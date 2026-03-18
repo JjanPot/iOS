@@ -7,18 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D0673D3A2F629B6B00FEEFE0 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = D0673D392F629B6B00FEEFE0 /* Alamofire */; };
-		D0673D3C2F629B6B00FEEFE0 /* AlamofireDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = D0673D3B2F629B6B00FEEFE0 /* AlamofireDynamic */; };
 		D0673D3F2F629B7600FEEFE0 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = D0673D3E2F629B7600FEEFE0 /* Kingfisher */; };
+		D0B8BCB62F692A900096D306 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = D0B8BCB52F692A900096D306 /* FirebaseMessaging */; };
+		D0B8E2FF2F69344E0096D306 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = D0B8E2FE2F69344E0096D306 /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D022FD012F61B49100A86E7A /* jjanpot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = jjanpot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D0B8BCBB2F692EC80096D306 /* Exceptions for "jjanpot" folder in "jjanpot" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D022FD002F61B49100A86E7A /* jjanpot */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D022FD032F61B49100A86E7A /* jjanpot */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D0B8BCBB2F692EC80096D306 /* Exceptions for "jjanpot" folder in "jjanpot" target */,
+			);
 			path = jjanpot;
 			sourceTree = "<group>";
 		};
@@ -29,9 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0B8E2FF2F69344E0096D306 /* Alamofire in Frameworks */,
+				D0B8BCB62F692A900096D306 /* FirebaseMessaging in Frameworks */,
 				D0673D3F2F629B7600FEEFE0 /* Kingfisher in Frameworks */,
-				D0673D3A2F629B6B00FEEFE0 /* Alamofire in Frameworks */,
-				D0673D3C2F629B6B00FEEFE0 /* AlamofireDynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,9 +87,9 @@
 			);
 			name = jjanpot;
 			packageProductDependencies = (
-				D0673D392F629B6B00FEEFE0 /* Alamofire */,
-				D0673D3B2F629B6B00FEEFE0 /* AlamofireDynamic */,
 				D0673D3E2F629B7600FEEFE0 /* Kingfisher */,
+				D0B8BCB52F692A900096D306 /* FirebaseMessaging */,
+				D0B8E2FE2F69344E0096D306 /* Alamofire */,
 			);
 			productName = jjanpot;
 			productReference = D022FD012F61B49100A86E7A /* jjanpot.app */;
@@ -107,8 +120,9 @@
 			mainGroup = D022FCF82F61B49100A86E7A;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				D0673D382F629B6B00FEEFE0 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				D0673D3D2F629B7600FEEFE0 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				D0B8BCB42F692A900096D306 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				D0B8E2FD2F69344E0096D306 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D022FD022F61B49100A86E7A /* Products */;
@@ -267,11 +281,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = jjanpot/jjanpot.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4XPB5Y5D44;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = jjanpot/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -303,11 +319,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = jjanpot/jjanpot.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4XPB5Y5D44;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = jjanpot/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -358,14 +376,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		D0673D382F629B6B00FEEFE0 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.11.1;
-			};
-		};
 		D0673D3D2F629B7600FEEFE0 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher";
@@ -374,23 +384,39 @@
 				minimumVersion = 8.8.0;
 			};
 		};
+		D0B8BCB42F692A900096D306 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.11.0;
+			};
+		};
+		D0B8E2FD2F69344E0096D306 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.11.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D0673D392F629B6B00FEEFE0 /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D0673D382F629B6B00FEEFE0 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
-		};
-		D0673D3B2F629B6B00FEEFE0 /* AlamofireDynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D0673D382F629B6B00FEEFE0 /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = AlamofireDynamic;
-		};
 		D0673D3E2F629B7600FEEFE0 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D0673D3D2F629B7600FEEFE0 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		D0B8BCB52F692A900096D306 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0B8BCB42F692A900096D306 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		D0B8E2FE2F69344E0096D306 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D0B8E2FD2F69344E0096D306 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
