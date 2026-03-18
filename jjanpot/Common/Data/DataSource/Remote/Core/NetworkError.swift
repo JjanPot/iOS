@@ -14,7 +14,7 @@ public enum NetworkError: Error, Equatable {
     case failToDecode(String)
     case dataNil
     case serverError(Int)
-    case serverFailed(code: String, message: String) // 서버에서 보낸 에러 정보
+    case serverFailed(code: Int, message: String) // 서버에서 보낸 에러 정보
     case requestFailed(String)
     case noInternet
     case cancelled

@@ -14,7 +14,9 @@ struct jjanpotApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            //ContentView()
+            AppDIContainer.shared.makeLoginView(onDismiss: {})
+            
         }
     }
 }
