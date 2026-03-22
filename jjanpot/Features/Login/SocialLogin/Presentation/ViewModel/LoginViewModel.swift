@@ -47,9 +47,6 @@ final class LoginViewModel: ObservableObject {
             
             await MainActor.run {
                 
-                // 로그인 성공
-                Logger.success("로그인 성공: \(entity)")
-                
                 isLoading = false
                 isLoggedIn = true
                 // 로그인 성공 처리 (토큰 + 사용자 정보 저장)

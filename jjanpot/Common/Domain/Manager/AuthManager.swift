@@ -25,7 +25,7 @@ final class AuthManager: ObservableObject {
     @Published private(set) var isLoggedIn: Bool = false
 
     /// 현재 사용자 정보 (메모리에만 유지, 스플래시에서 API로 받아옴)
-    @Published private(set) var currentUser: User?
+    @Published private(set) var currentUser: UserEntity?
 
     // MARK: - Init
 
@@ -37,16 +37,16 @@ final class AuthManager: ObservableObject {
     // MARK: - Public Methods
 
     /// 로그인 성공 시 호출 (토큰만 Keychain에 저장, 유저 정보는 메모리에만)
-    func login(user: User, accessToken: String, refreshToken: String) {
+    func login(_ entity: LoginEntity) {
         // 1. 토큰 저장 (Keychain)
-        self.accessToken = accessToken
-        self.refreshToken = refreshToken
+        self.accessToken = entity.accessToken
+        self.refreshToken = entity.refreshToken
 
         // 2. 상태 업데이트 (메모리에만)
-        currentUser = user
+        currentUser = entity.user
         isLoggedIn = true
 
-        Logger.success("로그인 성공: \(user.nickname ?? "익명") (userId: \(user.userId))")
+        Logger.success("로그인 성공: \(entity.user.nickname) (userId: \(entity.user.userId))")
 
     }
     
@@ -83,19 +83,17 @@ final class AuthManager: ObservableObject {
     /// 닉네임 업데이트
     func updateNickname(_ nickname: String) {
         guard let user = currentUser else { return }
-        let updatedUser = User(
+        let updatedUser = UserEntity(
             userId: user.userId,
-            nickname: nickname,
-            socialType: user.socialType,
-            profileImageUrl: user.profileImageUrl
+            nickname: nickname
         )
         updateUser(updatedUser)
     }
 
     /// 사용자 정보 업데이트 (메모리에만)
-    func updateUser(_ user: User) {
+    func updateUser(_ user: UserEntity) {
         currentUser = user
-        Logger.success("사용자 정보 업데이트: \(user.nickname ?? "익명")")
+        Logger.success("사용자 정보 업데이트: \(user.nickname)")
     }
 
     // MARK: - Private Methods

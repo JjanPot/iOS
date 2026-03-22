@@ -24,8 +24,12 @@ extension AuthRouter: Router {
     
     public var path: String {
         switch self {
-        case .appleLogin, .googleLogin, .kakaoLogin:
-            return "api/v1/auth/social-login"
+        case .appleLogin:
+            return "api/auth/v1/login/apple"
+        case .googleLogin:
+            return "api/auth/v1/login/google"
+        case .kakaoLogin:
+            return "api/auth/v1/login/kakao"
         }
     }
     
@@ -37,21 +41,18 @@ extension AuthRouter: Router {
         switch self {
         case let .kakaoLogin(token):
             let params: Parameters = [
-                "socialType" : "KAKAO",
                 "accessToken" : token,
             ]
             return params
            
         case let .appleLogin(token):
             let params: Parameters = [
-                "socialType" : "APPLE",
                 "accessToken" : token,
             ]
             return params
             
         case let .googleLogin(token):
             let params: Parameters = [
-                "socialType" : "GOOGLE",
                 "accessToken" : token,
             ]
             return params

@@ -22,6 +22,7 @@ final class LoginUseCase: LoginUseCaseProtocol {
     }
 
     func loginWithApple() async throws -> LoginEntity {
+        Logger.debug("애플 로그인")
         return try await performSocialLogin(type: .apple, socialLogin: appleLogin)
     }
 
@@ -37,17 +38,8 @@ final class LoginUseCase: LoginUseCaseProtocol {
     
     // 로그인 성공 처리 (토큰 + 사용자 정보 저장)
     func login(entity: LoginEntity){
-        let user = User(
-            userId: entity.userId,
-            nickname: entity.nickname,
-            socialType: entity.socialType,
-            profileImageUrl: entity.profileImageUrl
-        )
-        AuthManager.shared.login(
-            user: user,
-            accessToken: entity.accessToken,
-            refreshToken: entity.refreshToken
-        )
+        Logger.success("로그인 성공 \(entity)")
+        AuthManager.shared.login(entity)
     }
     
     

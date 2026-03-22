@@ -7,15 +7,12 @@
 
 
 struct LoginEntity {
-    let userId: Int
-    let socialType: LoginType
     
     // 유저정보
-    let nickname: String?
-    let profileImageUrl: String?
+    let user: UserEntity
+    let isNewUser: Bool
     
     // 토큰 정보
     let accessToken: String
     let refreshToken: String
-    
 }

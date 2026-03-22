@@ -9,16 +9,12 @@
 import Foundation
 
 /// 사용자 정보 Entity
-struct User: Codable {
+struct UserEntity: Codable {
     let userId: Int
-    let nickname: String?
-    let socialType: LoginType
-    let profileImageUrl: String?
-
-    init(userId: Int, nickname: String?, socialType: LoginType, profileImageUrl: String?) {
+    let nickname: String
+    
+    init(userId: Int, nickname: String) {
         self.userId = userId
         self.nickname = nickname
-        self.socialType = socialType
-        self.profileImageUrl = profileImageUrl
     }
 }

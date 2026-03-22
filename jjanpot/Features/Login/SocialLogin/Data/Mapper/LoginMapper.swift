@@ -10,17 +10,14 @@ import Foundation
 
 struct LoginMapper {
     static func toEntity(from dto: LoginResponseDto) -> LoginEntity? {
-        guard let socialType = LoginType(socialType: dto.socialType) else {
-            return nil
-        }
-
         return LoginEntity(
-            userId: dto.userId,
-            socialType: socialType,
-            nickname: dto.nickname,
-            profileImageUrl: dto.profileImageUrl,
+            user: UserEntity(
+                userId: dto.user.userId,
+                nickname: dto.user.nickname
+            ),
+            isNewUser: dto.newUser,
             accessToken: dto.accessToken,
-            refreshToken: dto.refreshToken,
+            refreshToken: dto.refreshToken
         )
     }
 }

@@ -8,14 +8,16 @@
 
 /// 소셜 로그인
 public struct LoginResponseDto: Codable {
-    let userId: Int
-    let socialType: String
-    
+     
     // 유저정보
-    let nickname: String?
-    let profileImageUrl: String?
+    let user: UserDto
+    let newUser: Bool
     
     // 토큰
     let accessToken: String
     let refreshToken: String
+}
+public struct UserDto: Codable {
+    let userId: Int
+    let nickname: String
 }
