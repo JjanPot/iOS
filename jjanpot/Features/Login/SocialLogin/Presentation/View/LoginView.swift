@@ -15,18 +15,26 @@ struct LoginView: View {
     }
     
     var body: some View {
-        Button {
-            viewModel.clickAppleLoginButton()
-        } label: {
-            Text("애플 로그인")
-        }
-        
-        Button {
-            viewModel.clickKakaoLoginButton()
-        } label: {
-            Text("카카오 로그인")
-        }
+        VStack(spacing: 20) {
+            Button {
+                viewModel.clickAppleLoginButton()
+            } label: {
+                Text("애플 로그인")
+            }
+            
+            Button {
+                viewModel.clickKakaoLoginButton()
+            } label: {
+                Text("카카오 로그인")
+            }
+            
+            Button {
+                viewModel.clickGoogleLoginButton()
+            } label: {
+                Text("구글 로그인")
+            }
 
+        }
     }
 }
 

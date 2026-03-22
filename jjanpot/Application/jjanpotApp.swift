@@ -8,6 +8,7 @@
 import SwiftUI
 import KakaoSDKCommon
 import KakaoSDKAuth
+import GoogleSignIn
 
 @main
 struct jjanpotApp: App {
@@ -29,7 +30,7 @@ struct jjanpotApp: App {
                     if (AuthApi.isKakaoTalkLoginUrl(url)) {
                         AuthController.handleOpenUrl(url: url)
                     } else {
-                        //GIDSignIn.sharedInstance.handle(url)
+                        GIDSignIn.sharedInstance.handle(url)
                     }
                 })
         }

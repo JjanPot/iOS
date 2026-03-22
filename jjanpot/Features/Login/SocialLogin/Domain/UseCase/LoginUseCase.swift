@@ -12,13 +12,13 @@ final class LoginUseCase: LoginUseCaseProtocol {
     private let repository: LoginRepositoryProtocol
     private var appleLogin: SocialLoginProtocol
     private var kakaoLogin: SocialLoginProtocol
-//    private var googleLogin: SocialLoginProtocol
+    private var googleLogin: SocialLoginProtocol
 
     init(repository: LoginRepositoryProtocol) {
         self.repository = repository
         self.appleLogin = AppleLogin()
         self.kakaoLogin = KakaoLogin()
-        //self.googleLogin = GoogleLogin()
+        self.googleLogin = GoogleLogin()
     }
 
     func loginWithApple() async throws -> LoginEntity {
@@ -32,8 +32,7 @@ final class LoginUseCase: LoginUseCaseProtocol {
     }
 
     func loginWithGoogle() async throws -> LoginEntity {
-//        return try await performSocialLogin(type: .google, socialLogin: googleLogin)
-        throw NetworkError.cancelled
+        return try await performSocialLogin(type: .google, socialLogin: googleLogin)
     }
     
     // 로그인 성공 처리 (토큰 + 사용자 정보 저장)
