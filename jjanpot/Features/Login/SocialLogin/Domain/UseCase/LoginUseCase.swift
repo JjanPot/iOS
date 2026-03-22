@@ -11,13 +11,13 @@ import Foundation
 final class LoginUseCase: LoginUseCaseProtocol {
     private let repository: LoginRepositoryProtocol
     private var appleLogin: SocialLoginProtocol
-//    private var kakaoLogin: SocialLoginProtocol
+    private var kakaoLogin: SocialLoginProtocol
 //    private var googleLogin: SocialLoginProtocol
 
     init(repository: LoginRepositoryProtocol) {
         self.repository = repository
         self.appleLogin = AppleLogin()
-        //self.kakaoLogin = KakaoLogin()
+        self.kakaoLogin = KakaoLogin()
         //self.googleLogin = GoogleLogin()
     }
 
@@ -27,8 +27,8 @@ final class LoginUseCase: LoginUseCaseProtocol {
     }
 
     func loginWithKakao() async throws -> LoginEntity {
-        //return try await performSocialLogin(type: .kakao, socialLogin: kakaoLogin)
-        throw NetworkError.cancelled
+        Logger.debug("카카오 로그인")
+        return try await performSocialLogin(type: .kakao, socialLogin: kakaoLogin)
     }
 
     func loginWithGoogle() async throws -> LoginEntity {
@@ -90,6 +90,7 @@ private class SocialLoginDelegateWrapper: SocialLoginDelegate {
     func didLogin(type: LoginType, didReceiveToken token: String?, error: Error?) {
         guard !hasResumed else { return }
         hasResumed = true
+        Logger.info("didLogin \(type), \(token)")
 
         if let error = error {
             continuation.resume(throwing: error)

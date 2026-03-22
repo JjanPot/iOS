@@ -86,11 +86,11 @@ public protocol AuthApiClientProtocol {
 public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
    
     
-    public func kakaoLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError> {
-        await request(AuthRouter.kakaoLogin(accessToken: token))
-    }
     public func appleLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError> {
         await request(AuthRouter.appleLogin(accessToken: token))
+    }
+    public func kakaoLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError> {
+        await request(AuthRouter.kakaoLogin(accessToken: token))
     }
     public func googleLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError> {
         await request(AuthRouter.googleLogin(accessToken: token))

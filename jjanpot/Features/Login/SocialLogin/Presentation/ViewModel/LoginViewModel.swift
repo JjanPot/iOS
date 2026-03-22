@@ -27,9 +27,26 @@ final class LoginViewModel: ObservableObject {
     // MARK: - Input Methods
 
     func clickAppleLoginButton() {
+        Logger.debug("애플 로그인 클릭")
         guard !isLoading else { return }
         Task {
             await performLogin { try await useCase.loginWithApple() }
+        }
+    }
+    
+    func clickKakaoLoginButton() {
+        guard !isLoading else { return }
+        Logger.debug("카카오 로그인 클릭")
+        Task {
+            await performLogin { try await useCase.loginWithKakao() }
+        }
+    }
+    
+    func clickGoogleLoginButton() {
+        Logger.debug("구글 로그인 클릭")
+        guard !isLoading else { return }
+        Task {
+            await performLogin { try await useCase.loginWithGoogle() }
         }
     }
     
