@@ -32,7 +32,7 @@ final class KakaoLogin: SocialLoginProtocol {
                 self?.delegate?.didLogin(type: .kakao, didReceiveToken: nil, error: error)
             }
             else {
-                Logger.success("카카오앱 로그인 성공")
+                Logger.success("카카오(앱) 로그인 성공")
 
                 // 성공 시 동작 구현
                 _ = oauthToken
@@ -48,7 +48,7 @@ final class KakaoLogin: SocialLoginProtocol {
                     self?.delegate?.didLogin(type: .kakao, didReceiveToken: nil, error: error)
                 }
                 else {
-                    Logger.success("카카오웹 로그인 성공")
+                    Logger.success("카카오(웹) 로그인 성공")
 
                     // 성공 시 동작 구현
                     _ = oauthToken

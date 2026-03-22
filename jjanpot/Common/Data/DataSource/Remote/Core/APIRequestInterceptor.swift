@@ -19,11 +19,11 @@ public final class APIRequestInterceptor: RequestInterceptor {
         // 토큰 갱신 전용 서비스 (순환 의존성 방지를 위해 interceptor 없는 별도 session 사용)
         let configuration = URLSessionConfiguration.af.default
         configuration.timeoutIntervalForRequest = 20
+        let refreshSession = Session(configuration: configuration)
+        let authApiClient = AuthApiClient(session: refreshSession)
         
         // TODO: 토큰 갱신
         /*
-        let refreshSession = Session(configuration: configuration)
-        let authApiClient = AuthApiClient(session: refreshSession)
         self.tokenRefreshService = TokenRefreshService(authApiClient: authApiClient)
          */
     }
@@ -36,12 +36,11 @@ public final class APIRequestInterceptor: RequestInterceptor {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        /*
+        
         // 인증 토큰 있으면 추가
          if let token = AuthManager.shared.getAccessToken() {
              request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
          }
-         */
 
         completion(.success(request))
     }
@@ -62,6 +61,7 @@ public final class APIRequestInterceptor: RequestInterceptor {
                 completion(success ? .retry : .doNotRetry)
             }
              */
+            completion(.doNotRetry)
             
             
         } else if (500...599).contains(response.statusCode) {

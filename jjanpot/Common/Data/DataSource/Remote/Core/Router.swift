@@ -29,12 +29,18 @@ extension Router {
             headers.forEach { request.setValue($0.value, forHTTPHeaderField: $0.name) }
         }
 
-        // 파라미터 인코딩 방식, 선택한 인코딩방식이 없는 경우 httpMethod에 따라 인코딩
-        let encoding: Encoding = if let encoding { encoding }
-        else if [.post, .put, .patch].contains(method) { .json }
-        else { .url }
-
-        switch encoding {
+        // encoding 선택
+        let finalEncoding: Encoding
+        if let customEncoding = encoding {
+            finalEncoding = customEncoding
+        } else if [.post, .put, .patch].contains(method) {
+            finalEncoding = .json
+        } else {
+            finalEncoding = .url
+        }
+        
+        // 파라미터 인코딩
+        switch finalEncoding {
         case .json:
             request = try JSONEncoding.default.encode(request, with: parameters)
         case .url:

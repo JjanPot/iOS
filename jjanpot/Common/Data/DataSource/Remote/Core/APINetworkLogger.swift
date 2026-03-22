@@ -14,14 +14,15 @@ public final class APINetworkLogger: EventMonitor {
 
     public init() {}
 
-    // Event called when any type of Request is resumed.
-    public func requestDidResume(_ request: Request) {
+    // Event called when a request is about to start
+    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
         #if DEBUG
-        let bodyString = request.request.flatMap { req in
-            req.httpBody.flatMap { String(data: $0, encoding: .utf8) }
-        } ?? "No Body"
-        Logger.network("➡️ [REQUEST] \(request)")
-        Logger.network("   Headers: \(request.request?.allHTTPHeaderFields ?? [:])")
+        let url = urlRequest.url?.absoluteString ?? "No URL"
+        let method = urlRequest.httpMethod ?? "Unknown"
+        let bodyString = urlRequest.httpBody.flatMap { String(data: $0, encoding: .utf8) } ?? "No Body"
+
+        Logger.network("➡️ [REQUEST] \(method) \(url)")
+        Logger.network("   Headers: \(urlRequest.allHTTPHeaderFields ?? [:])")
         Logger.network("   Body: \(bodyString)")
         #endif
     }

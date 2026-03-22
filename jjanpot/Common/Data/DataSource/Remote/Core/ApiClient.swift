@@ -92,7 +92,5 @@ public class ApiClient<R: Router> {
             return .failure(.serverError(response.statusCode))
         }
     }
-    
-    
 }
 
