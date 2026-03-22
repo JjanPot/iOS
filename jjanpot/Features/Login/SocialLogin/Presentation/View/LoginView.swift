@@ -32,7 +32,9 @@ struct LoginView: View {
                 viewModel.clickGoogleLoginButton()
             } label: {
                 Text("구글 로그인")
+                    .font(.pretendard(.medium), size: 14)
             }
+            
 
         }
     }
