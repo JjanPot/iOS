@@ -12,7 +12,7 @@ import Alamofire
 
 public final class APIRequestInterceptor: RequestInterceptor {
 
-    //private let tokenRefreshService: TokenRefreshService
+    private let tokenRefreshService: TokenRefreshService
 
     public init() {
         
@@ -22,10 +22,8 @@ public final class APIRequestInterceptor: RequestInterceptor {
         let refreshSession = Session(configuration: configuration)
         let authApiClient = AuthApiClient(session: refreshSession)
         
-        // TODO: 토큰 갱신
-        /*
+        // 토큰 갱신
         self.tokenRefreshService = TokenRefreshService(authApiClient: authApiClient)
-         */
     }
 
     // Adapt request if needed (e.g., attach auth headers)
@@ -56,11 +54,9 @@ public final class APIRequestInterceptor: RequestInterceptor {
         if [401, 403].contains(response.statusCode) {
             Logger.error("네트워킹 [권한없음] \(response.statusCode)")
             
-            /*
             tokenRefreshService.refreshToken { success in
                 completion(success ? .retry : .doNotRetry)
             }
-             */
             completion(.doNotRetry)
             
             

@@ -14,6 +14,9 @@ public enum AuthRouter {
     case kakaoLogin(accessToken: String)
     case appleLogin(accessToken: String)
     case googleLogin(accessToken: String)
+    
+    // 토큰 재발급
+    case refresh(token: String)
 }
 
 extension AuthRouter: Router {
@@ -30,6 +33,10 @@ extension AuthRouter: Router {
             return "api/auth/v1/login/google"
         case .kakaoLogin:
             return "api/auth/v1/login/kakao"
+            
+            
+        case .refresh:
+            return "api/auth/v1/refresh"
         }
     }
     
@@ -56,6 +63,12 @@ extension AuthRouter: Router {
                 "accessToken" : token,
             ]
             return params
+            
+        case let .refresh(token):
+            let params: Parameters = [
+                "refreshToken" : token,
+            ]
+            return params
         }
     }
     
@@ -77,6 +90,9 @@ public protocol AuthApiClientProtocol {
     func appleLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError>
     func googleLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError>
     
+    // 토큰 재발급
+    func refreshToken(refreshToken token: String) async -> Result<RefreshDto, NetworkError>
+
     
 }
 
@@ -94,6 +110,11 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
     }
     public func googleLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError> {
         await request(AuthRouter.googleLogin(accessToken: token))
+    }
+    
+    // 토큰 재발급
+    public func refreshToken(refreshToken token: String) async -> Result<RefreshDto, NetworkError> {
+        await request(.refresh(token: token))
     }
 }
 
