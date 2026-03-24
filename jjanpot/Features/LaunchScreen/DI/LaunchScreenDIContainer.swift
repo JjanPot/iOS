@@ -1,0 +1,39 @@
+//
+//  LaunchScreenDIContainer.swift
+//  jjanpot
+//
+//  Created by 임주희 on 3/22/26.
+//
+
+
+import Foundation
+
+final class LaunchScreenDIContainer {
+
+    // MARK: - Dependencies
+
+    private let authApiClient: AuthApiClientProtocol
+    private let appContainer: AppDIContainer
+
+    // MARK: - Initializer
+
+    init(authApiClient: AuthApiClientProtocol, appContainer: AppDIContainer) {
+        self.authApiClient = authApiClient
+        self.appContainer = appContainer
+    }
+
+    // MARK: - Repository
+
+    private func makeLaunchScreenRepository() -> LaunchScreenRepositoryProtocol {
+        return LaunchScreenRepository(authApiClient: authApiClient)
+    }
+
+    // MARK: - View
+
+    func makeLaunchScreenView() -> LaunchScreenView {
+        let repository = makeLaunchScreenRepository()
+        let useCase = LaunchScreenUseCase(repository: repository)
+        let viewModel = LaunchScreenViewModel(useCase: useCase)
+        return LaunchScreenView(viewModel: viewModel, container: appContainer)
+    }
+}
