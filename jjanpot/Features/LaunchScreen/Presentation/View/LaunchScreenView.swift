@@ -18,10 +18,8 @@ struct LaunchScreenView: View {
     
     
     var body: some View {
-        if viewModel.isLaunchFinished {
-            // 할 일 완료 후 메인 화면으로 전환
-            container.makeLoginView(onDismiss: {})
-        } else {
+        switch viewModel.navigationDestination {
+        case .loading:
             ZStack {
                 Color.white
                     .ignoresSafeArea()
@@ -32,6 +30,14 @@ struct LaunchScreenView: View {
                 // 토큰 갱신 + 유저 정보 가져오기
                 viewModel.checkAuth()
             }
+
+        case .main:
+            // 인증 성공 → 메인 화면
+            container.makeMainTabView()
+
+        case .login:
+            // 인증 실패 → 로그인 화면
+            container.makeLoginView(onDismiss: {})
         }
     }
 }

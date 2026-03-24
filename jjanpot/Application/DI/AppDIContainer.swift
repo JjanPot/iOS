@@ -59,5 +59,12 @@ extension AppDIContainer {
     func makeLoginView(onDismiss: @escaping () -> Void) -> LoginView {
         return loginDIContainer.makeLoginView(onDismiss: onDismiss)
     }
-   
+}
+
+// MARK: - Main Feature
+extension AppDIContainer {
+
+    func makeMainTabView() -> MainTabView {
+        return MainTabView()
+    }
 }
