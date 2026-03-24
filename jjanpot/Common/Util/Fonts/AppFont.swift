@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 // MARK: - Font Protocol
 /// 모든 폰트가 구현해야 하는 프로토콜
@@ -43,4 +44,16 @@ enum Pretendard: String, FontWeightProtocol {
     }
 }
 
+// MARK: - Font Extension
+
+extension Font {
+    /// Pretendard 폰트를 Font 타입으로 반환
+    /// - Parameters:
+    ///   - weight: Pretendard weight
+    ///   - size: 폰트 크기
+    /// - Returns: SwiftUI Font
+    static func pretendard(_ weight: Pretendard, size: CGFloat) -> Font {
+        return Font.custom(weight.fontName, size: size)
+    }
+}
 
