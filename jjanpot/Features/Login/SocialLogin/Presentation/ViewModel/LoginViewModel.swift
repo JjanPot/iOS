@@ -10,17 +10,17 @@ import SwiftUI
 import Combine
 
 final class LoginViewModel: ObservableObject {
+
     private let useCase: LoginUseCaseProtocol
 
     init(useCase: LoginUseCaseProtocol) {
         self.useCase = useCase
     }
-    
+
     // MARK: - Output Properties
-    
-    /// 로그인 성공여부
-    @Published var isLoggedIn = false
-    
+
+    @Published var shouldNavigateToSignup = false
+    @Published var shouldNavigateToMain = false
     @Published var isLoading = false
     
     
@@ -63,21 +63,30 @@ final class LoginViewModel: ObservableObject {
             let entity = try await loginAction()
             await MainActor.run {
                 isLoading = false
-                isLoggedIn = true
                 // 로그인 성공 처리 (토큰 + 사용자 정보 저장)
                 useCase.login(entity: entity)
+
+                // 신규 유저 → 회원가입 화면 (NavigationStack에 push)
+                // 기존 유저 → 메인 화면 (Root 변경)
+                if entity.isNewUser {
+                    Logger.success("신규 유저 로그인 성공 → 회원가입 화면으로")
+                    shouldNavigateToSignup = true
+                } else {
+                    Logger.success("기존 유저 로그인 성공 → 메인 화면으로")
+                    shouldNavigateToMain = true
+                }
             }
-            
+
         } catch {
             // 로그인 실패
             Logger.error("로그인 실패: \(error)")
-            isLoggedIn = false
             isLoading = false
         }
     }
-    
-    private func clearData(){
-        isLoggedIn = false
+
+    private func clearData() {
+        shouldNavigateToSignup = false
+        shouldNavigateToMain = false
     }
 
 }

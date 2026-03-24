@@ -57,7 +57,11 @@ extension AppDIContainer {
 extension AppDIContainer {
 
     func makeLoginView(onDismiss: @escaping () -> Void) -> LoginView {
-        return loginDIContainer.makeLoginView(onDismiss: onDismiss)
+        return loginDIContainer.makeLoginView(onDismiss: onDismiss, appContainer: self)
+    }
+
+    func makeTermsView() -> TermsView {
+        return TermsView()
     }
 }
 

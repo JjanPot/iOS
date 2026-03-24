@@ -37,7 +37,10 @@ struct LaunchScreenView: View {
 
         case .login:
             // 인증 실패 → 로그인 화면
-            container.makeLoginView(onDismiss: {})
+            container.makeLoginView(onDismiss: {
+                // 로그인 성공 (기존 유저) → 메인 화면으로 root 변경
+                viewModel.navigationDestination = .main
+            })
         }
     }
 }

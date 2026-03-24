@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 protocol LoginDIContainerProtocol {
-    func makeLoginView(onDismiss: @escaping () -> Void) -> LoginView
+    func makeLoginView(onDismiss: @escaping () -> Void, appContainer: AppDIContainer) -> LoginView
 }
 
 final class LoginDIContainer: LoginDIContainerProtocol {
@@ -37,9 +37,9 @@ final class LoginDIContainer: LoginDIContainerProtocol {
         return LoginViewModel(useCase: makeLoginUseCase())
     }
 
-    func makeLoginView(onDismiss: @escaping () -> Void) -> LoginView {
+    func makeLoginView(onDismiss: @escaping () -> Void, appContainer: AppDIContainer) -> LoginView {
         let viewModel = makeLoginViewModel()
-        return LoginView(viewModel: viewModel)
+        return LoginView(viewModel: viewModel, container: appContainer, onDismiss: onDismiss)
     }
 }
 
@@ -55,9 +55,9 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
     private func makeLoginViewModel() -> LoginViewModel {
         LoginViewModel(useCase: makeLoginUseCase())
     }
-    func makeLoginView(onDismiss: @escaping () -> Void) -> LoginView {
+    func makeLoginView(onDismiss: @escaping () -> Void, appContainer: AppDIContainer) -> LoginView {
         let viewModel = makeLoginViewModel()
-        return LoginView(viewModel: viewModel)
+        return LoginView(viewModel: viewModel, container: appContainer, onDismiss: onDismiss)
     }
     
 }
