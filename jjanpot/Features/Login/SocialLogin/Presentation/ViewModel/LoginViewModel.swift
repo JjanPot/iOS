@@ -61,9 +61,7 @@ final class LoginViewModel: ObservableObject {
 
         do {
             let entity = try await loginAction()
-            
             await MainActor.run {
-                
                 isLoading = false
                 isLoggedIn = true
                 // 로그인 성공 처리 (토큰 + 사용자 정보 저장)
@@ -71,7 +69,6 @@ final class LoginViewModel: ObservableObject {
             }
             
         } catch {
-            
             // 로그인 실패
             Logger.error("로그인 실패: \(error)")
             isLoggedIn = false

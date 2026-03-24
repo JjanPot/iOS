@@ -37,9 +37,10 @@ final class GoogleLogin: SocialLoginProtocol {
                 
                 // let givenName = user.profile?.givenName ?? "" //사용자의 이름
                 // let oauthId = user.userID ?? "" //사용자의 고유 ID
-                let idToken = user.idToken?.tokenString ?? ""//사용자의 ID 토큰
+                let idToken = user.idToken?.tokenString ?? "" //사용자의 ID 토큰
+                let accessToken = user.accessToken.tokenString
 
-                self?.delegate?.didLogin(type: .google, didReceiveToken: idToken, error: nil)
+                self?.delegate?.didLogin(type: .google, didReceiveToken: accessToken, error: nil)
                 
             }
     }
