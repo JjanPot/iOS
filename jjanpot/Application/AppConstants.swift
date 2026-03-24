@@ -13,9 +13,9 @@ enum AppConstants {
 
     enum URLs {
         /// 이용약관
-        static let termsOfService = "https://patch-carpenter-1ef.notion.site/32dcf10cd2e780b8bebdd7c733c2bd1d?source=copy_link"
+        static let termsOfService = "https://patch-carpenter-1ef.notion.site/323cf10cd2e780fb923de53f35730547?source=copy_link"
         /// 개인정보 처리방침
-        static let privacyPolicy = "https://patch-carpenter-1ef.notion.site/32dcf10cd2e780ef9d2adb9315ab37bf?source=copy_link"
+        static let privacyPolicy = "https://patch-carpenter-1ef.notion.site/323cf10cd2e780dbae46f69761e835ea?source=copy_link"
         
         /// 오픈소스라이선스
         static let openSourceLicense = "https://patch-carpenter-1ef.notion.site/32dcf10cd2e78081a7a3c18daa24edcf?source=copy_link"

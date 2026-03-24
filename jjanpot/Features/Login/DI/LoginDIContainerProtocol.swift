@@ -11,6 +11,8 @@ import SwiftUI
 
 protocol LoginDIContainerProtocol {
     func makeLoginView(onDismiss: @escaping () -> Void, appContainer: AppDIContainer) -> LoginView
+    
+    func makeWebView(url: String, onDismiss: @escaping () -> Void) -> AnyView
 }
 
 final class LoginDIContainer: LoginDIContainerProtocol {
@@ -41,6 +43,31 @@ final class LoginDIContainer: LoginDIContainerProtocol {
         let viewModel = makeLoginViewModel()
         return LoginView(viewModel: viewModel, container: appContainer, onDismiss: onDismiss)
     }
+    
+    
+    // MARK: - Web view
+    
+    func makeWebView(url: String, onDismiss: @escaping () -> Void) -> AnyView {
+        return AnyView(
+            NavigationStack {
+                AdvancedWebView(
+                    url: URL(string: url)!,
+                    isLoading: .constant(false)
+                )
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            onDismiss()
+                        } label: {
+                            Image(systemName: "xmark")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
+            }
+        )
+    }
 }
 
 // MARK: - Mock
@@ -58,6 +85,10 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
     func makeLoginView(onDismiss: @escaping () -> Void, appContainer: AppDIContainer) -> LoginView {
         let viewModel = makeLoginViewModel()
         return LoginView(viewModel: viewModel, container: appContainer, onDismiss: onDismiss)
+    }
+    
+    func makeWebView(url: String, onDismiss: @escaping () -> Void) -> AnyView {
+        return AnyView(EmptyView())
     }
     
 }

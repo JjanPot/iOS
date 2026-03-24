@@ -9,54 +9,97 @@ import Foundation
 import SwiftUI
 
 struct TermsView: View {
-    
+
+    private let diContainer: LoginDIContainerProtocol
+
+
+    @State private var allChecked = false
+    @State private var ageAgreed = false
+    @State private var termsAgreed = false
+    @State private var privacyAgreed = false
+    @State private var marketingAgreed = false
+
+    /// 이용약관 띄우기(웹뷰)
+    @State private var showTermsOfService: Bool = false
+
+    /// 개인정보처리방침  띄우기(웹뷰)
+    @State private var showPrivacyPolicy: Bool = false
+
+    /// 마케팅 수신동의약관  띄우기(웹뷰)
+    @State private var showMarketingTemrs: Bool = false
+
+    init(diContainer: LoginDIContainerProtocol){
+        self.diContainer = diContainer
+    }
+
+
     var body: some View {
         VStack(alignment: .leading, spacing: .zero) {
             Text("서비스 이용을 위해\n이용약관 동의가 필요해요")
                 .multilineTextAlignment(.leading)
                 .font(.pretendard(.semiBold), size: 24)
                 .padding(20)
-            
-            TermsCheckBoxGroup()
-                .padding(20)
-            
+
+            CheckBoxGroup(
+                allChecked: $allChecked,
+                items: [
+                    CheckBoxItem(isChecked: $ageAgreed, label: "만 14세 이상입니다. (필수)"),
+                    CheckBoxItem(isChecked: $termsAgreed, label: "서비스 이용약관 동의 (필수)",
+                                 buttonText: "보기",
+                                 action: {
+                                     print("서비스 이용약관 동의 보기")
+                                     showTermsOfService = true
+                                 }),
+                    CheckBoxItem(isChecked: $privacyAgreed, label: "개인정보 수집 및 이용 동의 (필수)",
+                                 buttonText: "보기",
+                                 action: {
+                                     print("개인정보 수집 및 이용 동의 보기")
+                                     showPrivacyPolicy = true
+                                 }),
+                    CheckBoxItem(isChecked: $marketingAgreed, label: "마케팅 정보 수신 동의 (선택)",
+                                 buttonText: "보기",
+                                 action: {
+                                     print("마케팅 정보 수신 동의 보기")
+                                     showMarketingTemrs = true
+                                 })
+                ],
+                allLabel: "약관에 모두 동의합니다."
+            )
+            .padding(20)
+
             Spacer()
+
+            MainButton(title: "다음", size: .large, colorType: .fill, isDisabled: !(ageAgreed && termsAgreed && privacyAgreed)) {
+                print("약관버튼 클릭")
+            }
+            .padding()
         }
-        
+        .navigationTitle("이용약관")
+        .fullScreenCover(isPresented: $showTermsOfService) {
+            diContainer.makeWebView(url: AppConstants.URLs.termsOfService) {
+                showTermsOfService = false
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
+        .fullScreenCover(isPresented: $showPrivacyPolicy) {
+            diContainer.makeWebView(url: AppConstants.URLs.privacyPolicy) {
+                showPrivacyPolicy = false
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
+        .fullScreenCover(isPresented: $showMarketingTemrs) {
+            diContainer.makeWebView(url: AppConstants.URLs.marketingTemrs) {
+                showMarketingTemrs = false
+            }
+        }
     }
-    
+
 }
 
-
-struct TermsCheckBoxGroup: View {
-    @State private var allChecked = false
-    @State private var items = [false, false, false, false]
-    
-    var body: some View {
-        
-        CheckBoxGroup(
-            allChecked: $allChecked,
-            items: $items,
-            allLabel: "약관에 모두 동의합니다.",
-            itemLabels: [
-                "만 14세 이상입니다. (필수)",
-                "서비스 이용약관 동의 (필수)",
-                "개인정보 수집 및 이용 동의 (필수)",
-                "마케팅 정보 수신 동의 (선택)"
-            ],
-            itemButtonTexts: [nil, "보기", "보기", "보기"],
-            itemButtonActions: [
-                nil,
-                { print("서비스 이용약관 동의 보기") },
-                { print("개인정보 수집 및 이용 동의 보기") },
-                { print("마케팅 정보 수신 동의 보기") }
-            ]
-        )
-        
-    }
-}
 
 
 #Preview {
-    TermsView()
+    TermsView(diContainer: MockLoginDIContainer())
 }

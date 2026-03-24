@@ -61,7 +61,7 @@ extension AppDIContainer {
     }
 
     func makeTermsView() -> TermsView {
-        return TermsView()
+        return TermsView(diContainer: loginDIContainer)
     }
 }
 

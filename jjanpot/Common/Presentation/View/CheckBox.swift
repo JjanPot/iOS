@@ -54,26 +54,48 @@ struct CheckBox: View {
 
 // MARK: - 체크박스 그룹
 
+struct CheckBoxItem {
+    struct ButtonInfo {
+        let text: String
+        let action: () -> Void
+    }
+
+    @Binding var isChecked: Bool
+    let label: String
+    let button: ButtonInfo?
+
+    init(isChecked: Binding<Bool>, label: String, button: ButtonInfo? = nil) {
+        self._isChecked = isChecked
+        self.label = label
+        self.button = button
+    }
+
+    init(isChecked: Binding<Bool>, label: String, buttonText: String, action: @escaping () -> Void) {
+        self._isChecked = isChecked
+        self.label = label
+        self.button = ButtonInfo(text: buttonText, action: action)
+    }
+}
+
 struct CheckBoxGroup: View {
     @Binding var allChecked: Bool
-    @Binding var items: [Bool]
+    var items: [CheckBoxItem]
     var color: Color = .orange500
     var size: CGFloat = 18
     var allLabel: String
     var allButtonText: String? = nil
     var allButtonAction: (() -> Void)? = nil
-    var itemLabels: [String]
-    var itemButtonTexts: [String?] = []
-    var itemButtonActions: [(() -> Void)?] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: .zero) {
             // 전체 선택 체크박스
             CheckBox(
                 isChecked: Binding(
-                    get: { items.allSatisfy { $0 } && !items.isEmpty },
+                    get: {
+                        !items.isEmpty && items.allSatisfy { $0.isChecked }
+                    },
                     set: { newValue in
-                        items = items.map { _ in newValue }
+                        items.forEach { $0.isChecked = newValue }
                         allChecked = newValue
                     }
                 ),
@@ -85,10 +107,10 @@ struct CheckBoxGroup: View {
                 buttonText: allButtonText,
                 buttonAction: allButtonAction
             )
-            .onChange(of: items) { newValue in
-                allChecked = newValue.allSatisfy { $0 } && !newValue.isEmpty
+            .onChange(of: items.map { $0.isChecked }) { newValue in
+                allChecked = !newValue.isEmpty && newValue.allSatisfy { $0 }
             }
-            
+
             Divider()
                 .padding(.top, 8)
                 .padding(.bottom, 25)
@@ -97,13 +119,13 @@ struct CheckBoxGroup: View {
             VStack(alignment: .leading, spacing: 24) {
                 ForEach(items.indices, id: \.self) { index in
                     CheckBox(
-                        isChecked: $items[index],
-                        text: itemLabels[index],
+                        isChecked: items[index].$isChecked,
+                        text: items[index].label,
                         color: color,
                         size: size,
                         font: .pretendard(.medium, size: 14),
-                        buttonText: itemButtonTexts.indices.contains(index) ? itemButtonTexts[index] : nil,
-                        buttonAction: itemButtonActions.indices.contains(index) ? itemButtonActions[index] : nil
+                        buttonText: items[index].button?.text,
+                        buttonAction: items[index].button?.action
                     )
                 }
             }
@@ -141,25 +163,20 @@ struct CheckBoxGroup: View {
 
 struct CheckBoxGroupExample: View {
     @State private var allChecked = false
-    @State private var items = [false, false, false]
+    @State private var item1 = false
+    @State private var item2 = false
+    @State private var item3 = false
 
     var body: some View {
         CheckBoxGroup(
             allChecked: $allChecked,
-            items: $items,
-            color: .orange500,
-            allLabel: "전체 동의",
-            itemLabels: [
-                "필수 이용약관 동의",
-                "개인정보 수집 및 이용 동의",
-                "마케팅 정보 수신 동의"
+            items: [
+                CheckBoxItem(isChecked: $item1, label: "필수 이용약관 동의", buttonText: "보기", action: { print("이용약관 보기") }),
+                CheckBoxItem(isChecked: $item2, label: "개인정보 수집 및 이용 동의", buttonText: "보기", action: { print("개인정보 보기") }),
+                CheckBoxItem(isChecked: $item3, label: "마케팅 정보 수신 동의")
             ],
-            itemButtonTexts: ["보기", "보기", nil],
-            itemButtonActions: [
-                { print("이용약관 보기") },
-                { print("개인정보 보기") },
-                nil
-            ]
+            color: .orange500,
+            allLabel: "전체 동의"
         )
     }
 }
