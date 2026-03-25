@@ -10,8 +10,9 @@ import Foundation
 import SwiftUI
 
 protocol LoginDIContainerProtocol {
-    func makeLoginView(onDismiss: @escaping () -> Void, appContainer: AppDIContainer) -> LoginView
+    func makeLoginCoordinator() -> LoginCoordinator
     
+    func makeLoginView(coordinator: LoginCoordinator, onNavigateToMain: @escaping () -> Void) -> LoginView
     func makeWebView(url: String, onDismiss: @escaping () -> Void) -> AnyView
 }
 
@@ -22,28 +23,29 @@ final class LoginDIContainer: LoginDIContainerProtocol {
     init(authApiClient: AuthApiClientProtocol) {
         self.authApiClient = authApiClient
     }
-    
-    
-    
+
+    // MARK: - Coordinator
+
+    func makeLoginCoordinator() -> LoginCoordinator {
+        return LoginCoordinator(loginDIContainer: self)
+    }
+
     // MARK: - SocialLogin
 
     private func makeLoginRepository() -> LoginRepositoryProtocol {
         return LoginRepository(authApiClient: authApiClient)
     }
-
     private func makeLoginUseCase() -> LoginUseCase {
         return LoginUseCase(repository: makeLoginRepository())
     }
-
     private func makeLoginViewModel() -> LoginViewModel {
         return LoginViewModel(useCase: makeLoginUseCase())
     }
 
-    func makeLoginView(onDismiss: @escaping () -> Void, appContainer: AppDIContainer) -> LoginView {
+    func makeLoginView(coordinator: LoginCoordinator, onNavigateToMain: @escaping () -> Void) -> LoginView {
         let viewModel = makeLoginViewModel()
-        return LoginView(viewModel: viewModel, container: appContainer, onDismiss: onDismiss)
+        return LoginView(viewModel: viewModel, coordinator: coordinator, onNavigateToMain: onNavigateToMain)
     }
-    
     
     // MARK: - Web view
     
@@ -74,7 +76,11 @@ final class LoginDIContainer: LoginDIContainerProtocol {
 
 
 final class MockLoginDIContainer: LoginDIContainerProtocol {
-   
+
+    func makeLoginCoordinator() -> LoginCoordinator {
+        return LoginCoordinator(loginDIContainer: self)
+    }
+
     // MARK: Login
     private func makeLoginUseCase() -> LoginUseCaseProtocol {
         return MockLoginUseCase()
@@ -82,15 +88,16 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
     private func makeLoginViewModel() -> LoginViewModel {
         LoginViewModel(useCase: makeLoginUseCase())
     }
-    func makeLoginView(onDismiss: @escaping () -> Void, appContainer: AppDIContainer) -> LoginView {
+
+    func makeLoginView(coordinator: LoginCoordinator, onNavigateToMain: @escaping () -> Void) -> LoginView {
         let viewModel = makeLoginViewModel()
-        return LoginView(viewModel: viewModel, container: appContainer, onDismiss: onDismiss)
+        return LoginView(viewModel: viewModel, coordinator: coordinator, onNavigateToMain: onNavigateToMain)
     }
-    
+
     func makeWebView(url: String, onDismiss: @escaping () -> Void) -> AnyView {
         return AnyView(EmptyView())
     }
-    
+
 }
 
 // -------- Mock struct ------ //

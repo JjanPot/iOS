@@ -8,7 +8,11 @@
 
 import Foundation
 
-final class LaunchScreenDIContainer {
+protocol LaunchScreenDIContainerProtocol {
+    func makeLaunchScreenView(appCoordinator: AppCoordinator) -> LaunchScreenView
+}
+
+final class LaunchScreenDIContainer: LaunchScreenDIContainerProtocol {
 
     // MARK: - Dependencies
 
@@ -28,12 +32,18 @@ final class LaunchScreenDIContainer {
         return LaunchScreenRepository(authApiClient: authApiClient)
     }
 
-    // MARK: - View
+    // MARK: - ViewModel
 
-    func makeLaunchScreenView() -> LaunchScreenView {
+    private func makeLaunchScreenViewModel(appCoordinator: AppCoordinator) -> LaunchScreenViewModel {
         let repository = makeLaunchScreenRepository()
         let useCase = LaunchScreenUseCase(repository: repository)
-        let viewModel = LaunchScreenViewModel(useCase: useCase)
-        return LaunchScreenView(viewModel: viewModel, container: appContainer)
+        return LaunchScreenViewModel(useCase: useCase, appCoordinator: appCoordinator)
+    }
+
+    // MARK: - View
+
+    func makeLaunchScreenView(appCoordinator: AppCoordinator) -> LaunchScreenView {
+        let viewModel = makeLaunchScreenViewModel(appCoordinator: appCoordinator)
+        return LaunchScreenView(viewModel: viewModel)
     }
 }

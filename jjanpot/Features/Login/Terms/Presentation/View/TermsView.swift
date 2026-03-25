@@ -8,10 +8,11 @@
 import Foundation
 import SwiftUI
 
+
+
 struct TermsView: View {
 
-    private let diContainer: LoginDIContainerProtocol
-
+    private let coordinator: LoginCoordinator
 
     @State private var allChecked = false
     @State private var ageAgreed = false
@@ -28,8 +29,8 @@ struct TermsView: View {
     /// 마케팅 수신동의약관  띄우기(웹뷰)
     @State private var showMarketingTemrs: Bool = false
 
-    init(diContainer: LoginDIContainerProtocol){
-        self.diContainer = diContainer
+    init(coordinator: LoginCoordinator) {
+        self.coordinator = coordinator
     }
 
 
@@ -70,27 +71,27 @@ struct TermsView: View {
             Spacer()
 
             MainButton(title: "다음", size: .large, colorType: .fill, isDisabled: !(ageAgreed && termsAgreed && privacyAgreed)) {
-                print("약관버튼 클릭")
+                coordinator.navigateToInviteCode()
             }
             .padding()
         }
         .navigationTitle("이용약관")
         .fullScreenCover(isPresented: $showTermsOfService) {
-            diContainer.makeWebView(url: AppConstants.URLs.termsOfService) {
+            coordinator.makeWebView(url: AppConstants.URLs.termsOfService) {
                 showTermsOfService = false
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $showPrivacyPolicy) {
-            diContainer.makeWebView(url: AppConstants.URLs.privacyPolicy) {
+            coordinator.makeWebView(url: AppConstants.URLs.privacyPolicy) {
                 showPrivacyPolicy = false
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $showMarketingTemrs) {
-            diContainer.makeWebView(url: AppConstants.URLs.marketingTemrs) {
+            coordinator.makeWebView(url: AppConstants.URLs.marketingTemrs) {
                 showMarketingTemrs = false
             }
         }
@@ -101,5 +102,7 @@ struct TermsView: View {
 
 
 #Preview {
-    TermsView(diContainer: MockLoginDIContainer())
+    let mockDIContainer = MockLoginDIContainer()
+    let coordinator = LoginCoordinator(loginDIContainer: mockDIContainer)
+    return TermsView(coordinator: coordinator)
 }

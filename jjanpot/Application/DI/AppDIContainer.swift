@@ -40,28 +40,32 @@ final class AppDIContainer {
         )
     }()
     
-    private lazy var loginDIContainer: LoginDIContainer = {
+    lazy var loginDIContainer: LoginDIContainerProtocol = {
         LoginDIContainer(authApiClient: authApiClient)
     }()
+}
+
+// MARK: - App Navigation
+extension AppDIContainer {
+    func makeAppCoordinator() -> AppCoordinator {
+        return AppCoordinator()
+    }
 }
 
 
 // MARK: - LaunchScreen Feature
 extension AppDIContainer {
-    func makeLaunchScreenView() -> LaunchScreenView {
-        return launchScreenDIContainer.makeLaunchScreenView()
+    func makeLaunchScreenView(appCoordinator: AppCoordinator) -> LaunchScreenView {
+        return launchScreenDIContainer.makeLaunchScreenView(appCoordinator: appCoordinator)
     }
 }
-    
+
+
 // MARK: - Login Feature
 extension AppDIContainer {
 
-    func makeLoginView(onDismiss: @escaping () -> Void) -> LoginView {
-        return loginDIContainer.makeLoginView(onDismiss: onDismiss, appContainer: self)
-    }
-
-    func makeTermsView() -> TermsView {
-        return TermsView(diContainer: loginDIContainer)
+    func makeTermsView(coordinator: LoginCoordinator) -> TermsView {
+        return TermsView(coordinator: coordinator)
     }
 }
 
@@ -70,5 +74,10 @@ extension AppDIContainer {
 
     func makeMainTabView() -> MainTabView {
         return MainTabView()
+    }
+    
+    func makeInviteCodeView() -> some View {
+        // TODO: InviteCodeView 구현 필요
+        Text("InviteCodeView (구현 예정)")
     }
 }
