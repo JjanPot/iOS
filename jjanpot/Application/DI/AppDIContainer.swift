@@ -76,7 +76,12 @@ extension AppDIContainer {
         return MainTabView()
     }
     
+    private func makeInviteCodeViewModel() -> InviteCodeViewModel {
+        InviteCodeViewModel()
+    }
+    
     func makeInviteCodeView(hasSkip: Bool = true) -> InviteCodeView {
-        return InviteCodeView(hasSkip: hasSkip)
+        let vm = makeInviteCodeViewModel()
+        return InviteCodeView(viewModel: vm, hasSkip: hasSkip)
     }
 }

@@ -6,16 +6,22 @@
 //
 
 import SwiftUI
+import Combine
 
 // 초대코드 입력 화면
 
+final class InviteCodeViewModel: ObservableObject {
+    @Published var inviteCodeErrorMessage: String? = nil
+}
+
 struct InviteCodeView: View {
     
+    @StateObject var viewModel: InviteCodeViewModel
+    @State var code: String = ""
     private let hasSkip: Bool
     
-    @State var code: String = ""
-    
-    init(hasSkip: Bool) {
+    init(viewModel: InviteCodeViewModel,hasSkip: Bool) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.hasSkip = hasSkip
     }
     
@@ -32,9 +38,9 @@ struct InviteCodeView: View {
                 textValue: $code,
                 isNeccessary: false,
                 textLimit: nil,
+                errorMessage: $viewModel.inviteCodeErrorMessage,
                 keyboardType: .numberPad
             )
-            
             
             Spacer()
             
@@ -46,6 +52,7 @@ struct InviteCodeView: View {
                         Text("초대코드가 없어요.")
                             .font(.pretendard(.regular, size: 14))
                             .foregroundStyle(Color.black500)
+                            .underline()
                     }
                 }
                 
@@ -61,5 +68,5 @@ struct InviteCodeView: View {
 }
 
 #Preview {
-    InviteCodeView(hasSkip: true)
+    InviteCodeView(viewModel: InviteCodeViewModel(), hasSkip: true)
 }
