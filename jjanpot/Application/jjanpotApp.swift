@@ -44,7 +44,7 @@ struct jjanpotApp: App {
 
                 case .main:
                     // 메인 플로우 (독립적인 NavigationStack)
-                    container.makeMainTabView()
+                    MainNavigationStack()
                 }
             }
             // 인증 리디렉션 url 처리
