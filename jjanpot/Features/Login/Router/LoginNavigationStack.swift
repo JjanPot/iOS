@@ -12,7 +12,6 @@ import SwiftUI
 struct LoginNavigationStack: View {
     @StateObject private var coordinator: LoginCoordinator
 
-    private let container = AppDIContainer.shared
     private let loginDIContainer: LoginDIContainerProtocol
     let onLoginSuccess: () -> Void
 
@@ -33,11 +32,11 @@ struct LoginNavigationStack: View {
             .navigationDestination(for: LoginDestination.self) { destination in
                 switch destination {
                 case .terms:
-                    container.makeTermsView(coordinator: coordinator)
+                    loginDIContainer.makeTermsView(coordinator: coordinator)
                 case .profileSetup:
-                    container.makeProfileSetupView(coordinator: coordinator)
+                    loginDIContainer.makeProfileSetupView(coordinator: coordinator)
                 case .signUpComplete:
-                    container.makeSignUpCompleteView(onNavigateToMain: onLoginSuccess)
+                    loginDIContainer.makeSignUpCompleteView(onNavigateToMain: onLoginSuccess)
                 }
             }
         }

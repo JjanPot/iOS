@@ -13,5 +13,4 @@ final class ProfileSetupViewModel: ObservableObject {
     @Published var nickname: String = ""
     @Published var nicknameErrorMessage: String? = nil
     @Published var birthDate: Date? = nil
-    @Published var gender: Gender? = nil
 }

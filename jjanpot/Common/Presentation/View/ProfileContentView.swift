@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct ProfileContentView: View {
-    
-    
     @Binding var nickname: String
     @Binding var nicknameErrorMessage: String?
     let onProfileImageTapped: (() -> Void)?

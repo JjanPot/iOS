@@ -61,27 +61,6 @@ extension AppDIContainer {
 }
 
 
-// MARK: - Login Feature
-extension AppDIContainer {
-
-    func makeTermsView(coordinator: LoginCoordinator) -> TermsView {
-        return TermsView(coordinator: coordinator)
-    }
-
-    private func makeProfileSetupViewModel() -> ProfileSetupViewModel {
-        return ProfileSetupViewModel()
-    }
-
-    func makeProfileSetupView(coordinator: LoginCoordinator) -> ProfileSetupView {
-        let vm = makeProfileSetupViewModel()
-        return ProfileSetupView(viewModel: vm, coordinator: coordinator)
-    }
-
-    func makeSignUpCompleteView(onNavigateToMain: @escaping () -> Void) -> SignUpCompleteView {
-        return SignUpCompleteView(onNavigateToMain: onNavigateToMain)
-    }
-}
-
 // MARK: - Main Feature
 extension AppDIContainer {
 

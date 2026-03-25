@@ -11,8 +11,20 @@ import SwiftUI
 
 protocol LoginDIContainerProtocol {
     func makeLoginCoordinator() -> LoginCoordinator
-    
+
+    // 로그인 화면
     func makeLoginView(coordinator: LoginCoordinator, onNavigateToMain: @escaping () -> Void) -> LoginView
+
+    // 약관 동의 화면
+    func makeTermsView(coordinator: LoginCoordinator) -> TermsView
+
+    // 프로필 설정 화면
+    func makeProfileSetupView(coordinator: LoginCoordinator) -> ProfileSetupView
+
+    // 회원가입 완료 화면
+    func makeSignUpCompleteView(onNavigateToMain: @escaping () -> Void) -> SignUpCompleteView
+
+    // 웹뷰
     func makeWebView(url: String, onDismiss: @escaping () -> Void) -> AnyView
 }
 
@@ -46,7 +58,30 @@ final class LoginDIContainer: LoginDIContainerProtocol {
         let viewModel = makeLoginViewModel()
         return LoginView(viewModel: viewModel, coordinator: coordinator, onNavigateToMain: onNavigateToMain)
     }
-    
+
+    // MARK: - Terms
+
+    func makeTermsView(coordinator: LoginCoordinator) -> TermsView {
+        return TermsView(coordinator: coordinator)
+    }
+
+    // MARK: - ProfileSetup
+
+    private func makeProfileSetupViewModel() -> ProfileSetupViewModel {
+        return ProfileSetupViewModel()
+    }
+
+    func makeProfileSetupView(coordinator: LoginCoordinator) -> ProfileSetupView {
+        let vm = makeProfileSetupViewModel()
+        return ProfileSetupView(viewModel: vm, coordinator: coordinator)
+    }
+
+    // MARK: - SignUpComplete
+
+    func makeSignUpCompleteView(onNavigateToMain: @escaping () -> Void) -> SignUpCompleteView {
+        return SignUpCompleteView(onNavigateToMain: onNavigateToMain)
+    }
+
     // MARK: - Web view
     
     func makeWebView(url: String, onDismiss: @escaping () -> Void) -> AnyView {
@@ -92,6 +127,18 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
     func makeLoginView(coordinator: LoginCoordinator, onNavigateToMain: @escaping () -> Void) -> LoginView {
         let viewModel = makeLoginViewModel()
         return LoginView(viewModel: viewModel, coordinator: coordinator, onNavigateToMain: onNavigateToMain)
+    }
+
+    func makeTermsView(coordinator: LoginCoordinator) -> TermsView {
+        return TermsView(coordinator: coordinator)
+    }
+
+    func makeProfileSetupView(coordinator: LoginCoordinator) -> ProfileSetupView {
+        return ProfileSetupView(viewModel: ProfileSetupViewModel(), coordinator: coordinator)
+    }
+
+    func makeSignUpCompleteView(onNavigateToMain: @escaping () -> Void) -> SignUpCompleteView {
+        return SignUpCompleteView(onNavigateToMain: onNavigateToMain)
     }
 
     func makeWebView(url: String, onDismiss: @escaping () -> Void) -> AnyView {
