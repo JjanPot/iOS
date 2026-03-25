@@ -26,24 +26,15 @@ struct InviteCodeView: View {
                 .foregroundStyle(Color.black900)
                 .multilineTextAlignment(.leading)
             
-            VStack(alignment: .leading, spacing: 10) {
-                
-                
-                Text("초대코드")
-                    .font(.pretendard(.semiBold, size: 14))
-                    .foregroundStyle(Color.black600)
-                
-                TextField("", text: $code,
-                          prompt: Text("초대 코드를 입력해주세요")
-                              .foregroundColor(.black200))
-                .padding(.vertical, 14.5)
-                .padding(.horizontal, 20)
-                .roundedBorder(color: .black100, radius: 12)
-                .keyboardType(.numberPad)
-                .onChange(of: code) { newValue in
-                    code = newValue.filter { $0.isNumber }
-                }
-            }
+            MainTextField(
+                title: "초대코드",
+                placeHolder: "초대 코드를 입력해주세요",
+                textValue: $code,
+                isNeccessary: false,
+                textLimit: nil,
+                keyboardType: .numberPad
+            )
+            
             
             Spacer()
             
