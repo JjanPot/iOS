@@ -76,8 +76,7 @@ extension AppDIContainer {
         return MainTabView()
     }
     
-    func makeInviteCodeView() -> some View {
-        // TODO: InviteCodeView 구현 필요
-        Text("InviteCodeView (구현 예정)")
+    func makeInviteCodeView(hasSkip: Bool = true) -> InviteCodeView {
+        return InviteCodeView(hasSkip: hasSkip)
     }
 }
