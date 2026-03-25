@@ -51,6 +51,8 @@ struct MainTextField: View {
                         .font(.pretendard(.regular, size: 14))
                         .foregroundColor(.black200)
                     )
+                    .font(.pretendard(.regular, size: 14))
+                    .foregroundStyle(Color.black900)
                     .keyboardType(keyboardType)
                     .onChange(of: textValue) { newValue in
                         if let limitCount = textLimit,

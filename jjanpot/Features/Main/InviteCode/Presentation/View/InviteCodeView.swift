@@ -6,13 +6,8 @@
 //
 
 import SwiftUI
-import Combine
 
 // 초대코드 입력 화면
-
-final class InviteCodeViewModel: ObservableObject {
-    @Published var inviteCodeErrorMessage: String? = nil
-}
 
 struct InviteCodeView: View {
     
@@ -49,7 +44,7 @@ struct InviteCodeView: View {
                     Button {
                         print(">>>>> 스킵")
                     } label: {
-                        Text("초대코드가 없어요.")
+                        Text("초대 코드가 없어요!")
                             .font(.pretendard(.regular, size: 14))
                             .foregroundStyle(Color.black500)
                             .underline()

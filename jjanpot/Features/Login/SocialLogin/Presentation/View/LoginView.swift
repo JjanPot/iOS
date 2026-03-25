@@ -9,12 +9,12 @@ import SwiftUI
 
 struct LoginView: View {
 
-    @ObservedObject var viewModel: LoginViewModel
+    @StateObject var viewModel: LoginViewModel
     @ObservedObject var coordinator: LoginCoordinator
     let onNavigateToMain: () -> Void
 
     init(viewModel: LoginViewModel, coordinator: LoginCoordinator, onNavigateToMain: @escaping () -> Void) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
         self.onNavigateToMain = onNavigateToMain
     }

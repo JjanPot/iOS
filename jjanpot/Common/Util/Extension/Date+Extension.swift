@@ -48,5 +48,40 @@ extension Date {
         /// "yyyy-MM-dd"
         case dateOnly = "yyyy-MM-dd"
         
+        /// "yyyy.MM.dd"
+        case dateOnly2 = "yyyy.MM.dd"
+    }
+}
+
+extension Date {
+    /// Date를 지정된 형식의 문자열로 변환
+    /// - Parameters:
+    ///   - format: 날짜 형식 (예: "yyyy-MM-dd'T'HH:mm:ss")
+    ///   - timeZone: 타임존 (기본값: 현재 타임존)
+    ///   - locale: 로케일 (기본값: .posix)
+    /// - Returns: 형식화된 날짜 문자열
+    /// - NOTE: 요일이나 월 이름을 한국어로 표시할 때는 locale: .korean 사용하기
+    public func toString(format: String,
+                         timeZone: TimeZone = .current,
+                         locale: LocaleType = .us) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        formatter.timeZone = timeZone
+        formatter.locale = locale.locale
+        return formatter.string(from: self)
+    }
+    
+    
+    /// 프리셋 형식을 사용하여 Date를 문자열로 변환
+    /// - Parameters:
+    ///   - format: 미리 정의된 날짜 형식 (DateFormat enum)
+    ///   - timeZone: 타임존 (기본값: 현재 타임존)
+    ///   - locale: 로케일 (기본값: .posix)
+    /// - Returns: 형식화된 날짜 문자열
+    /// - NOTE: 요일이나 월 이름을 한국어로 표시할 때는 locale: .korean 사용하기
+    public func toString(_ format: DateFormat,
+                         timeZone: TimeZone = .current,
+                         locale: LocaleType = .us) -> String {
+        return toString(format: format.rawValue, timeZone: timeZone, locale: locale)
     }
 }
