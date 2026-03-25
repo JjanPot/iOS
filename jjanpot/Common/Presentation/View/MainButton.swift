@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-enum MainButtonColorType {
+enum ButtonColorType {
     case fill
     case border
 }
@@ -80,7 +80,7 @@ struct MainButtonStyle {
     let foregroundColor: Color
     let borderColor: Color
 
-    static func style(for colorType: MainButtonColorType, isPressed: Bool, isDisabled: Bool) -> MainButtonStyle {
+    static func style(for colorType: ButtonColorType, isPressed: Bool, isDisabled: Bool) -> MainButtonStyle {
         switch (colorType, isDisabled, isPressed) {
         case (.fill, true, _):
             // Primary - Disabled
@@ -133,7 +133,7 @@ struct MainButtonStyle {
 struct MainButton: View {
     let title: String
     let size: MainButtonSize
-    let colorType: MainButtonColorType
+    let colorType: ButtonColorType
     let isDisabled: Bool
     let action: () -> Void
 
@@ -142,7 +142,7 @@ struct MainButton: View {
     init(
         title: String,
         size: MainButtonSize = .large,
-        colorType: MainButtonColorType = .fill,
+        colorType: ButtonColorType = .fill,
         isDisabled: Bool = false,
         action: @escaping () -> Void
     ) {
