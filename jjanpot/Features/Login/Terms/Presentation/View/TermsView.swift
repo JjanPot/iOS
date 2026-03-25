@@ -71,7 +71,7 @@ struct TermsView: View {
             Spacer()
 
             MainButton(title: "다음", size: .large, colorType: .fill, isDisabled: !(ageAgreed && termsAgreed && privacyAgreed)) {
-                coordinator.navigateToInviteCode()
+                coordinator.navigateToProfileSetup()
             }
             .padding()
         }

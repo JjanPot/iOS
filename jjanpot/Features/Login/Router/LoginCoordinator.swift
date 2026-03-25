@@ -10,14 +10,17 @@ import Combine
 
 enum LoginDestination: Route {
     case terms
-    case inviteCode
+    case profileSetup
+    case signUpComplete
 
     var id: String {
         switch self {
         case .terms:
             return "terms"
-        case .inviteCode:
-            return "inviteCode"
+        case .profileSetup:
+            return "profileSetup"
+        case .signUpComplete:
+            return "signUpComplete"
         }
     }
 
@@ -25,8 +28,10 @@ enum LoginDestination: Route {
         switch self {
         case .terms:
             return "login_terms_agreement"
-        case .inviteCode:
-            return "login_invite_code_input"
+        case .profileSetup:
+            return "login_profile_setup"
+        case .signUpComplete:
+            return "login_signup_complete"
         }
     }
 
@@ -53,9 +58,14 @@ final class LoginCoordinator: ObservableObject {
         path.append(LoginDestination.terms)
     }
 
-    /// 초대 코드 입력 화면으로 이동
-    func navigateToInviteCode() {
-        path.append(LoginDestination.inviteCode)
+    /// 프로필 설정 화면으로 이동
+    func navigateToProfileSetup() {
+        path.append(LoginDestination.profileSetup)
+    }
+
+    /// 회원가입 완료 화면으로 이동
+    func navigateToSignUpComplete() {
+        path.append(LoginDestination.signUpComplete)
     }
 
     /// 특정 화면으로 이동

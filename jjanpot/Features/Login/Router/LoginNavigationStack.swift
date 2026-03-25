@@ -34,8 +34,10 @@ struct LoginNavigationStack: View {
                 switch destination {
                 case .terms:
                     container.makeTermsView(coordinator: coordinator)
-                case .inviteCode:
-                    container.makeInviteCodeView()
+                case .profileSetup:
+                    container.makeProfileSetupView(coordinator: coordinator)
+                case .signUpComplete:
+                    container.makeSignUpCompleteView(onNavigateToMain: onLoginSuccess)
                 }
             }
         }

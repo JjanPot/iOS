@@ -9,8 +9,11 @@ import SwiftUI
 
 struct ProfileSetupView: View {
     @StateObject var viewModel: ProfileSetupViewModel
-    init(viewModel: ProfileSetupViewModel) {
+    private let coordinator: LoginCoordinator
+
+    init(viewModel: ProfileSetupViewModel, coordinator: LoginCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.coordinator = coordinator
     }
     
     
@@ -62,7 +65,7 @@ struct ProfileSetupView: View {
             } // ~ScrollView
             
             MainButton(title: "다음", size: .large, colorType: .fill, isDisabled: (viewModel.nickname.isEmpty)) {
-                print(">>>>> 다음")
+                coordinator.navigateToSignUpComplete()
             }
             .padding(20)
         } // ~VStack
@@ -72,5 +75,7 @@ struct ProfileSetupView: View {
 }
 
 #Preview {
-    ProfileSetupView(viewModel: ProfileSetupViewModel())
+    let mockDIContainer = MockLoginDIContainer()
+    let coordinator = LoginCoordinator(loginDIContainer: mockDIContainer)
+    return ProfileSetupView(viewModel: ProfileSetupViewModel(), coordinator: coordinator)
 }

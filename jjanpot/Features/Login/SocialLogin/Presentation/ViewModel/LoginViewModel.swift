@@ -68,7 +68,7 @@ final class LoginViewModel: ObservableObject {
 
                 // 신규 유저 → 회원가입 화면 (NavigationStack에 push)
                 // 기존 유저 → 메인 화면 (Root 변경)
-                if entity.isNewUser {
+                if true { // entity.isNewUser {
                     Logger.success("신규 유저 로그인 성공 → 회원가입 화면으로")
                     shouldNavigateToSignup = true
                 } else {
