@@ -63,3 +63,19 @@ extension View {
 
 
 
+extension View {
+    func hideTabBar() -> some View {
+        self.onAppear {
+            // 탭바 숨기기
+            UITabBar.appearance().isHidden = true
+            
+            // 투명하게 설정
+            let appearance = UITabBarAppearance()
+            appearance.configureWithTransparentBackground()
+            appearance.backgroundColor = .clear
+            UITabBar.appearance().standardAppearance = appearance
+            UITabBar.appearance().scrollEdgeAppearance = appearance
+        }
+    }
+}
+
