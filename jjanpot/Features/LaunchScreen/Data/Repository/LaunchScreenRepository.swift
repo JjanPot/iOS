@@ -49,10 +49,13 @@ struct LaunchScreenRepository: LaunchScreenRepositoryProtocol {
     func getUserInfo() async throws -> UserEntity {
         // TODO: User API Client 구현 필요
         // 현재는 임시로 AuthManager의 currentUser를 반환
+        /*
         guard let user = AuthManager.shared.currentUser else {
             throw NetworkError.unauthorized
         }
         return user
+         */
+        return UserEntity(userId: 3, nickname: "주희")
     }
 
     // 유저 정보 업데이트
