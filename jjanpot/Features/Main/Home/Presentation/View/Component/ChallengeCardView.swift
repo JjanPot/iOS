@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum ChallengeStatus {
+enum ChallengeCardStatus {
     // 없음
     case none
     // 대기중
@@ -18,7 +18,7 @@ enum ChallengeStatus {
 
 // 챌린지 카드
 struct ChallengeCardView: View {
-    let status: ChallengeStatus
+    let status: ChallengeCardStatus
     // 버튼클릭 액션
     let onAction: (ChallengeCardAction) -> Void
     
@@ -54,13 +54,6 @@ enum ChallengeCardAction {
     // 인증하기
     case submitSavingsProof
 }
-
-
-
-
-
-
-
 
 #Preview {
     ChallengeCardView(status: .none, onAction: {_ in})

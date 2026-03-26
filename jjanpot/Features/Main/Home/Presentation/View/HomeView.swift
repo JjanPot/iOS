@@ -11,7 +11,7 @@ struct HomeView: View {
     var body: some View {
         
         // TODO: 메세지 변경
-        @State var teamMessage = "목표를 만들고\n팀고 함께 절약해요!"
+        @State var teamMessage = "목표를 만들고\n팀과 함께 절약해요!"
         
         VStack(spacing: .zero) {
             // 헤더
@@ -45,9 +45,36 @@ struct HomeView: View {
                     .padding(.horizontal, 20)
                     
                     // 챌린지 카드
+                    ChallengeCardView(
+                        status: .none,
+                        onAction: { action in
+                            switch action {
+                            case .createChallenge:
+                                print(">>>>> createChallenge")
+                            case .detail:
+                                print(">>>>> detail")
+                            case .inputInviteCode:
+                                print(">>>>> inputInviteCode")
+                            case .copyInviteCode:
+                                print(">>>>> copyInviteCode")
+                            case .submitSavingsProof:
+                                print(">>>>> submitSavingsProof")
+                            }
+                        }
+                    )
                     
-                    
-                    
+                    // 챌린지 절약 현황
+                    ChallengeSummaryView(viewData: .init(
+                        team: .init(
+                            certificationCount: "10",
+                            participationRate: "7.8",
+                            consecutiveDays: "2"
+                        ),
+                        personal: .init(
+                            certificationCount: "3",
+                            participationRate: "90",
+                            consecutiveDays: "4"
+                        )))
                 }
             }
         }

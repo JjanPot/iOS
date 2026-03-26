@@ -42,7 +42,7 @@ struct DateTextField: View {
                     }
                     
                     Spacer()
-                    Image("calendar")
+                    Image("icon_calendar")
                         .resizable()
                         .frame(width: 15, height: 15)
                         .foregroundStyle(Color.black800)
