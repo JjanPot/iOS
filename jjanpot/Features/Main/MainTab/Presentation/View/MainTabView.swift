@@ -25,10 +25,11 @@ struct MainTabView: View {
                     
                 
                 // 챌린지
-                EmptyView()
+                ContentView()
+                    .tag(1)
                 
                 // 마이팟
-                EmptyView()
+                ContentView2()
                     .tag(2)
                 
             } //TabView

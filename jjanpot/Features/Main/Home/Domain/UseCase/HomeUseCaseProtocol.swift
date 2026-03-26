@@ -9,5 +9,5 @@
 import Foundation
 
 protocol HomeUseCaseProtocol {
-    func fetchHomeData() async throws -> HomeEntity
+    func fetchChallengeData() async throws -> HomeEntity
 }

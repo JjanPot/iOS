@@ -45,7 +45,7 @@ final class AppDIContainer {
     }()
 
     lazy var mainDIContainer: MainDIContainerProtocol = {
-        MainDIContainer()
+        MainDIContainer( session: session )
     }()
 }
 

@@ -11,7 +11,7 @@ import SwiftUI
 // MARK: 챌린지 대기
 struct ChallengePendingView : View {
 
-    let viewData: ChallengePendingViewData
+    let viewData: ChallengeWaitingViewData
     let onAction: (ChallengeCardAction) -> Void
     
     var body: some View {

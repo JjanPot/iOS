@@ -15,7 +15,24 @@ final class HomeUseCase: HomeUseCaseProtocol {
         self.repository = repository
     }
 
-    func fetchHomeData() async throws -> HomeEntity {
-        return try await repository.fetchHomeData()
+    func fetchChallengeData() async throws -> HomeEntity {
+        let challengeEntity = try await repository.fetchCurrentChallenge()
+
+        // 진행중 상태면, summary정보 가져오기
+        let summaryEntity: ChallengeSummaryEntity?
+        if case let .inProgress(entity) = challengeEntity.status {
+            summaryEntity = try await fetchChallengeSummary(challengeId: entity.challengeId)
+        } else {
+            summaryEntity = nil
+        }
+
+        return HomeEntity(
+            challenge: challengeEntity,
+            summary: summaryEntity
+        )
+    }
+
+    private func fetchChallengeSummary(challengeId: Int) async throws -> ChallengeSummaryEntity {
+        try await repository.fetchChallengeSummary(challengeId: challengeId)
     }
 }

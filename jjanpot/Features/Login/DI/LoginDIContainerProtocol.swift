@@ -123,7 +123,6 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
     private func makeLoginViewModel() -> LoginViewModel {
         LoginViewModel(useCase: makeLoginUseCase())
     }
-
     func makeLoginView(coordinator: LoginCoordinator, onNavigateToMain: @escaping () -> Void) -> LoginView {
         let viewModel = makeLoginViewModel()
         return LoginView(viewModel: viewModel, coordinator: coordinator, onNavigateToMain: onNavigateToMain)

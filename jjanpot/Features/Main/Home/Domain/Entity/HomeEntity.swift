@@ -6,7 +6,8 @@
 //
 
 import Foundation
- 
+
 struct HomeEntity {
-    
+    let challenge: CurrentChallengeEntity
+    let summary: ChallengeSummaryEntity?
 }

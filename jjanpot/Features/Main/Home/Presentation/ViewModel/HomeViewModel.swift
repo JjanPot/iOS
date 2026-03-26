@@ -43,7 +43,9 @@ final class HomeViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            let entity = try await useCase.fetchHomeData()
+            let entity = try await useCase.fetchChallengeData()
+            let viewData = HomeViewDataMapper().map(from: entity)
+            self.homeViewData = viewData
             isLoading = false
         } catch {
             Logger.error("홈 데이터 로드 실패: \(error)")

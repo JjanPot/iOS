@@ -24,40 +24,43 @@ struct HomeView: View {
             .padding(20)
 
             // 내용물
-            if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let errorMessage = viewModel.errorMessage {
-                VStack {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                    Button("다시 시도") {
-                        viewModel.loadHomeData()
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let homeViewData = viewModel.homeViewData {
-                ScrollView {
-                    VStack(spacing: 20) {
+            ScrollView {
+                VStack(spacing: 20) {
+                    if viewModel.isLoading {
+                        ProgressView()
+                        
+                    } else if let errorMessage = viewModel.errorMessage {
+                        VStack {
+                            Text(errorMessage)
+                                .foregroundColor(.red)
+                            Button("다시 시도") {
+                                viewModel.loadHomeData()
+                            }
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        
+                    } else if let homeViewData = viewModel.homeViewData {
                         HStack {
+                            // 메세지박스
                             Text(homeViewData.teamMessage)
                                 .font(.pretendard(.medium, size: 20))
                                 .foregroundStyle(.black900)
-
+                            
                             Spacer()
-
+                            
                             Image("charater")
                                 .resizable()
                                 .frame(width: 76.73, height: 72)
                         }
                         .padding(.horizontal, 20)
-
+                        
+                        
                         // 챌린지 카드
                         ChallengeCardView(
-                            status: mapToChallengeCardStatus(homeViewData.challenge),
+                            status: mapToChallengeCardStatus(homeViewData.challengeCard),
                             onAction: handleChallengeCardAction
                         )
-
+                        
                         // 챌린지 절약 현황
                         if let summary = homeViewData.summary {
                             ChallengeSummaryView(viewData: summary)
@@ -65,7 +68,7 @@ struct HomeView: View {
                     }
                 }
             }
-        }
+        } // ~VStack
         .onAppear {
             viewModel.loadHomeData()
         }
@@ -73,7 +76,7 @@ struct HomeView: View {
 
     // MARK: - Private Methods
 
-    private func mapToChallengeCardStatus(_ challenge: HomeViewData.ChallengeViewData?) -> ChallengeCardStatus {
+    private func mapToChallengeCardStatus(_ challenge: ChallengeCardStatus?) -> ChallengeCardStatus {
         guard let challenge = challenge else {
             return .none
         }
@@ -81,7 +84,7 @@ struct HomeView: View {
         switch challenge {
         case .none:
             return .none
-        case .pending(let viewData):
+        case .waiting(let viewData):
             return .waiting(viewData: viewData)
         case .inProgress(let viewData):
             return .inProgress(viewData: viewData)
@@ -105,7 +108,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    let useCase = HomeUseCase(repository: HomeRepository())
-    let viewModel = HomeViewModel(useCase: useCase)
-    return HomeView(viewModel: viewModel)
+    MockMainDIContainer().makeHomeView()
 }

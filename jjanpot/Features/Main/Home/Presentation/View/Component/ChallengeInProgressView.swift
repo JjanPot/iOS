@@ -18,7 +18,7 @@ struct ChallengeInProgressView : View {
             
             VStack(alignment: .leading, spacing: 8) {
                 // 챌린지 상태
-                BadgeView(title: "종료일까지 D-\(viewData.dday)")
+                BadgeView(title: "종료일까지 \(viewData.dday)")
                 
                 // 팀이름
                 Text(viewData.teamName)

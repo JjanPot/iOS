@@ -50,6 +50,9 @@ extension Date {
         
         /// "yyyy.MM.dd"
         case dateOnly2 = "yyyy.MM.dd"
+        
+        /// "yy.MM.dd"
+        case simpleDateOnly = "yy.MM.dd"
     }
 }
 

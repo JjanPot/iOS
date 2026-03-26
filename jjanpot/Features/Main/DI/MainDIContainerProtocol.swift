@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import Alamofire
 
 protocol MainDIContainerProtocol {
     func makeMainCoordinator() -> MainCoordinator
@@ -23,7 +24,13 @@ protocol MainDIContainerProtocol {
 }
 
 final class MainDIContainer: MainDIContainerProtocol {
+    
+    private let challengeApiClient: ChallengeApiClientProtocol
 
+          init(session: Session) {
+              self.challengeApiClient = ChallengeApiClient(session: session)
+          }
+    
     // MARK: - Coordinator
 
     func makeMainCoordinator() -> MainCoordinator {
@@ -39,7 +46,7 @@ final class MainDIContainer: MainDIContainerProtocol {
     // MARK: - Home
 
     private func makeHomeRepository() -> HomeRepositoryProtocol {
-        return HomeRepository()
+        return HomeRepository(apiClient: challengeApiClient)
     }
 
     private func makeHomeUseCase() -> HomeUseCaseProtocol {
@@ -80,14 +87,23 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
 
     func makeHomeView() -> HomeView {
-        let repository = HomeRepository()
-        let useCase = HomeUseCase(repository: repository)
+        
+        let useCase = MockHomeUseCase()
         let viewModel = HomeViewModel(useCase: useCase)
         return HomeView(viewModel: viewModel)
     }
 
     func makeInviteCodeView(hasSkip: Bool = true) -> InviteCodeView {
         return InviteCodeView(viewModel: InviteCodeViewModel(), hasSkip: hasSkip)
+    }
+    
+    final class MockHomeUseCase: HomeUseCaseProtocol {
+        func fetchChallengeData() async throws -> HomeEntity {
+            throw NetworkError.dataNil
+        }
+        func fetchHomeData() async throws -> HomeEntity{
+            throw NetworkError.dataNil
+        }
     }
 }
 
