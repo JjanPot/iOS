@@ -23,7 +23,7 @@ final class HomeViewModel: ObservableObject {
     @Published var homeViewData: HomeViewData?
     @Published var isLoading = false
     
-    @Published var errorMessage: String?
+    @Published var toastMessage: String?
 
     // MARK: - Input Methods
 
@@ -40,7 +40,6 @@ final class HomeViewModel: ObservableObject {
     @MainActor
     private func fetchHomeData() async {
         isLoading = true
-        errorMessage = nil
 
         do {
             let entity = try await useCase.fetchChallengeData()
@@ -49,7 +48,7 @@ final class HomeViewModel: ObservableObject {
             isLoading = false
         } catch {
             Logger.error("홈 데이터 로드 실패: \(error)")
-            errorMessage = "데이터를 불러오는데 실패했습니다."
+            toastMessage = "데이터를 불러오는데 실패했습니다."
             isLoading = false
         }
     }

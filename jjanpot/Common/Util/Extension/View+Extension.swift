@@ -36,33 +36,6 @@ extension View {
 
 }
 
-
-// MARK: - 로딩 뷰 코드 간소화
-
-struct LoadingModifier: ViewModifier {
-    let isLoading: Bool
-    
-    func body(content: Content) -> some View {
-        ZStack {
-            content
-            
-            if isLoading {
-                ProgressView()
-                    .tint(.orange500)
-                    .scaleEffect(1.5)
-            }
-        }
-    }
-}
-
-extension View {
-    func loading(_ isLoading: Bool) -> some View {
-        modifier(LoadingModifier(isLoading: isLoading))
-    }
-}
-
-
-
 extension View {
     func hideTabBar() -> some View {
         self.onAppear {

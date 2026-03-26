@@ -26,20 +26,21 @@ struct HomeView: View {
             // 내용물
             ScrollView {
                 VStack(spacing: 20) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                        
-                    } else if let errorMessage = viewModel.errorMessage {
-                        VStack {
-                            Text(errorMessage)
-                                .foregroundColor(.red)
-                            Button("다시 시도") {
-                                viewModel.loadHomeData()
-                            }
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        
-                    } else if let homeViewData = viewModel.homeViewData {
+//                    if viewModel.isLoading {
+//                        ProgressView()
+//                        
+//                    } else if let errorMessage = viewModel.errorMessage {
+//                        VStack {
+//                            Text(errorMessage)
+//                                .foregroundColor(.red)
+//                            Button("다시 시도") {
+//                                viewModel.loadHomeData()
+//                            }
+//                        }
+//                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                        
+//                    } else
+                    if let homeViewData = viewModel.homeViewData {
                         HStack {
                             // 메세지박스
                             Text(homeViewData.teamMessage)
@@ -72,6 +73,8 @@ struct HomeView: View {
         .onAppear {
             viewModel.loadHomeData()
         }
+        .loading(viewModel.isLoading)
+        .toast(message: $viewModel.toastMessage)
     }
 
     // MARK: - Private Methods
