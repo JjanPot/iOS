@@ -122,7 +122,7 @@ struct CapsuleButtonStyle {
         case (.fill, false, false):
             // Primary - Normal
             return CapsuleButtonStyle(
-                backgroundColor: .orange500,
+                backgroundColor: .orange600,
                 foregroundColor: .white,
                 borderColor: .clear
             )

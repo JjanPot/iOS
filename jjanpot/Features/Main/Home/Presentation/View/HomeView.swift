@@ -10,6 +10,9 @@ import SwiftUI
 struct HomeView: View {
     var body: some View {
         
+        // TODO: 메세지 변경
+        @State var teamMessage = "목표를 만들고\n팀고 함께 절약해요!"
+        
         VStack(spacing: .zero) {
             // 헤더
             HStack {
@@ -29,7 +32,7 @@ struct HomeView: View {
                 VStack(spacing: 20){
                     
                     HStack {
-                        Text("목표를 만들고\n팀고 함께 절약해요!")
+                        Text(teamMessage)
                             .font(.pretendard(.medium, size: 20))
                             .foregroundStyle(.black900)
                         
