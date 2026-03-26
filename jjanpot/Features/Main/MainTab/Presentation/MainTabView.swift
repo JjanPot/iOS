@@ -9,18 +9,22 @@ import SwiftUI
 
 struct MainTabView: View {
     @State var selectedTab: Int = 0
+    private let container: MainDIContainerProtocol
+
+    init(container: MainDIContainerProtocol) {
+        self.container = container
+    }
+
     var body: some View {
         TabView (selection: $selectedTab) {
-            
+
             // Home
-            
-            // 챌린지
-            
-            // 마이팟
+            container.makeHomeView()
+               
         }
     }
 }
 
 #Preview {
-    MainTabView()
+    MainTabView(container: MockMainDIContainer())
 }

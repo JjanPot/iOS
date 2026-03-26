@@ -116,7 +116,9 @@ struct LoginView: View {
             .padding(.vertical, 16)
             .padding(.horizontal, 20)
 
-            
+            Button("로그아웃", role: nil) {
+                AuthManager.shared.logout()
+            }
             Spacer()
 
 

@@ -43,6 +43,10 @@ final class AppDIContainer {
     lazy var loginDIContainer: LoginDIContainerProtocol = {
         LoginDIContainer(authApiClient: authApiClient)
     }()
+
+    lazy var mainDIContainer: MainDIContainerProtocol = {
+        MainDIContainer()
+    }()
 }
 
 // MARK: - App Navigation
@@ -65,15 +69,10 @@ extension AppDIContainer {
 extension AppDIContainer {
 
     func makeMainTabView() -> MainTabView {
-        return MainTabView()
+        return mainDIContainer.makeMainTabView()
     }
-    
-    private func makeInviteCodeViewModel() -> InviteCodeViewModel {
-        InviteCodeViewModel()
-    }
-    
+
     func makeInviteCodeView(hasSkip: Bool = true) -> InviteCodeView {
-        let vm = makeInviteCodeViewModel()
-        return InviteCodeView(viewModel: vm, hasSkip: hasSkip)
+        return mainDIContainer.makeInviteCodeView(hasSkip: hasSkip)
     }
 }

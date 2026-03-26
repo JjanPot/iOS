@@ -12,10 +12,11 @@ import SwiftUI
 struct MainNavigationStack: View {
     @StateObject private var coordinator: MainCoordinator
 
-    private let container = AppDIContainer.shared
+    private let container: MainDIContainerProtocol
 
-    init() {
-        _coordinator = StateObject(wrappedValue: MainCoordinator())
+    init(container: MainDIContainerProtocol = AppDIContainer.shared.mainDIContainer) {
+        self.container = container
+        _coordinator = StateObject(wrappedValue: container.makeMainCoordinator())
     }
 
     var body: some View {

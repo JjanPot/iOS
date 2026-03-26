@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct HomeView: View {
+    @StateObject var viewModel: HomeViewModel
+
     var body: some View {
-        
-        // TODO: 메세지 변경
-        @State var teamMessage = "목표를 만들고\n팀과 함께 절약해요!"
-        
         VStack(spacing: .zero) {
             // 헤더
             HStack {
@@ -20,67 +18,94 @@ struct HomeView: View {
                     .resizable()
                     .frame(width: 122, height: 18.49)
                 Spacer()
-                
+
                 // TODO: 알람버튼
-                
-                    
             }
             .padding(20)
-            
+
             // 내용물
-            ScrollView {
-                VStack(spacing: 20){
-                    
-                    HStack {
-                        Text(teamMessage)
-                            .font(.pretendard(.medium, size: 20))
-                            .foregroundStyle(.black900)
-                        
-                        Spacer()
-                        
-                        Image("charater")
-                            .resizable()
-                            .frame(width: 76.73, height: 72)
+            if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let errorMessage = viewModel.errorMessage {
+                VStack {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                    Button("다시 시도") {
+                        viewModel.loadHomeData()
                     }
-                    .padding(.horizontal, 20)
-                    
-                    // 챌린지 카드
-                    ChallengeCardView(
-                        status: .none,
-                        onAction: { action in
-                            switch action {
-                            case .createChallenge:
-                                print(">>>>> createChallenge")
-                            case .detail:
-                                print(">>>>> detail")
-                            case .inputInviteCode:
-                                print(">>>>> inputInviteCode")
-                            case .copyInviteCode:
-                                print(">>>>> copyInviteCode")
-                            case .submitSavingsProof:
-                                print(">>>>> submitSavingsProof")
-                            }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let homeViewData = viewModel.homeViewData {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        HStack {
+                            Text(homeViewData.teamMessage)
+                                .font(.pretendard(.medium, size: 20))
+                                .foregroundStyle(.black900)
+
+                            Spacer()
+
+                            Image("charater")
+                                .resizable()
+                                .frame(width: 76.73, height: 72)
                         }
-                    )
-                    
-                    // 챌린지 절약 현황
-                    ChallengeSummaryView(viewData: .init(
-                        team: .init(
-                            certificationCount: "10",
-                            participationRate: "7.8",
-                            consecutiveDays: "2"
-                        ),
-                        personal: .init(
-                            certificationCount: "3",
-                            participationRate: "90",
-                            consecutiveDays: "4"
-                        )))
+                        .padding(.horizontal, 20)
+
+                        // 챌린지 카드
+                        ChallengeCardView(
+                            status: mapToChallengeCardStatus(homeViewData.challenge),
+                            onAction: handleChallengeCardAction
+                        )
+
+                        // 챌린지 절약 현황
+                        if let summary = homeViewData.summary {
+                            ChallengeSummaryView(viewData: summary)
+                        }
+                    }
                 }
             }
+        }
+        .onAppear {
+            viewModel.loadHomeData()
+        }
+    }
+
+    // MARK: - Private Methods
+
+    private func mapToChallengeCardStatus(_ challenge: HomeViewData.ChallengeViewData?) -> ChallengeCardStatus {
+        guard let challenge = challenge else {
+            return .none
+        }
+
+        switch challenge {
+        case .none:
+            return .none
+        case .pending(let viewData):
+            return .waiting(viewData: viewData)
+        case .inProgress(let viewData):
+            return .inProgress(viewData: viewData)
+        }
+    }
+
+    private func handleChallengeCardAction(_ action: ChallengeCardAction) {
+        switch action {
+        case .createChallenge:
+            print(">>>>> createChallenge")
+        case .detail:
+            print(">>>>> detail")
+        case .inputInviteCode:
+            print(">>>>> inputInviteCode")
+        case .copyInviteCode:
+            print(">>>>> copyInviteCode")
+        case .submitSavingsProof:
+            print(">>>>> submitSavingsProof")
         }
     }
 }
 
 #Preview {
-    HomeView()
+    let useCase = HomeUseCase(repository: HomeRepository())
+    let viewModel = HomeViewModel(useCase: useCase)
+    return HomeView(viewModel: viewModel)
 }
