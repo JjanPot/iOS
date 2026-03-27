@@ -71,8 +71,4 @@ extension AppDIContainer {
     func makeMainTabView() -> MainTabView {
         return mainDIContainer.makeMainTabView()
     }
-
-    func makeInviteCodeView(hasSkip: Bool = true) -> InviteCodeView {
-        return mainDIContainer.makeInviteCodeView(hasSkip: hasSkip)
-    }
 }

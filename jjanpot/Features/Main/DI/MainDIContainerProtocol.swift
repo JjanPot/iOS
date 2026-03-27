@@ -18,9 +18,6 @@ protocol MainDIContainerProtocol {
 
     // 홈 화면
     func makeHomeView() -> HomeView
-
-    // 초대 코드 화면
-    func makeInviteCodeView(hasSkip: Bool) -> InviteCodeView
 }
 
 final class MainDIContainer: MainDIContainerProtocol {
@@ -61,17 +58,6 @@ final class MainDIContainer: MainDIContainerProtocol {
         let viewModel = makeHomeViewModel()
         return HomeView(viewModel: viewModel)
     }
-
-    // MARK: - InviteCode
-
-    private func makeInviteCodeViewModel() -> InviteCodeViewModel {
-        return InviteCodeViewModel()
-    }
-
-    func makeInviteCodeView(hasSkip: Bool = true) -> InviteCodeView {
-        let vm = makeInviteCodeViewModel()
-        return InviteCodeView(viewModel: vm, hasSkip: hasSkip)
-    }
 }
 
 // MARK: - Mock
@@ -91,10 +77,6 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         let useCase = MockHomeUseCase()
         let viewModel = HomeViewModel(useCase: useCase)
         return HomeView(viewModel: viewModel)
-    }
-
-    func makeInviteCodeView(hasSkip: Bool = true) -> InviteCodeView {
-        return InviteCodeView(viewModel: InviteCodeViewModel(), hasSkip: hasSkip)
     }
     
     final class MockHomeUseCase: HomeUseCaseProtocol {

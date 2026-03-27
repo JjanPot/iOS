@@ -20,6 +20,9 @@ protocol LoginDIContainerProtocol {
 
     // 프로필 설정 화면
     func makeProfileSetupView(coordinator: LoginCoordinator) -> ProfileSetupView
+    
+    // 초대 코드 화면
+    func makeInviteCodeView(hasSkip: Bool) -> InviteCodeView
 
     // 회원가입 완료 화면
     func makeSignUpCompleteView(onNavigateToMain: @escaping () -> Void) -> SignUpCompleteView
@@ -80,6 +83,17 @@ final class LoginDIContainer: LoginDIContainerProtocol {
 
     func makeSignUpCompleteView(onNavigateToMain: @escaping () -> Void) -> SignUpCompleteView {
         return SignUpCompleteView(onNavigateToMain: onNavigateToMain)
+    }
+    
+    // MARK: - InviteCode
+
+    private func makeInviteCodeViewModel() -> InviteCodeViewModel {
+        return InviteCodeViewModel()
+    }
+
+    func makeInviteCodeView(hasSkip: Bool = true) -> InviteCodeView {
+        let vm = makeInviteCodeViewModel()
+        return InviteCodeView(viewModel: vm, hasSkip: hasSkip)
     }
 
     // MARK: - Web view
@@ -143,7 +157,10 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
     func makeWebView(url: String, onDismiss: @escaping () -> Void) -> AnyView {
         return AnyView(EmptyView())
     }
-
+    
+    func makeInviteCodeView(hasSkip: Bool = true) -> InviteCodeView {
+        return InviteCodeView(viewModel: InviteCodeViewModel(), hasSkip: hasSkip)
+    }
 }
 
 // -------- Mock struct ------ //
