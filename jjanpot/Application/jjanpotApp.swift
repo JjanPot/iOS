@@ -29,32 +29,34 @@ struct jjanpotApp: App {
     var body: some Scene {
         WindowGroup {
             // App 레벨에서 화면 분기 (Navigation Router 패턴)
-            Group {
-                switch appCoordinator.currentFlow {
-                case .launching:
-                    // 스플래시 화면 (토큰 체크)
-                    container.makeLaunchScreenView(appCoordinator: appCoordinator)
-
-                case .login:
-                    // 로그인 플로우 (독립적인 NavigationStack)
-                    LoginNavigationStack {
-                        // 로그인 성공 → 메인 화면으로 전환
-                        appCoordinator.navigateToMain()
+            RootViewWithGlobalToast {
+                Group {
+                    switch appCoordinator.currentFlow {
+                    case .launching:
+                        // 스플래시 화면 (토큰 체크)
+                        container.makeLaunchScreenView(appCoordinator: appCoordinator)
+                        
+                    case .login:
+                        // 로그인 플로우 (독립적인 NavigationStack)
+                        LoginNavigationStack {
+                            // 로그인 성공 → 메인 화면으로 전환
+                            appCoordinator.navigateToMain()
+                        }
+                        
+                    case .main:
+                        // 메인 플로우 (독립적인 NavigationStack)
+                        MainNavigationStack()
                     }
-
-                case .main:
-                    // 메인 플로우 (독립적인 NavigationStack)
-                    MainNavigationStack()
                 }
+                // 인증 리디렉션 url 처리
+                .onOpenURL(perform: { url in
+                    if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                        AuthController.handleOpenUrl(url: url)
+                    } else {
+                        GIDSignIn.sharedInstance.handle(url)
+                    }
+                })
             }
-            // 인증 리디렉션 url 처리
-            .onOpenURL(perform: { url in
-                if (AuthApi.isKakaoTalkLoginUrl(url)) {
-                    AuthController.handleOpenUrl(url: url)
-                } else {
-                    GIDSignIn.sharedInstance.handle(url)
-                }
-            })
         }
     }
 }

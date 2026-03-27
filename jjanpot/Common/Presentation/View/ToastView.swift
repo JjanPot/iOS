@@ -33,6 +33,7 @@ struct ToastView: View {
 
 struct ToastModifier: ViewModifier {
     @Binding var message: String?
+    let bottomPadding: CGFloat
 
     @State private var workItem: DispatchWorkItem?
     @State private var isShowing: Bool = false
@@ -50,7 +51,7 @@ struct ToastModifier: ViewModifier {
 
                     ToastView(message: message)
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 50)
+                        .padding(.bottom, bottomPadding)
                         .transition(
                             .asymmetric(
                                 insertion: .move(edge: .bottom).combined(with: .opacity),
@@ -103,10 +104,12 @@ struct ToastModifier: ViewModifier {
 
 extension View {
     /// 토스트 메시지를 표시하는 modifier
-    /// - Parameter message: 표시할 메시지 (nil이면 토스트 숨김)
+    /// - Parameters:
+    ///   - message: 표시할 메시지 (nil이면 토스트 숨김)
+    ///   - bottomPadding: 하단 여백 (기본값: 30)
     /// - Returns: 토스트 메시지가 적용된 View
-    func toast(message: Binding<String?>) -> some View {
-        modifier(ToastModifier(message: message))
+    func toast(message: Binding<String?>, bottomPadding: CGFloat = 30) -> some View {
+        modifier(ToastModifier(message: message, bottomPadding: bottomPadding))
     }
 }
 
