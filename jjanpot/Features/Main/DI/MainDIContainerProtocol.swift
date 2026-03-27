@@ -20,7 +20,7 @@ protocol MainDIContainerProtocol {
     func makeHomeView() -> HomeView
     
     // 초대 코드 화면
-    func makeInviteCodePopupView(inviteCode: String?, onComfirmAction: @escaping ()-> Void ) -> InviteCodePopupView
+    func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView
 
 }
 
@@ -69,9 +69,9 @@ final class MainDIContainer: MainDIContainerProtocol {
         return InviteCodePopupViewModel()
     }
 
-    func makeInviteCodePopupView(inviteCode: String?, onComfirmAction: @escaping ()-> Void ) -> InviteCodePopupView {
+    func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
         let vm = makeInviteCodeViewModel()
-        return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onComfirmAction: { onComfirmAction() })
+        return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: { onCloseAction() })
     }
 }
 
@@ -102,9 +102,9 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         }
     }
     
-    func makeInviteCodePopupView(inviteCode: String?, onComfirmAction: @escaping ()-> Void ) -> InviteCodePopupView {
+    func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
         let vm = InviteCodePopupViewModel()
-        return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onComfirmAction: {onComfirmAction()})
+        return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: {onCloseAction()})
     }
 }
 

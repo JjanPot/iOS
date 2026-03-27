@@ -46,6 +46,7 @@ final class HomeViewModel: ObservableObject {
             let viewData = HomeViewDataMapper().map(from: entity)
             self.homeViewData = viewData
             isLoading = false
+
         } catch {
             Logger.error("홈 데이터 로드 실패: \(error)")
             toastMessage = "데이터를 불러오는데 실패했습니다."

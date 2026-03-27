@@ -10,4 +10,7 @@ import Combine
 
 final class InviteCodePopupViewModel: ObservableObject {
     
+    func checkInviteCode( _ code: String)  {
+        print(">>>>> 코드확인하기 \(code)")
+    }
 }

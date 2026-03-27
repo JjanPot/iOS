@@ -69,10 +69,10 @@ struct HomeView: View {
         }
         .loading(viewModel.isLoading)
         .toast(message: $viewModel.toastMessage)
-        .popup(isPresented: $showInvitePopup, onDismiss: {
+        .popup(isPresented: $showInvitePopup, dismissOnBackgroundTap: true ,onDismiss: {
             tempInviteCode = nil
         }) {
-            container.makeInviteCodePopupView(inviteCode: tempInviteCode, onComfirmAction: {
+            container.makeInviteCodePopupView(inviteCode: tempInviteCode, onCloseAction: {
                 showInvitePopup = false
             })
         }
@@ -101,8 +101,9 @@ struct HomeView: View {
             print(">>>>> createChallenge")
         case .detail:
             print(">>>>> detail")
+            
         case .inputInviteCode:
-            tempInviteCode = nil
+            tempInviteCode = nil //초대코드 없음. 받아야해
             showInvitePopup = true
 
         case let .copyInviteCode(code):
