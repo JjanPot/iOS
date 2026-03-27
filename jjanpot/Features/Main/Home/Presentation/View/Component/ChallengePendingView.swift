@@ -52,7 +52,7 @@ struct ChallengePendingView : View {
                     onAction(.detail)
                 }
                 CapsuleButton(title: "초대코드 복사", colorType: .fill, isDisabled: false){
-                    onAction(.copyInviteCode)
+                    onAction(.copyInviteCode(inviteCode: viewData.inviteCode))
                 }
             }
             

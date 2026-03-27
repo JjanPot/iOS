@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 // 챌린지 카드
 struct ChallengeCardView: View {
     let status: ChallengeCardStatus
@@ -43,7 +41,7 @@ enum ChallengeCardAction {
     // 초대코드입력
     case inputInviteCode
     // 초대코드 복사
-    case copyInviteCode
+    case copyInviteCode(inviteCode: String?)
     // 인증하기
     case submitSavingsProof
 }

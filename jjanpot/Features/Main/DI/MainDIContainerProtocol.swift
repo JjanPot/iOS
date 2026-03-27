@@ -18,6 +18,10 @@ protocol MainDIContainerProtocol {
 
     // 홈 화면
     func makeHomeView() -> HomeView
+    
+    // 초대 코드 화면
+    func makeInviteCodePopupView(inviteCode: String?, onComfirmAction: @escaping ()-> Void ) -> InviteCodePopupView
+
 }
 
 final class MainDIContainer: MainDIContainerProtocol {
@@ -56,14 +60,24 @@ final class MainDIContainer: MainDIContainerProtocol {
 
     func makeHomeView() -> HomeView {
         let viewModel = makeHomeViewModel()
-        return HomeView(viewModel: viewModel)
+        return HomeView(viewModel: viewModel, container: self)
+    }
+    
+    // MARK: - InviteCode
+
+    private func makeInviteCodeViewModel() -> InviteCodePopupViewModel {
+        return InviteCodePopupViewModel()
+    }
+
+    func makeInviteCodePopupView(inviteCode: String?, onComfirmAction: @escaping ()-> Void ) -> InviteCodePopupView {
+        let vm = makeInviteCodeViewModel()
+        return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onComfirmAction: { onComfirmAction() })
     }
 }
 
 // MARK: - Mock
 
 final class MockMainDIContainer: MainDIContainerProtocol {
-
     func makeMainCoordinator() -> MainCoordinator {
         return MainCoordinator()
     }
@@ -73,10 +87,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
 
     func makeHomeView() -> HomeView {
-        
+
         let useCase = MockHomeUseCase()
         let viewModel = HomeViewModel(useCase: useCase)
-        return HomeView(viewModel: viewModel)
+        return HomeView(viewModel: viewModel, container: self)
     }
     
     final class MockHomeUseCase: HomeUseCaseProtocol {
@@ -86,6 +100,11 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         func fetchHomeData() async throws -> HomeEntity{
             throw NetworkError.dataNil
         }
+    }
+    
+    func makeInviteCodePopupView(inviteCode: String?, onComfirmAction: @escaping ()-> Void ) -> InviteCodePopupView {
+        let vm = InviteCodePopupViewModel()
+        return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onComfirmAction: {onComfirmAction()})
     }
 }
 

@@ -9,6 +9,15 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var viewModel: HomeViewModel
+    private let container: MainDIContainerProtocol
+    
+    init(viewModel: HomeViewModel, container: MainDIContainerProtocol) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.container = container
+    }
+
+    @State private var showInvitePopup: Bool = false
+    @State private var tempInviteCode: String?
 
     var body: some View {
         VStack(spacing: .zero) {
@@ -26,35 +35,19 @@ struct HomeView: View {
             // 내용물
             ScrollView {
                 VStack(spacing: 20) {
-//                    if viewModel.isLoading {
-//                        ProgressView()
-//                        
-//                    } else if let errorMessage = viewModel.errorMessage {
-//                        VStack {
-//                            Text(errorMessage)
-//                                .foregroundColor(.red)
-//                            Button("다시 시도") {
-//                                viewModel.loadHomeData()
-//                            }
-//                        }
-//                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                        
-//                    } else
                     if let homeViewData = viewModel.homeViewData {
                         HStack {
                             // 메세지박스
                             Text(homeViewData.teamMessage)
                                 .font(.pretendard(.medium, size: 20))
                                 .foregroundStyle(.black900)
-                            
+                                
                             Spacer()
                             
                             Image("charater")
                                 .resizable()
                                 .frame(width: 76.73, height: 72)
                         }
-                        .padding(.horizontal, 20)
-                        
                         
                         // 챌린지 카드
                         ChallengeCardView(
@@ -68,6 +61,7 @@ struct HomeView: View {
                         }
                     }
                 }
+                .padding(.horizontal, 20)
             }
         } // ~VStack
         .onAppear {
@@ -75,6 +69,13 @@ struct HomeView: View {
         }
         .loading(viewModel.isLoading)
         .toast(message: $viewModel.toastMessage)
+        .popup(isPresented: $showInvitePopup, onDismiss: {
+            tempInviteCode = nil
+        }) {
+            container.makeInviteCodePopupView(inviteCode: tempInviteCode, onComfirmAction: {
+                showInvitePopup = false
+            })
+        }
     }
 
     // MARK: - Private Methods
@@ -101,9 +102,13 @@ struct HomeView: View {
         case .detail:
             print(">>>>> detail")
         case .inputInviteCode:
-            print(">>>>> inputInviteCode")
-        case .copyInviteCode:
-            print(">>>>> copyInviteCode")
+            tempInviteCode = nil
+            showInvitePopup = true
+
+        case let .copyInviteCode(code):
+            tempInviteCode = code
+            showInvitePopup = true
+
         case .submitSavingsProof:
             print(">>>>> submitSavingsProof")
         }
