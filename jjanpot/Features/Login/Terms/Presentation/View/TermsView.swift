@@ -60,7 +60,7 @@ struct TermsView: View {
                     CheckBoxItem(isChecked: $marketingAgreed, label: "마케팅 정보 수신 동의 (선택)",
                                  buttonText: "보기",
                                  action: {
-                                     print("마케팅 정보 수신 동의 보기")
+                                     print("마케팅 수신 동의")
                                      showMarketingTemrs = true
                                  })
                 ],

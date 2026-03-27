@@ -15,20 +15,17 @@ struct ToastView: View {
 
     var body: some View {
         Text(message)
-            .font(.Body1)
+            .font(.pretendard(.medium, size: 14))
             .foregroundColor(.black900)
-            .multilineTextAlignment(.center)
-            .padding(.vertical, 6)
-            .padding(.horizontal, 12)
+            .multilineTextAlignment(.leading)
+            .padding(.vertical, 14)
+            .padding(.horizontal, 17)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.orange50)
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.orange100)
+                    
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.orange100, lineWidth: 1)
-            )
-            //.shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
     }
 }
 
