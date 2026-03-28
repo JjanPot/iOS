@@ -10,6 +10,9 @@ import SwiftUI
 struct ProfileSetupView: View {
     @StateObject var viewModel: ProfileSetupViewModel
     private let coordinator: LoginCoordinator
+    
+    @State private var isShowingPicker = false
+    @State private var selectedDate = Date()
 
     init(viewModel: ProfileSetupViewModel, coordinator: LoginCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -20,7 +23,6 @@ struct ProfileSetupView: View {
     var body: some View {
         
         VStack {
-            
             ScrollView {
                 VStack(alignment: .leading, spacing: 40) {
                     
@@ -39,7 +41,7 @@ struct ProfileSetupView: View {
                     
                     // 생년월일
                     Button {
-                        print(">>>>> 달력띄우기")
+                        isShowingPicker = true
                     } label: {
                         DateTextField(
                             title: "생년월일",
@@ -48,15 +50,9 @@ struct ProfileSetupView: View {
                             isNeccessary: false
                         )
                     }
-                    
-                    // 성별
-//                    VStack(alignment: .leading, spacing: 10) {
-//                        HStack(spacing: .zero) {
-//                            Text("성별")
-//                                .font(.pretendard(.semiBold, size: 14))
-//                                .foregroundStyle(Color.black600)
-//                        }
-//                    }
+                    .onChange(of: selectedDate) { newValue in
+                        viewModel.birthDate = newValue
+                    }
                     
                     Spacer()
                 }
@@ -69,6 +65,24 @@ struct ProfileSetupView: View {
             }
             .padding(20)
         } // ~VStack
+        .navigationTitle("프로필 생성")
+        .sheet(isPresented: $isShowingPicker) {
+                    VStack {
+                        DatePicker(
+                            "날짜를 선택하세요",
+                            selection: $selectedDate,
+                            displayedComponents: .date
+                        )
+                        .datePickerStyle(.graphical) // 달력 형태로 표시
+                        .padding()
+
+                        Button("완료") {
+                            isShowingPicker = false
+                        }
+                        .padding()
+                    }
+                    .presentationDetents([.medium]) // 화면 절반 정도 높이로 설정
+                }
         
         
     }
