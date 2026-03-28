@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileContentView: View {
+    @Binding var profileImage: Image?
     @Binding var nickname: String
     @Binding var nicknameErrorMessage: String?
     let onProfileImageTapped: (() -> Void)?
@@ -18,15 +19,25 @@ struct ProfileContentView: View {
             
             // 프로필 이미지
             HStack(alignment: .center, spacing: 10) {
-                // placeHolder
-                Color.black100
-                    .frame(width: 66, height: 66)
-                    .rounded(radius: 12)
-                    .overlay(alignment: .center) {
-                        Image(systemName: "camera.fill")
-                            .renderingMode(.template)
-                            .foregroundStyle(Color.black300)
+                
+                
+                Group {
+                    if let profileImage {
+                        profileImage
+                            .resizable()
+                    } else {
+                        // placeHolder
+                        Color.black100
+                            .overlay(alignment: .center) {
+                                Image(systemName: "camera.fill")
+                                    .renderingMode(.template)
+                                    .foregroundStyle(Color.black300)
+                            }
                     }
+                }
+                .frame(width: 66, height: 66)
+                    .rounded(radius: 12)
+                    
                 
                 VStack(alignment: .leading, spacing: 7) {
                     Text("프로필 이미지를 등록해주세요.")
@@ -59,6 +70,7 @@ struct ProfileContentView: View {
 
 #Preview {
     ProfileContentView(
+        profileImage: .constant(nil),
         nickname: .constant(""),
         nicknameErrorMessage: .constant(nil),
         onProfileImageTapped: {}

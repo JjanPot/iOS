@@ -6,20 +6,27 @@
 //
 
 import SwiftUI
+import PhotosUI
+import Photos
 
 struct ProfileSetupView: View {
     @StateObject var viewModel: ProfileSetupViewModel
     private let coordinator: LoginCoordinator
-    
+
     @State private var isShowingPicker = false
     @State private var selectedDate = Date()
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var isShowingPhotoPicker = false
+    
+    // 권한 재요청
+    @State private var showPermissionAlert = false
 
     init(viewModel: ProfileSetupViewModel, coordinator: LoginCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
-    
-    
+
+ 
     var body: some View {
         
         VStack {
@@ -32,10 +39,11 @@ struct ProfileSetupView: View {
                     
                     // 프로필 이미지, 닉네임
                     ProfileContentView(
+                        profileImage: $viewModel.profileImage,
                         nickname: $viewModel.nickname,
                         nicknameErrorMessage: $viewModel.nicknameErrorMessage,
                         onProfileImageTapped: {
-                            print(">>>>> 이미지 등록하기")
+                            requestPhotoLibraryPermission()
                         }
                     )
                     
@@ -83,9 +91,54 @@ struct ProfileSetupView: View {
                     }
                     .presentationDetents([.medium]) // 화면 절반 정도 높이로 설정
                 }
-        
-        
+        .photosPicker(isPresented: $isShowingPhotoPicker, selection: $selectedPhotoItem, matching: .images)
+        .onChange(of: selectedPhotoItem) { newItem in
+            Task {
+                if let data = try? await newItem?.loadTransferable(type: Data.self),
+                   let uiImage = UIImage(data: data) {
+                    viewModel.profileImage = Image(uiImage: uiImage)
+                }
+            }
+        }
+        .alert("사진 접근 권한 필요", isPresented: $showPermissionAlert) {
+            Button("확인", role: .cancel) { }
+            Button("설정으로 이동") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+        } message: {
+            Text("앨범의 사진을 불러오려면 설정에서 사진 접근 권한을 허용해주세요.")
+        }
     }
+    
+    
+    // MARK: - methods..
+    
+    // 사진권한 받아오기
+    private func requestPhotoLibraryPermission() {
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+
+        switch status {
+        case .authorized, .limited:
+            isShowingPhotoPicker = true
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { newStatus in
+                DispatchQueue.main.async {
+                    if newStatus == .authorized || newStatus == .limited {
+                        isShowingPhotoPicker = true
+                    }
+                }
+            }
+        case .denied, .restricted:
+            print("앨범 접근 권한이 거부되었습니다.")
+            showPermissionAlert = true
+        @unknown default:
+            break
+        }
+    }
+    
+    
 }
 
 #Preview {

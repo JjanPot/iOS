@@ -28,10 +28,14 @@ final class LaunchScreenViewModel: ObservableObject {
             do {
                 // 갱신 후, 유저정보 가져옴 (로그인 유지)
                 try await useCase.checkAuth()
-                Logger.success("토큰 갱신 및 유저 정보 갱신 성공 → 메인 화면으로")
+                //Logger.success("토큰 갱신 및 유저 정보 갱신 성공 → 메인 화면으로")
 
                 // 결과를 AppCoordinator에게 전달
-                appCoordinator?.handleTokenCheckResult(isValid: true)
+                //appCoordinator?.handleTokenCheckResult(isValid: true)
+                
+                // 테스트코드
+                AuthManager.shared.logout()
+                appCoordinator?.handleTokenCheckResult(isValid: false)
 
             } catch {
                 // 토큰갱신, 유저정보 가져오기 실패 -> 로그아웃
