@@ -9,31 +9,26 @@ import SwiftUI
 import Combine
 
 enum MainDestination: Route {
-    // TODO: Main 플로우의 화면들을 여기에 추가
-    // 예: case profile, case settings, case detail(id: String) 등
-
-    // 임시로 추가 - 실제 화면 추가 시 제거하고 사용하세요
-    case placeholder
+    case createChallenge
 
     var id: String {
         switch self {
-        case .placeholder:
-            return "placeholder"
+        case .createChallenge:
+            return "createChallenge"
         }
     }
 
     var analyticsName: String {
         switch self {
-        case .placeholder:
-            return "main_placeholder"
+        case .createChallenge:
+            return "main_create_challenge"
         }
     }
 
     var hidesTabBar: Bool {
-        // Main 플로우에서 특정 화면은 탭바를 숨길 수 있음
         switch self {
-        case .placeholder:
-            return false
+        case .createChallenge:
+            return true
         }
     }
 }
@@ -45,6 +40,11 @@ final class MainCoordinator: ObservableObject {
     init() {}
 
     // MARK: - Navigation Methods
+
+    /// 챌린지 생성 화면으로 이동
+    func navigateToCreateChallenge() {
+        path.append(MainDestination.createChallenge)
+    }
 
     /// 특정 화면으로 이동
     func push(_ destination: MainDestination) {

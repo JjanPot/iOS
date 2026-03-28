@@ -121,7 +121,7 @@ struct RangeCalendarView: View {
         // 이전달 빈칸
         if weekdayOfFirst > 0 {
             guard let prevMonthEnd = calendar.date(byAdding: .day, value: -1, to: monthStart) else { return [] }
-            // let prevDaysInMonth = calendar.component(.day, from: prevMonthEnd)
+             let prevDaysInMonth = calendar.component(.day, from: prevMonthEnd)
             for i in stride(from: weekdayOfFirst - 1, through: 0, by: -1) {
                 days.append(calendar.date(byAdding: .day, value: -i - 1, to: monthStart))
             }

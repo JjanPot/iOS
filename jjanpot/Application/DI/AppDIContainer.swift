@@ -67,8 +67,7 @@ extension AppDIContainer {
 
 // MARK: - Main Feature
 extension AppDIContainer {
-
-    func makeMainTabView() -> MainTabView {
-        return mainDIContainer.makeMainTabView()
+    func makeMainNavigationStack() -> MainNavigationStack {
+        return MainNavigationStack(container: mainDIContainer)
     }
 }

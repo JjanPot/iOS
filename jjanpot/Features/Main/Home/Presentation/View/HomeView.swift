@@ -9,9 +9,11 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var viewModel: HomeViewModel
+    @ObservedObject var coordinator: MainCoordinator
 
-    init(viewModel: HomeViewModel) {
+    init(viewModel: HomeViewModel, coordinator: MainCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.coordinator = coordinator
     }
 
     var body: some View {
@@ -86,7 +88,7 @@ struct HomeView: View {
     private func handleChallengeCardAction(_ action: ChallengeCardAction) {
         switch action {
         case .createChallenge:
-            print(">>>>> createChallenge")
+            coordinator.navigateToCreateChallenge()
         case .detail:
             print(">>>>> detail")
 
@@ -103,5 +105,7 @@ struct HomeView: View {
 }
 
 #Preview {
-    MockMainDIContainer().makeHomeView()
+    let container = MockMainDIContainer()
+    let coordinator = container.makeMainCoordinator()
+    return container.makeHomeView(coordinator: coordinator)
 }

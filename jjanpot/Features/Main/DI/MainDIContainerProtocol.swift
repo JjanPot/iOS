@@ -13,14 +13,14 @@ import Alamofire
 protocol MainDIContainerProtocol {
     func makeMainCoordinator() -> MainCoordinator
 
-    // 메인 탭 화면
-    func makeMainTabView() -> MainTabView
-
     // 홈 화면
-    func makeHomeView() -> HomeView
+    func makeHomeView(coordinator: MainCoordinator) -> HomeView
 
     // 초대 코드 화면
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView
+
+    // 챌린지 생성 화면
+    func makeCreateChallengeView() -> CreateChallengeView
 
 }
 
@@ -38,12 +38,6 @@ final class MainDIContainer: MainDIContainerProtocol {
         return MainCoordinator()
     }
 
-    // MARK: - MainTab
-
-    func makeMainTabView() -> MainTabView {
-        return MainTabView(container: self)
-    }
-
     // MARK: - Home
 
     private func makeHomeRepository() -> HomeRepositoryProtocol {
@@ -58,9 +52,9 @@ final class MainDIContainer: MainDIContainerProtocol {
         return HomeViewModel(useCase: makeHomeUseCase())
     }
 
-    func makeHomeView() -> HomeView {
+    func makeHomeView(coordinator: MainCoordinator) -> HomeView {
         let viewModel = makeHomeViewModel()
-        return HomeView(viewModel: viewModel)
+        return HomeView(viewModel: viewModel, coordinator: coordinator)
     }
     
     // MARK: - InviteCode
@@ -73,6 +67,11 @@ final class MainDIContainer: MainDIContainerProtocol {
         let vm = makeInviteCodeViewModel()
         return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: { onCloseAction() })
     }
+    
+    // MARK: - 챌린지 생성 화면
+    func makeCreateChallengeView() -> CreateChallengeView {
+        CreateChallengeView()
+    }
 }
 
 // MARK: - Mock
@@ -82,14 +81,15 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return MainCoordinator()
     }
 
-    func makeMainTabView() -> MainTabView {
-        return MainTabView(container: self)
-    }
-
-    func makeHomeView() -> HomeView {
+    func makeHomeView(coordinator: MainCoordinator) -> HomeView {
         let useCase = MockHomeUseCase()
         let viewModel = HomeViewModel(useCase: useCase)
-        return HomeView(viewModel: viewModel)
+        return HomeView(viewModel: viewModel, coordinator: coordinator)
+    }
+    
+    
+    func makeCreateChallengeView() -> CreateChallengeView {
+        CreateChallengeView()
     }
     
     final class MockHomeUseCase: HomeUseCaseProtocol {

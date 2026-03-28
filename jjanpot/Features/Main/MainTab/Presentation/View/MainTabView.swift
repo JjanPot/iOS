@@ -9,10 +9,19 @@ import SwiftUI
 
 struct MainTabView: View {
     @State var selectedTab: Int = 0
-    private let container: MainDIContainerProtocol
 
-    init(container: MainDIContainerProtocol) {
-        self.container = container
+    private let homeView: AnyView
+    private let challengeView: AnyView
+    private let myPotView: AnyView
+
+    init(
+        homeView: AnyView,
+        challengeView: AnyView,
+        myPotView: AnyView
+    ) {
+        self.homeView = homeView
+        self.challengeView = challengeView
+        self.myPotView = myPotView
     }
 
     var body: some View {
@@ -20,15 +29,15 @@ struct MainTabView: View {
             TabView (selection: $selectedTab) {
 
                 // Home
-                container.makeHomeView()
+                homeView
                     .tag(0)
 
                 // 챌린지
-                ContentView()
+                challengeView
                     .tag(1)
 
                 // 마이팟
-                ContentView2()
+                myPotView
                     .tag(2)
 
             } //TabView
@@ -43,5 +52,11 @@ struct MainTabView: View {
 }
 
 #Preview {
-    MainTabView(container: MockMainDIContainer())
+    let container = MockMainDIContainer()
+    let coordinator = MainCoordinator()
+    return MainTabView(
+        homeView: AnyView(container.makeHomeView(coordinator: coordinator)),
+        challengeView: AnyView(ContentView()),
+        myPotView: AnyView(ContentView2())
+    )
 }
