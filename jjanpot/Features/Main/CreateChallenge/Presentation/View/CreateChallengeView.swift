@@ -13,8 +13,18 @@ struct CreateChallengeView: View {
     @State var challengeName: String = ""
     @State var description: String = ""
     @State var selectedRelationshipType: RelationshipType? = nil
+    
+    // 멤버 유형, 인원
     @State var memberCountString: String = ""
     @State var memberCount: Double = 2.0
+    
+    // 챌린지 기간
+    @State var startDate: Date? = Calendar.current.date(
+        from: DateComponents(year: 2026, month: 7, day: 13)
+    )
+    @State var endDate: Date? = Calendar.current.date(
+        from: DateComponents(year: 2026, month: 7, day: 19)
+    )
    
     var body: some View {
         ScrollView {
@@ -127,8 +137,7 @@ struct CreateChallengeView: View {
                       description: "누구와 함께, 몇 명이 챌린지에 참여하나요?",
                       isNeccessary: true
             )
-            
-            MemberTypePicker(selectedType: $selectedRelationshipType)
+            GridSingleSelector(selectedItem: $selectedRelationshipType, columns: 3)
         }
     }
     
@@ -189,6 +198,12 @@ struct CreateChallengeView: View {
             TitleView(title: "챌린지 기간",
                       description: "언제부터 챌린지를 시작할까요?(일주일동안 진행돼요.)",
                       isNeccessary: true
+            )
+            
+            RangeCalendarView(
+                startDate: $startDate,
+                endDate: $endDate,
+                rangeDays: 7
             )
             
             
