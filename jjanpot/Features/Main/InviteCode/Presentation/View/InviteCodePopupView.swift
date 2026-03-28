@@ -120,7 +120,7 @@ struct InviteCodePopupView: View {
             }
             
             MainButton(title: "확인") {
-                if viewer == .leader {
+                if viewer == .leader || inputCode.isEmpty {
                     onCloseAction()
                 } else {
                     // 입력 코드 확인하기 -> 맞으면 자동으로 닫기

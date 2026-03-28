@@ -18,29 +18,27 @@ struct MainTabView: View {
     var body: some View {
         VStack(spacing: .zero){
             TabView (selection: $selectedTab) {
-                
+
                 // Home
                 container.makeHomeView()
                     .tag(0)
-                    
-                
+
                 // 챌린지
                 ContentView()
                     .tag(1)
-                
+
                 // 마이팟
                 ContentView2()
                     .tag(2)
-                
+
             } //TabView
             .hideTabBar()
-            
+
             // 커스텀 탭바 [홈 | 챌린지 | 마이팟]
             MainTabBar(selectedTab: $selectedTab)
                 .ignoresSafeArea(edges: .bottom)
-                
+
         } //VStack
-        
     }
 }
 

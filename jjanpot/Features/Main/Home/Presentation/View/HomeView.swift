@@ -9,15 +9,10 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject var viewModel: HomeViewModel
-    private let container: MainDIContainerProtocol
-    
-    init(viewModel: HomeViewModel, container: MainDIContainerProtocol) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.container = container
-    }
 
-    @State private var showInvitePopup: Bool = false
-    @State private var tempInviteCode: String?
+    init(viewModel: HomeViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+    }
 
     var body: some View {
         VStack(spacing: .zero) {
@@ -69,13 +64,6 @@ struct HomeView: View {
         }
         .loading(viewModel.isLoading)
         .toast(message: $viewModel.toastMessage)
-        .popup(isPresented: $showInvitePopup, dismissOnBackgroundTap: true ,onDismiss: {
-            tempInviteCode = nil
-        }) {
-            container.makeInviteCodePopupView(inviteCode: tempInviteCode, onCloseAction: {
-                showInvitePopup = false
-            })
-        }
     }
 
     // MARK: - Private Methods
@@ -101,14 +89,12 @@ struct HomeView: View {
             print(">>>>> createChallenge")
         case .detail:
             print(">>>>> detail")
-            
+
         case .inputInviteCode:
-            tempInviteCode = nil //초대코드 없음. 받아야해
-            showInvitePopup = true
+            PopupManager.shared.showInviteCodeInput()
 
         case let .copyInviteCode(code):
-            tempInviteCode = code
-            showInvitePopup = true
+            PopupManager.shared.showInviteCodeCopy(code: code)
 
         case .submitSavingsProof:
             print(">>>>> submitSavingsProof")

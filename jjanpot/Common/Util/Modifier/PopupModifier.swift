@@ -31,7 +31,7 @@ struct PopupModifier<PopupContent: View>: ViewModifier {
 
             // 팝업
             popupContent()
-                .padding(.horizontal, 30)
+                .padding(.horizontal, 20)
                 .scaleEffect(isPresented ? 1.0 : 0.8)
                 .opacity(isPresented ? 1.0 : 0)
                 .allowsHitTesting(isPresented)

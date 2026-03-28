@@ -18,7 +18,7 @@ protocol MainDIContainerProtocol {
 
     // 홈 화면
     func makeHomeView() -> HomeView
-    
+
     // 초대 코드 화면
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView
 
@@ -60,7 +60,7 @@ final class MainDIContainer: MainDIContainerProtocol {
 
     func makeHomeView() -> HomeView {
         let viewModel = makeHomeViewModel()
-        return HomeView(viewModel: viewModel, container: self)
+        return HomeView(viewModel: viewModel)
     }
     
     // MARK: - InviteCode
@@ -87,10 +87,9 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
 
     func makeHomeView() -> HomeView {
-
         let useCase = MockHomeUseCase()
         let viewModel = HomeViewModel(useCase: useCase)
-        return HomeView(viewModel: viewModel, container: self)
+        return HomeView(viewModel: viewModel)
     }
     
     final class MockHomeUseCase: HomeUseCaseProtocol {

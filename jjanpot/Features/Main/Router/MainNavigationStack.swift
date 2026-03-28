@@ -11,6 +11,7 @@ import SwiftUI
 /// App 레벨에서 분기되어 메인 관련 화면들을 관리합니다.
 struct MainNavigationStack: View {
     @StateObject private var coordinator: MainCoordinator
+    @StateObject private var popupManager = PopupManager.shared
 
     private let container: MainDIContainerProtocol
 
@@ -21,6 +22,7 @@ struct MainNavigationStack: View {
 
     var body: some View {
         NavigationStack(path: $coordinator.path) {
+            
             // 메인 탭 화면
             container.makeMainTabView()
                 .navigationDestination(for: MainDestination.self) { destination in
@@ -35,6 +37,14 @@ struct MainNavigationStack: View {
                     // case .settings:
                     //     container.makeSettingsView()
                     }
+                }
+                .popup(isPresented: $popupManager.showInviteCodePopup, onDismiss: {
+                    popupManager.inviteCode = nil
+                }) {
+                    // 초대코드 팝업
+                    container.makeInviteCodePopupView(inviteCode: popupManager.inviteCode, onCloseAction: {
+                        popupManager.dismiss()
+                    })
                 }
         }
     }
