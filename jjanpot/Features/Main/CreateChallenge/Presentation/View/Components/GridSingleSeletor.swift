@@ -8,7 +8,7 @@
 import SwiftUI
 
 // MARK: - Protocol
-/// GridSingleSelector에서 사용할 enum이 준수해야 하는 프로토콜
+/// GridSingleSelector, GridMultipleSelector 에서 사용할 enum이 준수해야 하는 프로토콜
 protocol SelectableGridItem: CaseIterable, Hashable {
     var title: String { get }
     var image: String? { get }

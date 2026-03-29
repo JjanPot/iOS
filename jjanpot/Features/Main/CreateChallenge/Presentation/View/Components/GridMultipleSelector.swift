@@ -10,11 +10,11 @@ import SwiftUI
 
 /// enum을 받아서 그리드 형태로 다중 선택 UI를 제공하는 공통 컴포넌트
 struct GridMultipleSelector<T: SelectableGridItem>: View {
-    @Binding var selectedItems: Set<T>
+    @Binding var selectedItems: [T]
     let columns: Int
     let maxSelection: Int?
 
-    init(selectedItems: Binding<Set<T>>, columns: Int = 3, maxSelection: Int? = nil) {
+    init(selectedItems: Binding<[T]>, columns: Int = 3, maxSelection: Int? = nil) {
         self._selectedItems = selectedItems
         self.columns = columns
         self.maxSelection = maxSelection
@@ -51,14 +51,14 @@ struct GridMultipleSelector<T: SelectableGridItem>: View {
     }
 
     private func toggleSelection(_ item: T) {
-        if selectedItems.contains(item) {
-            selectedItems.remove(item)
+        if let index = selectedItems.firstIndex(of: item) {
+            selectedItems.remove(at: index)
         } else {
             // 최대 선택 개수 확인
             if let max = maxSelection, selectedItems.count >= max {
                 return // 최대 개수 초과 시 선택 불가
             }
-            selectedItems.insert(item)
+            selectedItems.append(item)
         }
     }
 }
@@ -92,7 +92,7 @@ struct SampleGridMultipleSelector : View {
         }
     }
     
-    @State var selected: Set<SampleType> = .init()
+    @State var selected: [SampleType] = []
     var body: some View {
         VStack(spacing: 20) {
             Text("다중 선택 (최대 2개)")

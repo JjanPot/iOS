@@ -15,7 +15,7 @@ struct CreateChallengeView: View {
     @State var selectedRelationshipType: RelationshipType? = nil
     
     // 멤버 유형, 인원
-    @State var memberCountString: String = ""
+    @State var memberCountString: String = "2"
     @State var memberCount: Double = 2.0
     
     // 챌린지 기간
@@ -25,6 +25,18 @@ struct CreateChallengeView: View {
     @State var endDate: Date? = Calendar.current.date(
         from: DateComponents(year: 2026, month: 7, day: 19)
     )
+    
+    // 절약항목
+    @State var selectedCategories: [SavingCategory] = []
+    
+    @State private var selectedFoodAmount: FoodEstimatedSavingAmount? = nil
+    @State private var selectedCafeAmount: CafeEstimatedSavingAmount? = nil
+    @State private var selectedCarAmount: CarEstimatedSavingAmount? = nil
+    @State private var selectedFashionAmount: FashionEstimatedSavingAmount? = nil
+    @State private var selectedHobbyAmount: HobbyEstimatedSavingAmount? = nil
+    @State private var selectedBearAmount: BearEstimatedSavingAmount? = nil
+    @State private var selectedOtherAmount: OtherEstimatedSavingAmount? = nil
+
    
     var body: some View {
         ScrollView {
@@ -41,8 +53,27 @@ struct CreateChallengeView: View {
                 
                 // 모집 인원, 유형
                 memberType
-                memberCountView
+                MemberSliderView(
+                    memberCountString: $memberCountString,
+                    memberCount: $memberCount
+                )
+
+                // 챌린지 기간
+                challengeDurationView
+
+                // 절약항목
+                savingCategory
                 
+                // 목표 금액(팀)
+                
+                // 목표 금액 (개인)
+                
+                Spacer()
+                    .frame(height: 150)
+                
+                MainButton(title: "챌린지 만들기") {
+                    print(">>>>> 챌린지 만들기")
+                }
                 
             }
             .padding(.horizontal, 20)
@@ -141,59 +172,9 @@ struct CreateChallengeView: View {
         }
     }
     
-    // 모집인원
-    private var memberCountView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            TextField("", text: $memberCountString, prompt:
-                        Text("최대 8")
-                .font(.pretendard(.regular, size: 14))
-                .foregroundColor(Color.black200)
-            )
-            .font(.pretendard(.regular, size: 14))
-            .foregroundColor(Color.black900)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .frame(width: 100)
-            .roundedBorder(color: .black100, radius: 12)
-//            .onChange(of: memberCountString) { newValue in
-//                let count = Int(newValue) ?? 0
-//                if count > 8 {
-//                    memberCount = 8
-//                } else if count < 2 {
-//                    memberCount = 2
-//                }
-//                memberCountString = "\(memberCount)"
-//            }
-            .overlay(alignment: .trailing) {
-                Text("명")
-                    .font(.pretendard(.regular, size: 14))
-                    .foregroundColor(Color.black900)
-                    .padding(.trailing, 20)
-                    .allowsHitTesting(false)
-            }
-            
-            VStack(spacing: 5) {
-                Slider(
-                    value: $memberCount,
-                    in: 2...8,      // 2에서 8까지 범위 제한
-                    step: 1         // 1 단위로 이동 (정수 선택)
-                )
-                .tint(Color.orange500)
-                
-                HStack {
-                    Text("2")
-                        .font(.pretendard(.medium, size: 12))
-                    Spacer()
-                    Text("8")
-                        .font(.pretendard(.medium, size: 12))
-                }
-                .foregroundStyle(Color.black500)
-            }
-        }
-    }
     
     // 챌린지 기간
-    private func challengeDurationView() -> some View {
+    private var challengeDurationView: some View {
         VStack(alignment: .leading, spacing: 16) {
             TitleView(title: "챌린지 기간",
                       description: "언제부터 챌린지를 시작할까요?(일주일동안 진행돼요.)",
@@ -205,16 +186,49 @@ struct CreateChallengeView: View {
                 endDate: $endDate,
                 rangeDays: 7
             )
+        }
+    }
+    
+    // 절약 항목
+    private var savingCategory: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            TitleView(title: "절약 항목",
+                      description: "무엇을 절약할 건가요? (3개까지 선택 가능해요.)",
+                      isNeccessary: true
+            )
             
-            
+            GridMultipleSelector<SavingCategory>(selectedItems: $selectedCategories, maxSelection: 3)
+
+            // 카테고리 별 기준 금액 선택 (선택 순서대로 표시)
+            ForEach(selectedCategories) { category in
+                SavingCategoryDetail(
+                    category: category,
+                    selectedFoodAmount: $selectedFoodAmount,
+                    selectedCafeAmount: $selectedCafeAmount,
+                    selectedCarAmount: $selectedCarAmount,
+                    selectedFashionAmount: $selectedFashionAmount,
+                    selectedHobbyAmount: $selectedHobbyAmount,
+                    selectedBearAmount: $selectedBearAmount,
+                    selectedOtherAmount: $selectedOtherAmount
+                )
+            }
         }
     }
     
     
+    
+    
 }
+
+
 
 
 
 #Preview {
     CreateChallengeView()
 }
+
+
+
+
+
