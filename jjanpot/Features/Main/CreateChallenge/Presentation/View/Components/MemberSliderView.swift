@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MemberSliderView: View {
-    @Binding var memberCountString: String
+    @State var memberCountString: String = ""
     @Binding var memberCount: Double
 
     @FocusState private var isTextFieldFocused: Bool
@@ -103,7 +103,6 @@ struct MemberSliderView: View {
 
 #Preview {
     struct PreviewWrapper: View {
-        @State var memberCountString = "2"
         @State var memberCount: Double = 2.0
 
         var body: some View {
@@ -112,7 +111,6 @@ struct MemberSliderView: View {
                     .padding()
 
                 MemberSliderView(
-                    memberCountString: $memberCountString,
                     memberCount: $memberCount
                 )
                 .padding()

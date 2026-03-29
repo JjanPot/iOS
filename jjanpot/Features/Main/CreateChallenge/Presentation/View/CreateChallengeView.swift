@@ -15,7 +15,6 @@ struct CreateChallengeView: View {
     @State var selectedRelationshipType: RelationshipType? = nil
     
     // 멤버 유형, 인원
-    @State var memberCountString: String = "2"
     @State var memberCount: Double = 2.0
     
     // 챌린지 기간
@@ -28,6 +27,11 @@ struct CreateChallengeView: View {
     
     // 절약항목
     @State var selectedCategories: [SavingCategory] = []
+    
+    // 목표 금액(팀)
+    @State var teamTargetPrice: Double = 0
+    // 목표 금액 (개인)
+    @State var personalTargetPrice: Double = 0
     
     @State private var selectedFoodAmount: FoodEstimatedSavingAmount? = nil
     @State private var selectedCafeAmount: CafeEstimatedSavingAmount? = nil
@@ -54,7 +58,6 @@ struct CreateChallengeView: View {
                 // 모집 인원, 유형
                 memberType
                 MemberSliderView(
-                    memberCountString: $memberCountString,
                     memberCount: $memberCount
                 )
 
@@ -65,15 +68,16 @@ struct CreateChallengeView: View {
                 savingCategory
                 
                 // 목표 금액(팀)
+                teamTargetPriceView
                 
                 // 목표 금액 (개인)
+                personalTargetPriceView
                 
-                Spacer()
-                    .frame(height: 150)
                 
                 MainButton(title: "챌린지 만들기") {
                     print(">>>>> 챌린지 만들기")
                 }
+                .padding(.vertical, 50)
                 
             }
             .padding(.horizontal, 20)
@@ -129,7 +133,6 @@ struct CreateChallengeView: View {
                       description: "팀원들과 공유할 메모를 남겨보세요.",
                       isNeccessary: false
             )
-            
             
             ZStack(alignment: .topLeading) {
                 // 1. 실제 입력창
@@ -216,12 +219,49 @@ struct CreateChallengeView: View {
     }
     
     
+    // 팀 목표금액의 최소금액
+    var minPrice: Double {
+        let price = memberCount * 5000
+        return price < 10000 ? 10000 : price
+    }
+    
+    // 목표 금액(팀)
+    private var teamTargetPriceView: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            TitleView(title: "목표 금액(팀)",
+                      description: "우리 팀의 절약 목표 금액은 얼마인가요?",
+                      isNeccessary: true
+            )
+            
+            PriceSliderView(
+                price: $teamTargetPrice,
+                minPrice: minPrice,
+                maxPrice: 3000000,
+                step: 1000,
+                placeholder: "최대 300만"
+            )
+        }
+    }
     
     
+    // 목표 금액 (개인)
+    private var personalTargetPriceView: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            TitleView(title: "목표 금액(개인)",
+                      description: "각자 최소 얼마씩 절약해야 하나요?",
+                      isNeccessary: true
+            )
+            
+            PriceSliderView(
+                price: $personalTargetPrice,
+                minPrice: 5000,
+                maxPrice: 300000,
+                step: 1000,
+                placeholder: "최대 30만"
+            )
+        }
+    }
 }
-
-
-
 
 
 #Preview {
