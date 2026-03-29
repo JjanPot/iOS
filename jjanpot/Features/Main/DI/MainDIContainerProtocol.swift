@@ -21,6 +21,9 @@ protocol MainDIContainerProtocol {
 
     // 챌린지 생성 화면
     func makeCreateChallengeView() -> CreateChallengeView
+    
+    // 챌린지 상세정보 화면
+    func makeChallengeDetailView() -> ChallengeDetailView
 
 }
 
@@ -72,6 +75,11 @@ final class MainDIContainer: MainDIContainerProtocol {
     func makeCreateChallengeView() -> CreateChallengeView {
         CreateChallengeView()
     }
+    
+    // MARK: - 챌린지 상세정보 화면
+    func makeChallengeDetailView() -> ChallengeDetailView {
+        ChallengeDetailView()
+    }
 }
 
 // MARK: - Mock
@@ -104,6 +112,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
         let vm = InviteCodePopupViewModel()
         return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: {onCloseAction()})
+    }
+    
+    func makeChallengeDetailView() -> ChallengeDetailView {
+        ChallengeDetailView()
     }
 }
 

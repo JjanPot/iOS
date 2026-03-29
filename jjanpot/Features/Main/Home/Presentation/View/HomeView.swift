@@ -88,9 +88,10 @@ struct HomeView: View {
     private func handleChallengeCardAction(_ action: ChallengeCardAction) {
         switch action {
         case .createChallenge:
-            coordinator.navigateToCreateChallenge()
+            coordinator.push(.createChallenge)
         case .detail:
             print(">>>>> detail")
+            coordinator.push(.challengeDetail)
 
         case .inputInviteCode:
             PopupManager.shared.showInviteCodeInput()

@@ -47,6 +47,9 @@ struct MainNavigationStack: View {
         switch destination {
         case .createChallenge:
             container.makeCreateChallengeView()
+            
+        case .challengeDetail:
+            container.makeChallengeDetailView()
         }
     }
 }

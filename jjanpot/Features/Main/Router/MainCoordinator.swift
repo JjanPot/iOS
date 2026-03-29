@@ -10,11 +10,14 @@ import Combine
 
 enum MainDestination: Route {
     case createChallenge
+    case challengeDetail
 
     var id: String {
         switch self {
         case .createChallenge:
             return "createChallenge"
+        case .challengeDetail:
+            return "challengeDetail"
         }
     }
 
@@ -22,6 +25,8 @@ enum MainDestination: Route {
         switch self {
         case .createChallenge:
             return "main_create_challenge"
+        case .challengeDetail:
+            return "challenge_detail"
         }
     }
 
@@ -29,6 +34,8 @@ enum MainDestination: Route {
         switch self {
         case .createChallenge:
             return true
+        case .challengeDetail:
+            return false
         }
     }
 }
@@ -41,10 +48,6 @@ final class MainCoordinator: ObservableObject {
 
     // MARK: - Navigation Methods
 
-    /// 챌린지 생성 화면으로 이동
-    func navigateToCreateChallenge() {
-        path.append(MainDestination.createChallenge)
-    }
 
     /// 특정 화면으로 이동
     func push(_ destination: MainDestination) {
