@@ -19,15 +19,7 @@ struct HomeView: View {
     var body: some View {
         VStack(spacing: .zero) {
             // 헤더
-            HStack {
-                Image("TextLogo")
-                    .resizable()
-                    .frame(width: 122, height: 18.49)
-                Spacer()
-
-                // TODO: 알람버튼
-            }
-            .padding(20)
+            MainHeader()
 
             // 내용물
             ScrollView {

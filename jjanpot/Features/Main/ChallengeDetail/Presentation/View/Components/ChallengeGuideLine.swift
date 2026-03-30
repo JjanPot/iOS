@@ -13,7 +13,7 @@ struct ChallengeGuideLine: View {
     @State var isExpanded: Bool = false
     @State var isExpanded2: Bool = false
     @State var isExpanded3: Bool = false
-    @State var isExpanded4: Bool = true
+    @State var isExpanded4: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20){
