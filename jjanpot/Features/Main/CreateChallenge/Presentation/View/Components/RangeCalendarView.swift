@@ -18,7 +18,10 @@ struct RangeCalendarView: View {
     @Binding var endDate: Date?
     var rangeDays: Int = 7
 
-    @State private var displayedMonth: Date = Date()
+    
+//    @State private var displayedMonth: Date = Date()
+//    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
+    @State private var displayedMonth: Date = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
 
     private let calendar = Calendar.current
     private let weekdaySymbols = ["일", "월", "화", "수", "목", "금", "토"]
@@ -31,7 +34,6 @@ struct RangeCalendarView: View {
                 Text(headerTitle)
                     .font(.pretendard(.semiBold, size: 16))
                     .foregroundColor(.black900)
-                    
 
                 Spacer()
 
@@ -42,7 +44,6 @@ struct RangeCalendarView: View {
                             .frame(width: 16, height: 16)
                             .foregroundColor(.black200)
                     }
-                    
 
                     Button(action: moveNextMonth) {
                         Image(systemName: "chevron.right")
@@ -78,12 +79,11 @@ struct RangeCalendarView: View {
                         isInRange: isInRange(date),
                         isRangeStart: isRangeEdge(index: index, date: date, checkingStart: true),
                         isRangeEnd: isRangeEdge(index: index, date: date, checkingStart: false),
-                        isPastDate: isPastDate(date),
+                        isPastDate: isPastOrToday(date),
                         onTap: { selectDate(date) }
                     )
                 }
             }
-
         }
         .padding(.top, 18)
         .padding(.horizontal, 20)
@@ -91,11 +91,6 @@ struct RangeCalendarView: View {
         .background(Color(.white))
         .rounded(radius: 12)
         .roundedBorder(color: .black100, radius: 12)
-        
-        
-        
-        
-        
     }
 
     // MARK: - Computed
@@ -175,18 +170,25 @@ struct RangeCalendarView: View {
     }
 
     /// 오늘 이전 날짜인지 확인 (오늘 포함 X)
-    private func isPastDate(_ date: Date?) -> Bool {
+//    private func isPastDate(_ date: Date?) -> Bool {
+//        guard let date else { return false }
+//        let today = calendar.startOfDay(for: Date())
+//        let compareDate = calendar.startOfDay(for: date)
+//        return compareDate < today
+//    }
+    /// 오늘 이전 날짜인지 확인 (오늘 포함)
+    private func isPastOrToday(_ date: Date?) -> Bool {
         guard let date else { return false }
         let today = calendar.startOfDay(for: Date())
         let compareDate = calendar.startOfDay(for: date)
-        return compareDate < today
+        return compareDate <= today
     }
-
+    
     private func selectDate(_ date: Date?) {
         guard let date, isCurrentMonth(date) else { return }
 
-        // 과거 날짜는 선택 불가
-        if isPastDate(date) { return }
+        // 과거 날짜는 선택 불가 (오늘포함)
+        if isPastOrToday(date) { return }
 
         startDate = calendar.startOfDay(for: date)
         if let start = startDate,
