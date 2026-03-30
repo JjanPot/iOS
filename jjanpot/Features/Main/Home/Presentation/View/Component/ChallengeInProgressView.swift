@@ -51,7 +51,7 @@ struct ChallengeInProgressView : View {
             // 상세정보 버튼 (두개)
             HStack(spacing: 10){
                 CapsuleButton(title: "상세 정보", colorType: .border, isDisabled: false){
-                    onAction(.detail)
+                    onAction(.detail(challengeId: viewData.challengeId))
                 }
                 CapsuleButton(title: "인증하기", colorType: .fill, isDisabled: false){
                     onAction(.submitSavingsProof)

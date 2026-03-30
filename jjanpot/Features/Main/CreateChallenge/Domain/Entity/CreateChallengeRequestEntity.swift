@@ -7,6 +7,7 @@
 
 import Foundation
 
+// 서버에 보내는 용
 struct CreateChallengeRequestEntity {
     let title: String
     let description: String
@@ -36,7 +37,7 @@ extension CreateChallengeRequestEntity {
 
         
         let dtoCategories = categories.map {
-            CreateChallengeRequestDto.Category(id: $0.categoryId, amount: $0.amount)
+            ChallengeCategoryDto(id: $0.categoryId, amount: $0.amount)
         }
 
         return CreateChallengeRequestDto(

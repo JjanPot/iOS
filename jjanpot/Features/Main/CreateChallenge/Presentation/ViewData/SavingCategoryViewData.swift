@@ -1,5 +1,5 @@
 //
-//  CategoryViewData.swift
+//  SavingCategoryViewData.swift
 //  jjanpot
 //
 //  Created by 임주희 on 3/30/26.
@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct CategoryViewData: GridDisplayable {
+// 챌린지 생성하기 절약항목
+struct SavingCategoryViewData: GridDisplayable {
     let id: Int // categoryId
     let name: String
     let nameUS: String
@@ -36,15 +37,15 @@ struct CategoryViewData: GridDisplayable {
         hasher.combine(id)
     }
 
-    static func == (lhs: CategoryViewData, rhs: CategoryViewData) -> Bool {
+    static func == (lhs: SavingCategoryViewData, rhs: SavingCategoryViewData) -> Bool {
         lhs.id == rhs.id
     }
 }
 
 // MARK: - Mapper
 
-extension CategoryViewData {
-    init(from entity: CategoryEntity) {
+extension SavingCategoryViewData {
+    init(from entity: SavingCategoryEntity) {
         
         let krName: String
         switch entity.name {

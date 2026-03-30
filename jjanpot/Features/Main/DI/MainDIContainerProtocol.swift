@@ -23,7 +23,7 @@ protocol MainDIContainerProtocol {
     func makeCreateChallengeView(coordinator: MainCoordinator) -> CreateChallengeView
 
     // 챌린지 상세정보 화면
-    func makeChallengeDetailView() -> ChallengeDetailView
+    func makeChallengeDetailView(challengeId: Int) -> ChallengeDetailView
 
 }
 
@@ -91,14 +91,35 @@ final class MainDIContainer: MainDIContainerProtocol {
     }
     
     // MARK: - 챌린지 상세정보 화면
-    func makeChallengeDetailView() -> ChallengeDetailView {
-        ChallengeDetailView()
+    
+    private func makeChallengeDetailRepository() -> ChallengeDetailRepositoryProtocol {
+        return ChallengeDetailRepository(apiClient: challengeApiClient)
+    }
+    
+    private func makeChallengeDetailUseCase() -> ChallengeDetailUseCaseProtocol {
+        let repo = makeChallengeDetailRepository()
+        return ChallengeDetailUseCase(repository: repo)
+    }
+    
+    private func makeChallengeDetailViewModel(challengeId: Int) -> ChallengeDetailViewModel {
+        let useCase = makeChallengeDetailUseCase()
+        return ChallengeDetailViewModel(challengeId: challengeId, useCase: useCase)
+    }
+    func makeChallengeDetailView(challengeId: Int) -> ChallengeDetailView {
+        let vm = makeChallengeDetailViewModel(challengeId: challengeId)
+        return ChallengeDetailView(viewModel: vm)
     }
 }
 
 // MARK: - Mock
 
 final class MockMainDIContainer: MainDIContainerProtocol {
+    
+    func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
+        let vm = InviteCodePopupViewModel()
+        return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: { onCloseAction() })
+    }
+    
     func makeMainCoordinator() -> MainCoordinator {
         return MainCoordinator()
     }
@@ -109,12 +130,22 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return HomeView(viewModel: viewModel, coordinator: coordinator)
     }
     
-    
     func makeCreateChallengeView(coordinator: MainCoordinator) -> CreateChallengeView {
-        let repository = MockCreateChallengeRepository()
-        let useCase = CreateChallengeUseCase(repository: repository)
+        let useCase = MockCreateChallengeUseCase()
         let viewModel = CreateChallengeViewModel(useCase: useCase)
         return CreateChallengeView(viewModel: viewModel, coordinator: coordinator)
+    }
+    
+    func makeChallengeDetailView(challengeId: Int) -> ChallengeDetailView {
+        let usecase = MockChallengeDetailUseCase()
+        let vm = ChallengeDetailViewModel(challengeId: challengeId, useCase: usecase)
+        return ChallengeDetailView(viewModel: vm)
+    }
+    
+    final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
+        func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
+            throw NetworkError.dataNil
+        }
     }
 
     final class MockHomeUseCase: HomeUseCaseProtocol {
@@ -125,55 +156,14 @@ final class MockMainDIContainer: MainDIContainerProtocol {
             throw NetworkError.dataNil
         }
     }
-
-    final class MockChallengeApiClient: ChallengeApiClientProtocol {
-        func fetchChallenges() async -> Result<ChallengeResponseDto, NetworkError> {
-            .failure(.dataNil)
+    final class MockCreateChallengeUseCase: CreateChallengeUseCaseProtocol {
+        func getCategories() async throws -> [SavingCategoryEntity] {
+            throw NetworkError.dataNil
         }
-
-        func fetchChallengeSummary(challengeId: Int) async -> Result<ChallengeSummaryDto, NetworkError> {
-            .failure(.dataNil)
+        
+        func createChallenge(title: String, description: String, teamType: String, maxMemberCount: Int, startDate: Date, categories: [CreateChallengeRequestEntity.CategoryWithAmount], goalAmount: Int, minPersonalGoalAmount: Int) async throws -> CreateChallengeEntity {
+            throw NetworkError.dataNil
         }
-
-        func fetchCategories() async -> Result<[CategoryDto], NetworkError> {
-            .failure(.dataNil)
-        }
-
-        func createChallenge(dto: CreateChallengeRequestDto) async -> Result<CreateChallengeResponseDto, NetworkError> {
-            // Mock 성공 응답
-            try? await Task.sleep(nanoseconds: 1_000_000_000) // 1초 delay
-            return .success(CreateChallengeResponseDto())
-        }
-    }
-
-    final class MockCreateChallengeRepository: CreateChallengeRepositoryProtocol {
-        func fetchCategories() async throws -> [CategoryEntity] {
-            // Mock 카테고리 데이터
-            return [
-                CategoryEntity(categoryId: 1, name: "외식/배달", iconURL: nil, amountOptions: [10000, 15000, 20000, 30000]),
-                CategoryEntity(categoryId: 2, name: "카페/디저트", iconURL: nil, amountOptions: [1500, 2000, 4000, 7000]),
-                CategoryEntity(categoryId: 3, name: "교통", iconURL: nil, amountOptions: [1500, 3000, 5000, 10000]),
-                CategoryEntity(categoryId: 4, name: "패션/뷰티", iconURL: nil, amountOptions: [10000, 30000, 50000, 100000]),
-                CategoryEntity(categoryId: 5, name: "취미/문화", iconURL: nil, amountOptions: [5000, 10000, 20000, 50000]),
-                CategoryEntity(categoryId: 6, name: "술/유흥", iconURL: nil, amountOptions: [5000, 10000, 20000, 30000]),
-                CategoryEntity(categoryId: 7, name: "기타", iconURL: nil, amountOptions: [5000, 10000, 20000])
-            ]
-        }
-
-        func createChallenge(entity: CreateChallengeRequestEntity) async throws -> CreateChallengeEntity {
-            // Mock 성공 응답
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
-            return CreateChallengeEntity()
-        }
-    }
-
-    func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
-        let vm = InviteCodePopupViewModel()
-        return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: {onCloseAction()})
-    }
-    
-    func makeChallengeDetailView() -> ChallengeDetailView {
-        ChallengeDetailView()
     }
 }
 

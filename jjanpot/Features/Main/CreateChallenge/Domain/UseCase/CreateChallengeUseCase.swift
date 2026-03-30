@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CreateChallengeUseCaseProtocol {
-    func fetchCategories() async throws -> [CategoryEntity]
+    func getCategories() async throws -> [SavingCategoryEntity]
     
     func createChallenge(
         title: String,
@@ -22,6 +22,7 @@ protocol CreateChallengeUseCaseProtocol {
     ) async throws -> CreateChallengeEntity
 }
 
+
 final class CreateChallengeUseCase: CreateChallengeUseCaseProtocol {
     private let repository: CreateChallengeRepositoryProtocol
 
@@ -29,8 +30,8 @@ final class CreateChallengeUseCase: CreateChallengeUseCaseProtocol {
         self.repository = repository
     }
 
-    func fetchCategories() async throws -> [CategoryEntity] {
-        return try await repository.fetchCategories()
+    func getCategories() async throws -> [SavingCategoryEntity] {
+        return try await repository.getCategories()
     }
 
     func createChallenge(

@@ -9,6 +9,6 @@
 import Foundation
 
 protocol CreateChallengeRepositoryProtocol {
-    func fetchCategories() async throws -> [CategoryEntity]
+    func getCategories() async throws -> [SavingCategoryEntity]
     func createChallenge(entity: CreateChallengeRequestEntity) async throws -> CreateChallengeEntity
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CategoryAmountSelector: View {
-    let category: CategoryViewData
+    let category: SavingCategoryViewData
     @Binding var selectedAmount: Int?
 
     private let gridColumns = [GridItem(.flexible(), spacing: 5),
@@ -68,7 +68,7 @@ struct AmountOptionButton: View {
 
         var body: some View {
             CategoryAmountSelector(
-                category: CategoryViewData(
+                category: SavingCategoryViewData(
                     id: 1,
                     name: "외식/배달",
                     nameUS: "FOOD_DELIVERY",

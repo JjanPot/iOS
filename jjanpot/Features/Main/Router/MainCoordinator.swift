@@ -10,7 +10,7 @@ import Combine
 
 enum MainDestination: Route {
     case createChallenge
-    case challengeDetail
+    case challengeDetail(id: Int)
 
     var id: String {
         switch self {

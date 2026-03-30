@@ -15,8 +15,9 @@ struct ChallengeCardViewDataMapper {
             return ChallengeCardStatus.none
         case .waiting(let entity):
             let viewData = ChallengeWaitingViewData(
+                challengeId: entity.challengeId,
                 teamName: entity.title,
-                targetSavingsAmount: (entity.goalAmount/10000), //만원단위로 자름.
+                targetSavingsAmount: formatWonRange(entity.goalAmount),
                 period: period(start: entity.startDate, end: entity.endDate),
                 inviteCode: entity.inviteCode
             )
@@ -25,6 +26,7 @@ struct ChallengeCardViewDataMapper {
             
         case .inProgress(let entity):
             let viewData = ChallengeInProgressViewData(
+                challengeId: entity.challengeId,
                 teamName: entity.title,
                 dday: dDayString(to: entity.endDate),
                 teamSavingsAmount: formatPrice(entity.teamWeekSavedAmount),
@@ -34,12 +36,29 @@ struct ChallengeCardViewDataMapper {
         }
     }
     
+    private func formatWonRange(_ value: Int) -> String {
+        if value < 10_000 {
+            return "\(value)원"
+        }
+        
+        let man = value / 10_000
+        let remainder = value % 10_000
+        
+        if remainder == 0 {
+            return "\(man)만원"
+        } else {
+            let thousand = remainder / 1_000
+            return "\(man)만\(thousand)천원"
+        }
+    }
+    
+    
     // 시작일 - 종료일 (1주), ex: "26.07.15 - 26.07.21 (1주)"
-    func period(start :Date, end: Date) -> String {
+    private func period(start :Date, end: Date) -> String {
         "\(start.toString(.simpleDateOnly)) - \(end.toString(.simpleDateOnly)) (1주)"
     }
     
-    func dDayString(to targetDate: Date) -> String {
+    private func dDayString(to targetDate: Date) -> String {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let target = calendar.startOfDay(for: targetDate)
@@ -55,7 +74,7 @@ struct ChallengeCardViewDataMapper {
         }
     }
     
-    func formatPrice(_ value: Int) -> String {
+    private func formatPrice(_ value: Int) -> String {
         let converted = value / 10
         
         let formatter = NumberFormatter()

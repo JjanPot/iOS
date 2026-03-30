@@ -81,9 +81,9 @@ struct HomeView: View {
         switch action {
         case .createChallenge:
             coordinator.push(.createChallenge)
-        case .detail:
-            print(">>>>> detail")
-            coordinator.push(.challengeDetail)
+        case let .detail(id):
+            print(">>>>> detail \(id)")
+            coordinator.push(.challengeDetail(id: id))
 
         case .inputInviteCode:
             PopupManager.shared.showInviteCodeInput()

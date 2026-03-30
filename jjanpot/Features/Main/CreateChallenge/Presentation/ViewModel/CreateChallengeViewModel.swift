@@ -8,12 +8,12 @@
 import Foundation
 import Combine
 
-@MainActor
+
 final class CreateChallengeViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var toastMessage: String?
     @Published var isSuccess = false
-    @Published var categories: [CategoryViewData] = []
+    @Published var categories: [SavingCategoryViewData] = []
 
     private let useCase: CreateChallengeUseCaseProtocol
 
@@ -21,14 +21,16 @@ final class CreateChallengeViewModel: ObservableObject {
         self.useCase = useCase
     }
 
+    
     // 카테고리 목록 가져오기
+    @MainActor
     func loadCategories() {
         isLoading = true
         Task {
             do {
-                let entities = try await useCase.fetchCategories()
+                let entities = try await useCase.getCategories()
                 // Entity → ViewData 변환
-                categories = entities.map { CategoryViewData(from: $0) }
+                categories = entities.map { SavingCategoryViewData(from: $0) }
             } catch {
                 Logger.error("카테고리 로딩에 실패했습니다: \(error.localizedDescription)")
                 toastMessage = "카테고리 로딩에 실패했습니다"
@@ -38,14 +40,15 @@ final class CreateChallengeViewModel: ObservableObject {
     }
 
     // 챌린지 생성
+    @MainActor
     func createChallenge(
         title: String,
         description: String,
         relationshipType: RelationshipType,
         memberCount: Int,
         startDate: Date,
-        selectedCategories: [CategoryViewData],
-        categoryAmounts: [CategoryViewData: Int],
+        selectedCategories: [SavingCategoryViewData],
+        categoryAmounts: [SavingCategoryViewData: Int],
         teamTargetPrice: Int,
         personalTargetPrice: Int
     ){

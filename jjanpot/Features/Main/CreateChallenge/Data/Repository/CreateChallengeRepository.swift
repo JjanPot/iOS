@@ -14,12 +14,12 @@ final class CreateChallengeRepository: CreateChallengeRepositoryProtocol {
         self.apiClient = apiClient
     }
 
-    func fetchCategories() async throws -> [CategoryEntity] {
+    func getCategories() async throws -> [SavingCategoryEntity] {
         let result = await apiClient.fetchCategories()
 
         switch result {
         case .success(let dtos):
-            return dtos.map { CategoryEntity(from: $0) }
+            return dtos.map { SavingCategoryEntity(from: $0) }
         case .failure(let error):
             throw error
         }

@@ -18,6 +18,9 @@ enum ChallengeRouter {
     // 챌린지 생성
     case createChallenge(dto: CreateChallengeRequestDto)
     
+    // 챌린지 상세정보
+    case getDetail(id: Int)
+    
     
     // 카테고리 조회
     case getCategories
@@ -31,8 +34,9 @@ extension ChallengeRouter: Router {
         switch self {
         case .getChallenges,
                 .getChallengeSummary,
-                .getCategories:
-                .get
+                .getCategories,
+                .getDetail
+            : .get
             
         case .createChallenge: .post
         
@@ -50,6 +54,9 @@ extension ChallengeRouter: Router {
             
         case .createChallenge:
             return "/api/challenges/v1"
+            
+        case let .getDetail(id):
+            return "/api/challenges/v1/\(id)/detail"
         }
     }
     
@@ -61,11 +68,12 @@ extension ChallengeRouter: Router {
         switch self {
         case .getChallenges,
              .getChallengeSummary,
-             .getCategories:
+             .getCategories,
 //             .createChallenge:
+                .getDetail:
             return nil
             
-        case .createChallenge(let dto):
+        case .createChallenge:
 //            return [
 //                "title": dto.title,
 //                "description": dto.description,
@@ -83,7 +91,8 @@ extension ChallengeRouter: Router {
         switch self {
         case .getChallenges,
              .getChallengeSummary,
-             .getCategories:
+             .getCategories,
+             .getDetail:
             return nil
 
         case let .createChallenge(dto):
@@ -109,10 +118,13 @@ protocol ChallengeApiClientProtocol {
     func fetchChallengeSummary(challengeId: Int) async -> Result<ChallengeSummaryDto, NetworkError>
 
     /// 카테고리 목록 불러오기
-    func fetchCategories() async -> Result<[CategoryDto], NetworkError>
+    func fetchCategories() async -> Result<[SavingCategoryDto], NetworkError>
 
     /// 챌린지 생성
     func createChallenge(dto: CreateChallengeRequestDto) async -> Result<CreateChallengeResponseDto, NetworkError>
+    
+    /// 챌린지 상세
+    func fetchDetail(challengeId: Int) async -> Result<ChallengeDetailResponseDto, NetworkError>
 
 }
 final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientProtocol {
@@ -124,39 +136,19 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
         await request(.getChallengeSummary(challengeId: challengeId))
     }
 
-    func fetchCategories() async -> Result<[CategoryDto], NetworkError> {
+    func fetchCategories() async -> Result<[SavingCategoryDto], NetworkError> {
         await request(.getCategories)
     }
 
     func createChallenge(dto: CreateChallengeRequestDto) async -> Result<CreateChallengeResponseDto, NetworkError> {
         await request(.createChallenge(dto: dto))
     }
-}
-
-struct CreateChallengeResponseDto: Codable {
-}
-
-
-
-struct CreateChallengeRequestDto: Codable {
-    let title, description, teamType: String
-    let maxMemberCount: Int
     
-    /// "2026-03-18"
-    let startDate: String
-    let categories: [Category]
     
-    let goalAmount, minPersonalGoalAmount: Int
-    
-    struct Category: Codable {
-        let id: Int
-        let amount: Int
-
-        enum CodingKeys: String, CodingKey {
-            case id = "categoryId"
-            case amount
-        }
+    func fetchDetail(challengeId: Int) async -> Result<ChallengeDetailResponseDto, NetworkError>{
+        await request(.getDetail(id: challengeId))
     }
-
 }
+
+
 

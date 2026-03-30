@@ -48,8 +48,8 @@ struct MainNavigationStack: View {
         case .createChallenge:
             container.makeCreateChallengeView(coordinator: coordinator)
 
-        case .challengeDetail:
-            container.makeChallengeDetailView()
+        case let .challengeDetail(id):
+            container.makeChallengeDetailView(challengeId: id)
         }
     }
 }

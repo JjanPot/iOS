@@ -7,6 +7,8 @@
 
 
 struct ChallengeInProgressViewData {
+    let challengeId: Int
+    
     let teamName: String
     
     // 남은 기간

@@ -44,6 +44,6 @@ struct OngoingChallengeDto: Codable {
     let weekNumber: Int
     let weekGoalAmount: Int
     let teamWeekSavedAmount: Int
-//    let personalWeekSavedAmount: Int
+    let personalWeekSavedAmount: Int
     let achievementRate: Int
 }

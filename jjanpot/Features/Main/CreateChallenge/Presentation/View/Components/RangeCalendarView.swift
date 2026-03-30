@@ -18,9 +18,6 @@ struct RangeCalendarView: View {
     @Binding var endDate: Date?
     var rangeDays: Int = 7
 
-    
-//    @State private var displayedMonth: Date = Date()
-//    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
     @State private var displayedMonth: Date = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
 
     private let calendar = Calendar.current

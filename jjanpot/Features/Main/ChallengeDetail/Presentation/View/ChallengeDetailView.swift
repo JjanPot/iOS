@@ -7,37 +7,12 @@
 
 import SwiftUI
 
-struct ChallengeDetailViewData {
-    let teamName: String
-    let goals: String
-    let category: String
-    let teamTargetAmount: String
-    let personTargetAmound: String
-    let relationshipType: String
-    let during: String
-    let memberCount: String
-    
-    // 챌린지 설명
-    let description: String
-    
-}
-
 // 챌린지 상세 정보
 struct ChallengeDetailView: View {
-    private let viewData = ChallengeDetailViewData(
-        teamName: "배달을 아껴요",
-        goals: "30만원 목표로 1주동안 함께 절약하기",
-        category: "외식/배달",
-        teamTargetAmount: "30만원",
-        personTargetAmound: "2만원 이상",
-        relationshipType: "친구",
-        during: "26.07.15-26.07.15",
-        memberCount: "5명",
-        
-        description: "배달을 아끼는 챌린지 방입니다. 모두 절약 파이팅"
-        
-        
-    )
+    @StateObject var viewModel: ChallengeDetailViewModel
+    init(viewModel: ChallengeDetailViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+    }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
@@ -53,6 +28,11 @@ struct ChallengeDetailView: View {
             }
             .padding(.horizontal, 20)
         }
+        .loading(viewModel.isLoading)
+        .toast(message: $viewModel.toastMessage)
+        .task {
+            viewModel.getDetail()
+        }
         .background(Color.orange50)
         .navigationTitle("상세 정보")
     }
@@ -62,22 +42,22 @@ struct ChallengeDetailView: View {
     var basicInfoView: some View {
         VStack(alignment: .leading, spacing: 18) {
             VStack(alignment: .leading, spacing: 8) {
-                Text(viewData.teamName)
+                Text(viewModel.viewData?.teamName ?? "")
                     .font(.pretendard(.semiBold, size: 24))
                     .foregroundStyle(.black900)
                 
-                Text(viewData.goals)
+                Text(viewModel.viewData?.goals ?? "")
                     .font(.pretendard(.medium, size: 14))
                     .foregroundStyle(.black500)
             }
             
             VStack(alignment: .leading, spacing: 14) {
-                detailView(title: "카테고리", content: viewData.category)
-                detailView(title: "목표금액", content: viewData.teamTargetAmount)
-                detailView(title: "개인금액", content: viewData.personTargetAmound)
-                detailView(title: "팀 유형", content: viewData.relationshipType)
-                detailView(title: "기간", content: viewData.during)
-                detailView(title: "팀 인원", content: viewData.memberCount)
+                detailView(title: "카테고리", content: viewModel.viewData?.category ?? "")
+                detailView(title: "목표금액", content: viewModel.viewData?.teamTargetAmount ?? "")
+                detailView(title: "개인금액", content: viewModel.viewData?.personTargetAmound ?? "")
+                detailView(title: "팀 유형", content: viewModel.viewData?.relationshipType ?? "")
+                detailView(title: "기간", content: viewModel.viewData?.during ?? "")
+                detailView(title: "팀 인원", content: viewModel.viewData?.memberCount ?? "")
             }
         }
         .padding(20)
@@ -93,7 +73,7 @@ struct ChallengeDetailView: View {
                 .font(.pretendard(.medium, size: 16))
                 .foregroundStyle(.black900)
             
-            Text(viewData.description)
+            Text(viewModel.viewData?.description ?? "")
                 .font(.pretendard(.regular, size: 14))
                 .foregroundStyle(.black600)
         }
@@ -118,9 +98,9 @@ struct ChallengeDetailView: View {
     }
 }
 
-#Preview {
-    ChallengeDetailView()
-}
+//#Preview {
+//    ChallengeDetailView(viewModel: )
+//}
 
 
 

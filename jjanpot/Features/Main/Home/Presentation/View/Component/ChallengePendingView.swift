@@ -28,7 +28,7 @@ struct ChallengePendingView : View {
                 
                 // 부제
                 (
-                    Text("\(viewData.targetSavingsAmount)만원")
+                    Text(viewData.targetSavingsAmount)
                     .foregroundColor(.black700)
                  + Text(" 목표로 ")
                         .foregroundColor(.black500)
@@ -49,7 +49,7 @@ struct ChallengePendingView : View {
             // 상세정보 버튼 (두개)
             HStack(spacing: 10){
                 CapsuleButton(title: "상세정보", colorType: .border, isDisabled: false){
-                    onAction(.detail)
+                    onAction(.detail(challengeId: viewData.challengeId))
                 }
                 CapsuleButton(title: "초대코드 복사", colorType: .fill, isDisabled: false){
                     onAction(.copyInviteCode(inviteCode: viewData.inviteCode))

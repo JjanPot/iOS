@@ -32,8 +32,8 @@ struct CreateChallengeView: View {
     @State var endDate: Date?
 
     // 절약항목
-    @State var selectedCategories: [CategoryViewData] = []
-    @State var categoryAmounts: [CategoryViewData: Int] = [:]
+    @State var selectedCategories: [SavingCategoryViewData] = []
+    @State var categoryAmounts: [SavingCategoryViewData: Int] = [:]
 
     // 목표 금액(팀)
     @State var teamTargetPrice: Double = 0

@@ -8,10 +8,13 @@
 
 // MARK: 챌린지 대기
 struct ChallengeWaitingViewData {
+    
+    let challengeId: Int
+    
     let teamName: String
     
-    // 팀 목표금액
-    let targetSavingsAmount: Int
+    // 팀 목표금액 30만원
+    let targetSavingsAmount: String
     
     // 기간 "26.07.15 - 16.07.21 (1주)"
     let period: String
