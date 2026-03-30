@@ -78,6 +78,7 @@ struct RangeCalendarView: View {
                         isInRange: isInRange(date),
                         isRangeStart: isRangeEdge(index: index, date: date, checkingStart: true),
                         isRangeEnd: isRangeEdge(index: index, date: date, checkingStart: false),
+                        isPastDate: isPastDate(date),
                         onTap: { selectDate(date) }
                     )
                 }
@@ -173,8 +174,20 @@ struct RangeCalendarView: View {
         }
     }
 
+    /// 오늘 이전 날짜인지 확인 (오늘 포함 X)
+    private func isPastDate(_ date: Date?) -> Bool {
+        guard let date else { return false }
+        let today = calendar.startOfDay(for: Date())
+        let compareDate = calendar.startOfDay(for: date)
+        return compareDate < today
+    }
+
     private func selectDate(_ date: Date?) {
         guard let date, isCurrentMonth(date) else { return }
+
+        // 과거 날짜는 선택 불가
+        if isPastDate(date) { return }
+
         startDate = calendar.startOfDay(for: date)
         if let start = startDate,
            let end = calendar.date(byAdding: .day, value: rangeDays - 1, to: start) {
@@ -200,6 +213,7 @@ private struct DayCell: View {
     let isInRange: Bool
     let isRangeStart: Bool
     let isRangeEnd: Bool
+    let isPastDate: Bool
     let onTap: () -> Void
 
     private let accentColor = Color(red: 1.0, green: 0.55, blue: 0.2) // 오렌지
@@ -207,13 +221,13 @@ private struct DayCell: View {
     var body: some View {
         ZStack {
             // 범위 배경 (행 연결)
-            if isInRange {
+            if isInRange && !isPastDate {
                 HStack(spacing: .zero) {
                     // 왼쪽 절반
                     Rectangle()
                         .fill(isRangeStart ? Color.clear : rangeBackground)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    
+
                     // 오른쪽 절반
                     Rectangle()
                         .fill(isRangeEnd ? Color.clear : rangeBackground)
@@ -229,7 +243,7 @@ private struct DayCell: View {
 
             // 날짜 원
             Circle()
-                .fill(isStart || isEnd ? accentColor : Color.clear)
+                .fill((isStart || isEnd) && !isPastDate ? accentColor : Color.clear)
                 .frame(width: 30, height: 30)
 
             if let date {
@@ -241,7 +255,7 @@ private struct DayCell: View {
         .frame(height: 30)
         .contentShape(Rectangle())
         .onTapGesture {
-            if date != nil { onTap() }
+            if date != nil && !isPastDate { onTap() }
         }
     }
 
@@ -250,6 +264,7 @@ private struct DayCell: View {
     }
 
     private var textColor: Color {
+        if isPastDate { return Color.black200 } // 과거 날짜는 흐리게
         if isStart || isEnd { return .white }
         if !isCurrentMonth { return Color(.black300) }
         return Color.black900
