@@ -12,7 +12,7 @@ struct CreateChallengeRequestEntity {
     let description: String
     let teamType: String
     let maxMemberCount: Int
-    let startDate: String
+    let startDate: Date
     let categories: [CategoryWithAmount]
     let goalAmount: Int
     let minPersonalGoalAmount: Int
@@ -26,7 +26,15 @@ struct CreateChallengeRequestEntity {
 // MARK: - Mapper
 
 extension CreateChallengeRequestEntity {
+    
     func toDTO() -> CreateChallengeRequestDto {
+        
+        // 날짜 포맷
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let startDateString = dateFormatter.string(from: startDate)
+
+        
         let dtoCategories = categories.map {
             CreateChallengeRequestDto.Category(id: $0.categoryId, amount: $0.amount)
         }
@@ -36,10 +44,12 @@ extension CreateChallengeRequestEntity {
             description: description,
             teamType: teamType,
             maxMemberCount: maxMemberCount,
-            startDate: startDate,
+            startDate: startDateString,
             categories: dtoCategories,
             goalAmount: goalAmount,
             minPersonalGoalAmount: minPersonalGoalAmount
         )
     }
+    
+    
 }

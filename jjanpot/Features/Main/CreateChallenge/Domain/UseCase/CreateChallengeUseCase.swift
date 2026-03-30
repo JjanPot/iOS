@@ -15,7 +15,7 @@ protocol CreateChallengeUseCaseProtocol {
         description: String,
         teamType: String,
         maxMemberCount: Int,
-        startDate: String,
+        startDate: Date,
         categories: [CreateChallengeRequestEntity.CategoryWithAmount],
         goalAmount: Int,
         minPersonalGoalAmount: Int
@@ -38,7 +38,7 @@ final class CreateChallengeUseCase: CreateChallengeUseCaseProtocol {
         description: String,
         teamType: String,
         maxMemberCount: Int,
-        startDate: String,
+        startDate: Date,
         categories: [CreateChallengeRequestEntity.CategoryWithAmount],
         goalAmount: Int,
         minPersonalGoalAmount: Int

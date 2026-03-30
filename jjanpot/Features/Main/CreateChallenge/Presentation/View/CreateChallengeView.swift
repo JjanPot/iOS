@@ -25,15 +25,11 @@ struct CreateChallengeView: View {
     @State var selectedRelationshipType: RelationshipType? = nil
 
     // 멤버 유형, 인원
-    @State var memberCount: Double = 2.0
+    @State var memberCount: Double = 0.0
 
     // 챌린지 기간
-    @State var startDate: Date? = Calendar.current.date(
-        from: DateComponents(year: 2026, month: 7, day: 13)
-    )
-    @State var endDate: Date? = Calendar.current.date(
-        from: DateComponents(year: 2026, month: 7, day: 19)
-    )
+    @State var startDate: Date?
+    @State var endDate: Date?
 
     // 절약항목
     @State var selectedCategories: [CategoryViewData] = []
@@ -88,9 +84,7 @@ struct CreateChallengeView: View {
                 
                 
                 MainButton(title: "챌린지 만들기") {
-                    Task {
-                        await handleCreateChallenge()
-                    }
+                    handleCreateChallenge()
                 }
                 .padding(.vertical, 100)
                 
@@ -265,7 +259,7 @@ struct CreateChallengeView: View {
     
     
     // 팀 목표금액의 최소금액
-    var minPrice: Double {
+    var teamTargetMinPrice: Double {
         let price = memberCount * 5000
         return price < 10000 ? 10000 : price
     }
@@ -282,7 +276,7 @@ struct CreateChallengeView: View {
                 price: $teamTargetPrice,
                 focusedField: $focusedField,
                 fieldIdentifier: .teamPrice,
-                minPrice: minPrice,
+                minPrice: teamTargetMinPrice,
                 maxPrice: 3000000,
                 step: 1000,
                 placeholder: "최대 300만"
@@ -312,20 +306,74 @@ struct CreateChallengeView: View {
     }
 
     // MARK: - Actions
+    
+    // 입력값 검증
+    private func isValidForm() -> Bool {
+        // 챌린지 이름
+        guard challengeName.isNotEmpty else {
+            viewModel.toastMessage = "챌린지 이름을 입력해주세요"
+            return false
+        }
+        
+        //모집 유형
+        guard selectedRelationshipType != nil else {
+            viewModel.toastMessage = "모집 유형을 선택해주세요"
+            return false
+        }
+        
+        // 모집 인원
+        guard memberCount >= 2 && memberCount <= 8 else {
+            viewModel.toastMessage = "모집 인원을 확인해주세요"
+            return false
+        }
+        
+        // 챌린지 기간 (시작일)
+        guard startDate != nil else {
+            viewModel.toastMessage = "챌린지 시작일을 선택해주세요"
+            return false
+        }
+        
+        // 절약 항목
+        guard selectedCategories.isNotEmpty else {
+            viewModel.toastMessage = "절약 항목을 선택해주세요"
+            return false
+        }
+        
+        // 선택한 절약항목의, 기준 금액 선택 여부
+        guard selectedCategories.count == categoryAmounts.keys.count else {
+            viewModel.toastMessage = "절약 항목의 기준 금액을 선택해주세요."
+            return false
+        }
 
-    private func handleCreateChallenge() async {
+        // 목표금액 (팀)
+        guard teamTargetPrice >= teamTargetMinPrice && teamTargetPrice <= 3000000 else {
+            viewModel.toastMessage = "팀 목표 금액을 확인해주세요"
+            return false
+        }
+
+        // 목표금액 (개인)
+        guard personalTargetPrice >= 5000 && personalTargetPrice <= 300000 else {
+            viewModel.toastMessage = "개인 목표 금액을 확인해주세요"
+            return false
+        }
+        return true
+    }
+
+    private func handleCreateChallenge() {
         // 필수값 검증
+        guard isValidForm() else { return }
+        
         guard let relationshipType = selectedRelationshipType else {
             viewModel.toastMessage = "모집 유형을 선택해주세요"
             return
         }
-
+        
         guard let startDate = startDate else {
             viewModel.toastMessage = "챌린지 시작일을 선택해주세요"
             return
         }
-
-        await viewModel.createChallenge(
+        
+        viewModel.createChallenge(
             title: challengeName,
             description: description,
             relationshipType: relationshipType,
@@ -345,8 +393,3 @@ struct CreateChallengeView: View {
     let coordinator = container.makeMainCoordinator()
     return container.makeCreateChallengeView(coordinator: coordinator)
 }
-
-
-
-
-
