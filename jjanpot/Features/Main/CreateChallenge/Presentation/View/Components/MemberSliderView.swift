@@ -7,11 +7,12 @@
 
 import SwiftUI
 
-struct MemberSliderView: View {
+struct MemberSliderView<FocusField: Hashable>: View {
     @State var memberCountString: String = ""
     @Binding var memberCount: Double
-
-    @FocusState private var isTextFieldFocused: Bool
+    @FocusState.Binding var focusedField: FocusField?
+    let fieldIdentifier: FocusField
+    var onEndEditing: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -27,22 +28,18 @@ struct MemberSliderView: View {
             .padding(.vertical, 16)
             .frame(width: 100)
             .roundedBorder(color: .black100, radius: 12)
-            .focused($isTextFieldFocused)
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button("완료") {
-                        validateAndSync()
-                        isTextFieldFocused = false
-                    }
-                    .foregroundStyle(.orange500)
-                }
-            }
-            
+            .focused($focusedField, equals: fieldIdentifier)
             .onChange(of: memberCountString) { newValue in
                 // 타이핑 중에도 유효한 값이면 실시간 반영
                 if let value = Double(newValue), value >= 2, value <= 8 {
                     memberCount = value
+                }
+            }
+            .onChange(of: focusedField) { newValue in
+                // 포커스가 이 필드에서 벗어났을 때
+                if newValue != fieldIdentifier {
+                    validateAndSync()
+                    onEndEditing?()
                 }
             }
             .overlay(alignment: .trailing) {
@@ -77,7 +74,7 @@ struct MemberSliderView: View {
         }
     }
 
-    private func validateAndSync() {
+    func validateAndSync() {
         guard let value = Double(memberCountString) else {
             // 잘못된 입력이면 원래 값으로 복원
             memberCountString = "\(Int(memberCount))"
@@ -102,8 +99,13 @@ struct MemberSliderView: View {
 }
 
 #Preview {
+    enum PreviewField {
+        case member
+    }
+
     struct PreviewWrapper: View {
         @State var memberCount: Double = 2.0
+        @FocusState var focusedField: PreviewField?
 
         var body: some View {
             VStack {
@@ -111,7 +113,9 @@ struct MemberSliderView: View {
                     .padding()
 
                 MemberSliderView(
-                    memberCount: $memberCount
+                    memberCount: $memberCount,
+                    focusedField: $focusedField,
+                    fieldIdentifier: .member
                 )
                 .padding()
             }

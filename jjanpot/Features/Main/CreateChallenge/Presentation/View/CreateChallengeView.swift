@@ -7,16 +7,24 @@
 
 import SwiftUI
 
+enum FocusedField {
+    case challengeName
+    case challengeDescription
+    case memberCount
+    case teamPrice
+    case personalPrice
+}
+
 // 챌린지 만들기
 struct CreateChallengeView: View {
-    
+
     @State var challengeName: String = ""
     @State var description: String = ""
     @State var selectedRelationshipType: RelationshipType? = nil
-    
+
     // 멤버 유형, 인원
     @State var memberCount: Double = 2.0
-    
+
     // 챌린지 기간
     @State var startDate: Date? = Calendar.current.date(
         from: DateComponents(year: 2026, month: 7, day: 13)
@@ -24,15 +32,15 @@ struct CreateChallengeView: View {
     @State var endDate: Date? = Calendar.current.date(
         from: DateComponents(year: 2026, month: 7, day: 19)
     )
-    
+
     // 절약항목
     @State var selectedCategories: [SavingCategory] = []
-    
+
     // 목표 금액(팀)
     @State var teamTargetPrice: Double = 0
     // 목표 금액 (개인)
     @State var personalTargetPrice: Double = 0
-    
+
     @State private var selectedFoodAmount: FoodEstimatedSavingAmount? = nil
     @State private var selectedCafeAmount: CafeEstimatedSavingAmount? = nil
     @State private var selectedCarAmount: CarEstimatedSavingAmount? = nil
@@ -40,6 +48,9 @@ struct CreateChallengeView: View {
     @State private var selectedHobbyAmount: HobbyEstimatedSavingAmount? = nil
     @State private var selectedBearAmount: BearEstimatedSavingAmount? = nil
     @State private var selectedOtherAmount: OtherEstimatedSavingAmount? = nil
+
+    // 포커스 상태 관리
+    @FocusState private var focusedField: FocusedField?
 
    
     var body: some View {
@@ -58,7 +69,9 @@ struct CreateChallengeView: View {
                 // 모집 인원, 유형
                 memberType
                 MemberSliderView(
-                    memberCount: $memberCount
+                    memberCount: $memberCount,
+                    focusedField: $focusedField,
+                    fieldIdentifier: .memberCount
                 )
 
                 // 챌린지 기간
@@ -77,13 +90,23 @@ struct CreateChallengeView: View {
                 MainButton(title: "챌린지 만들기") {
                     print(">>>>> 챌린지 만들기")
                 }
-                .padding(.vertical, 50)
+                .padding(.vertical, 100)
                 
             }
             .padding(.horizontal, 20)
             
         }
         .navigationTitle("챌린지 만들기")
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("완료") {
+                    // 모든 포커스 해제
+                    focusedField = nil
+                }
+                .foregroundStyle(.orange500)
+            }
+        }
     }
     
     private var messageBox: some View {
@@ -118,11 +141,13 @@ struct CreateChallengeView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .roundedBorder(color: .black100, radius: 12)
+            .focused($focusedField, equals: .challengeName)
             .onChange(of: challengeName) { newValue in
                 if newValue.count > 14 {
                     challengeName = String(newValue.prefix(14))
                 }
             }
+            
         }
     }
     
@@ -141,6 +166,7 @@ struct CreateChallengeView: View {
 //                    .background(Color.red)
                     .font(.pretendard(.regular, size: 14))
                     .foregroundColor(Color.black900)
+                    .focused($focusedField, equals: .challengeDescription)
                     .onChange(of: description) { newValue in
                         if newValue.count > 80 {
                             challengeName = String(newValue.prefix(80))
@@ -235,6 +261,8 @@ struct CreateChallengeView: View {
             
             PriceSliderView(
                 price: $teamTargetPrice,
+                focusedField: $focusedField,
+                fieldIdentifier: .teamPrice,
                 minPrice: minPrice,
                 maxPrice: 3000000,
                 step: 1000,
@@ -254,6 +282,8 @@ struct CreateChallengeView: View {
             
             PriceSliderView(
                 price: $personalTargetPrice,
+                focusedField: $focusedField,
+                fieldIdentifier: .personalPrice,
                 minPrice: 5000,
                 maxPrice: 300000,
                 step: 1000,

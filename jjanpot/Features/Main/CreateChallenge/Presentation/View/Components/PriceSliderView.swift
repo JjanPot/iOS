@@ -7,36 +7,43 @@
 
 import SwiftUI
 
-struct PriceSliderView: View {
+struct PriceSliderView<FocusField: Hashable>: View {
     @State var priceString: String = ""
     @Binding var price: Double
-    
+    @FocusState.Binding var focusedField: FocusField?
+    let fieldIdentifier: FocusField
+
     let minPrice: Double
     let maxPrice: Double
     let step: Double
     let placeholder: String
-    
-    @FocusState private var isTextFieldFocused: Bool
-    
+    var onEndEditing: (() -> Void)?
+
     init(
         price: Binding<Double>,
+        focusedField: FocusState<FocusField?>.Binding,
+        fieldIdentifier: FocusField,
         minPrice: Double,
         maxPrice: Double,
         step: Double = 1000,
-        placeholder: String = "금액 입력"
+        placeholder: String = "금액 입력",
+        onEndEditing: (() -> Void)? = nil
     ) {
         self._price = price
+        self._focusedField = focusedField
+        self.fieldIdentifier = fieldIdentifier
         self.minPrice = minPrice
         self.maxPrice = maxPrice
         self.step = step
         self.placeholder = placeholder
+        self.onEndEditing = onEndEditing
         self._priceString = State(initialValue: "\(Int(price.wrappedValue))")
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack (alignment: .bottom, spacing: 8) {
-                
+
                 TextField("", text: $priceString, prompt:
                             Text(placeholder)
                     .font(.pretendard(.regular, size: 14))
@@ -49,21 +56,18 @@ struct PriceSliderView: View {
                 .padding(.vertical, 16)
                 .frame(width: 120)
                 .roundedBorder(color: .black100, radius: 12)
-                .focused($isTextFieldFocused)
-                .toolbar {
-                    ToolbarItemGroup(placement: .keyboard) {
-                        Spacer()
-                        Button("완료") {
-                            validateAndSync()
-                            isTextFieldFocused = false
-                        }
-                        .foregroundStyle(.orange500)
-                    }
-                }
+                .focused($focusedField, equals: fieldIdentifier)
                 .onChange(of: priceString) { newValue in
                     // 타이핑 중에도 유효한 값이면 실시간 반영
                     if let value = Double(newValue), value >= minPrice, value <= maxPrice {
                         price = value
+                    }
+                }
+                .onChange(of: focusedField) { newValue in
+                    // 포커스가 이 필드에서 벗어났을 때
+                    if newValue != fieldIdentifier {
+                        validateAndSync()
+                        onEndEditing?()
                     }
                 }
                 .overlay(alignment: .trailing) {
@@ -105,7 +109,7 @@ struct PriceSliderView: View {
         }
     }
     
-    private func validateAndSync() {
+    func validateAndSync() {
         guard let value = Double(priceString) else {
             // 잘못된 입력이면 원래 값으로 복원
             priceString = "\(Int(price))"
@@ -152,16 +156,23 @@ struct PriceSliderView: View {
 }
 
 #Preview {
+    enum PreviewField {
+        case price
+    }
+
     struct PreviewWrapper: View {
         @State var price: Double = 50000
-        
+        @FocusState var focusedField: PreviewField?
+
         var body: some View {
             VStack(spacing: 20) {
                 Text("현재 금액: \(Int(price))원")
                     .padding()
-                
+
                 PriceSliderView(
                     price: $price,
+                    focusedField: $focusedField,
+                    fieldIdentifier: .price,
                     minPrice: 5000,
                     maxPrice: 3000000,
                     step: 1000,
@@ -171,6 +182,6 @@ struct PriceSliderView: View {
             }
         }
     }
-    
+
     return PreviewWrapper()
 }
