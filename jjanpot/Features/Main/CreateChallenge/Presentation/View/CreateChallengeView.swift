@@ -17,6 +17,8 @@ enum FocusedField {
 
 // 챌린지 만들기
 struct CreateChallengeView: View {
+    @StateObject var viewModel: CreateChallengeViewModel
+    @ObservedObject var coordinator: MainCoordinator
 
     @State var challengeName: String = ""
     @State var description: String = ""
@@ -34,23 +36,21 @@ struct CreateChallengeView: View {
     )
 
     // 절약항목
-    @State var selectedCategories: [SavingCategory] = []
+    @State var selectedCategories: [CategoryViewData] = []
+    @State var categoryAmounts: [CategoryViewData: Int] = [:]
 
     // 목표 금액(팀)
     @State var teamTargetPrice: Double = 0
     // 목표 금액 (개인)
     @State var personalTargetPrice: Double = 0
 
-    @State private var selectedFoodAmount: FoodEstimatedSavingAmount? = nil
-    @State private var selectedCafeAmount: CafeEstimatedSavingAmount? = nil
-    @State private var selectedCarAmount: CarEstimatedSavingAmount? = nil
-    @State private var selectedFashionAmount: FashionEstimatedSavingAmount? = nil
-    @State private var selectedHobbyAmount: HobbyEstimatedSavingAmount? = nil
-    @State private var selectedBearAmount: BearEstimatedSavingAmount? = nil
-    @State private var selectedOtherAmount: OtherEstimatedSavingAmount? = nil
-
     // 포커스 상태 관리
     @FocusState private var focusedField: FocusedField?
+
+    init(viewModel: CreateChallengeViewModel, coordinator: MainCoordinator) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.coordinator = coordinator
+    }
 
    
     var body: some View {
@@ -88,7 +88,9 @@ struct CreateChallengeView: View {
                 
                 
                 MainButton(title: "챌린지 만들기") {
-                    print(">>>>> 챌린지 만들기")
+                    Task {
+                        await handleCreateChallenge()
+                    }
                 }
                 .padding(.vertical, 100)
                 
@@ -96,7 +98,17 @@ struct CreateChallengeView: View {
             .padding(.horizontal, 20)
             
         }
+        .task {
+            viewModel.loadCategories()
+        }
         .navigationTitle("챌린지 만들기")
+        .loading(viewModel.isLoading)
+        .toast(message: $viewModel.toastMessage)
+        .onChange(of: viewModel.isSuccess) { isSuccess in
+            if isSuccess {
+                coordinator.popToRoot()
+            }
+        }
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
@@ -225,21 +237,28 @@ struct CreateChallengeView: View {
                       description: "무엇을 절약할 건가요? (3개까지 선택 가능해요.)",
                       isNeccessary: true
             )
-            
-            GridMultipleSelector<SavingCategory>(selectedItems: $selectedCategories, maxSelection: 3)
 
-            // 카테고리 별 기준 금액 선택 (선택 순서대로 표시)
-            ForEach(selectedCategories) { category in
-                SavingCategoryDetail(
-                    category: category,
-                    selectedFoodAmount: $selectedFoodAmount,
-                    selectedCafeAmount: $selectedCafeAmount,
-                    selectedCarAmount: $selectedCarAmount,
-                    selectedFashionAmount: $selectedFashionAmount,
-                    selectedHobbyAmount: $selectedHobbyAmount,
-                    selectedBearAmount: $selectedBearAmount,
-                    selectedOtherAmount: $selectedOtherAmount
+            if viewModel.categories.isEmpty {
+                Text("카테고리 로딩 중...")
+                    .font(.pretendard(.regular, size: 14))
+                    .foregroundStyle(Color.black500)
+            } else {
+                DynamicGridMultipleSelector(
+                    selectedItems: $selectedCategories,
+                    items: viewModel.categories,
+                    maxSelection: 3
                 )
+
+                // 카테고리 별 기준 금액 선택 (선택 순서대로 표시)
+                ForEach(selectedCategories) { category in
+                    CategoryAmountSelector(
+                        category: category,
+                        selectedAmount: Binding(
+                            get: { categoryAmounts[category] },
+                            set: { categoryAmounts[category] = $0 }
+                        )
+                    )
+                }
             }
         }
     }
@@ -291,11 +310,40 @@ struct CreateChallengeView: View {
             )
         }
     }
+
+    // MARK: - Actions
+
+    private func handleCreateChallenge() async {
+        // 필수값 검증
+        guard let relationshipType = selectedRelationshipType else {
+            viewModel.toastMessage = "모집 유형을 선택해주세요"
+            return
+        }
+
+        guard let startDate = startDate else {
+            viewModel.toastMessage = "챌린지 시작일을 선택해주세요"
+            return
+        }
+
+        await viewModel.createChallenge(
+            title: challengeName,
+            description: description,
+            relationshipType: relationshipType,
+            memberCount: Int(memberCount),
+            startDate: startDate,
+            selectedCategories: selectedCategories,
+            categoryAmounts: categoryAmounts,
+            teamTargetPrice: Int(teamTargetPrice),
+            personalTargetPrice: Int(personalTargetPrice)
+        )
+    }
 }
 
 
 #Preview {
-    CreateChallengeView()
+    let container = MockMainDIContainer()
+    let coordinator = container.makeMainCoordinator()
+    return container.makeCreateChallengeView(coordinator: coordinator)
 }
 
 

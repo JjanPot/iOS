@@ -75,11 +75,15 @@ extension AuthRouter: Router {
     public var headers: HTTPHeaders? {
         return nil
     }
-    
+
+    public var body: Encodable? {
+        return nil
+    }
+
     public var encoding: Encoding? {
         nil
     }
-    
+
 }
     
 

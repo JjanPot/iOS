@@ -53,4 +53,19 @@ enum SavingCategory: SelectableGridItem, Identifiable {
             return "icon_category_etc"
         }
     }
+
+    /*
+    /// API 요청에 사용되는 카테고리 ID
+    var categoryId: Int {
+        switch self {
+        case .food: return 1
+        case .cafe: return 2
+        case .car: return 3
+        case .fasion: return 4
+        case .hobby: return 5
+        case .bear: return 6
+        case .other: return 7
+        }
+    }
+     */
 }

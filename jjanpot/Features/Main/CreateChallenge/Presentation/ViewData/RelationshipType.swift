@@ -26,4 +26,15 @@ enum RelationshipType: SelectableGridItem {
     var image: String? {
         return nil
     }
+
+    /// API 요청에 사용되는 문자열 값
+    var apiValue: String {
+        switch self {
+        case .friend: return "FRIEND"
+        case .partner: return "PARTNER"
+        case .family: return "FAMILY"
+        case .community: return "COMMUNITY"
+        case .etc: return "ETC"
+        }
+    }
 }

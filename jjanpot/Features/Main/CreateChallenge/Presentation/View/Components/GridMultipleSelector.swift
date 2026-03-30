@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-/// enum을 받아서 그리드 형태로 다중 선택 UI를 제공하는 공통 컴포넌트
-struct GridMultipleSelector<T: SelectableGridItem>: View {
+/// enum (CaseIterable)을 받아서 그리드 형태로 다중 선택 UI를 제공하는 공통 컴포넌트
+struct GridMultipleSelector<T: SelectableGridItem & CaseIterable>: View {
     @Binding var selectedItems: [T]
     let columns: Int
     let maxSelection: Int?

@@ -37,8 +37,8 @@ struct GridSingleSelector<T: SelectableGridItem>: View {
                         .font(.pretendard(.medium, size: 12))
                         .frame(maxWidth: .infinity)
                         .frame(height: 37)
-                        .background(Color.white)
                         .foregroundColor(.black900)
+                        .background(Color.white)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
                                 .stroke(selectedItem == item ? Color.orange500 : Color.black100, lineWidth: 1)

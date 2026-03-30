@@ -46,8 +46,8 @@ struct MainNavigationStack: View {
     private func destinationView(for destination: MainDestination) -> some View {
         switch destination {
         case .createChallenge:
-            container.makeCreateChallengeView()
-            
+            container.makeCreateChallengeView(coordinator: coordinator)
+
         case .challengeDetail:
             container.makeChallengeDetailView()
         }

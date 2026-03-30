@@ -23,6 +23,15 @@ enum FoodEstimatedSavingAmount: SelectableGridItem {
         }
     }
     var image: String? { nil }
+
+    var rawValue: Int {
+        switch self {
+        case ._10000: return 10000
+        case ._15000: return 15000
+        case ._20000: return 20000
+        case ._30000: return 30000
+        }
+    }
 }
 
 enum CafeEstimatedSavingAmount: SelectableGridItem {
@@ -40,6 +49,15 @@ enum CafeEstimatedSavingAmount: SelectableGridItem {
         }
     }
     var image: String? { nil }
+
+    var rawValue: Int {
+        switch self {
+        case ._1500: return 1500
+        case ._2000: return 2000
+        case ._4000: return 4000
+        case ._7000: return 7000
+        }
+    }
 }
 
 enum CarEstimatedSavingAmount: SelectableGridItem {
@@ -57,6 +75,15 @@ enum CarEstimatedSavingAmount: SelectableGridItem {
         }
     }
     var image: String? { nil }
+
+    var rawValue: Int {
+        switch self {
+        case ._1500: return 1500
+        case ._3000: return 3000
+        case ._5000: return 5000
+        case ._10000: return 10000
+        }
+    }
 }
 
 enum FashionEstimatedSavingAmount: SelectableGridItem {
@@ -72,10 +99,19 @@ enum FashionEstimatedSavingAmount: SelectableGridItem {
         case ._30000: return "30,000원"
         case ._50000: return "50,000원"
         case ._100000: return "100,000원"
-        
+
         }
     }
     var image: String? { nil }
+
+    var rawValue: Int {
+        switch self {
+        case ._10000: return 10000
+        case ._30000: return 30000
+        case ._50000: return 50000
+        case ._100000: return 100000
+        }
+    }
 }
 
 enum HobbyEstimatedSavingAmount: SelectableGridItem {
@@ -93,6 +129,15 @@ enum HobbyEstimatedSavingAmount: SelectableGridItem {
         }
     }
     var image: String? { nil }
+
+    var rawValue: Int {
+        switch self {
+        case ._5000: return 5000
+        case ._10000: return 10000
+        case ._20000: return 20000
+        case ._50000: return 50000
+        }
+    }
 }
 
 enum BearEstimatedSavingAmount: SelectableGridItem {
@@ -110,6 +155,15 @@ enum BearEstimatedSavingAmount: SelectableGridItem {
         }
     }
     var image: String? { nil }
+
+    var rawValue: Int {
+        switch self {
+        case ._5000: return 5000
+        case ._10000: return 10000
+        case ._20000: return 20000
+        case ._30000: return 30000
+        }
+    }
 }
 
 enum OtherEstimatedSavingAmount: SelectableGridItem {
@@ -125,4 +179,12 @@ enum OtherEstimatedSavingAmount: SelectableGridItem {
         }
     }
     var image: String? { nil }
+
+    var rawValue: Int {
+        switch self {
+        case ._5000: return 5000
+        case ._10000: return 10000
+        case ._20000: return 20000
+        }
+    }
 }
