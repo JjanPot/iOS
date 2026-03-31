@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PriceSliderView<FocusField: Hashable>: View {
     @State var priceString: String = ""
+    @State private var wasFocused: Bool = false
     @Binding var price: Double
     @FocusState.Binding var focusedField: FocusField?
     let fieldIdentifier: FocusField
@@ -64,11 +65,15 @@ struct PriceSliderView<FocusField: Hashable>: View {
                     }
                 }
                 .onChange(of: focusedField) { newValue in
-                    // 포커스가 이 필드에서 벗어났을 때
-                    if newValue != fieldIdentifier {
+                    let isFocusedNow = (newValue == fieldIdentifier)
+
+                    // 이 필드가 포커스를 잃었을 때만 실행
+                    if wasFocused && !isFocusedNow {
                         validateAndSync()
                         onEndEditing?()
                     }
+
+                    wasFocused = isFocusedNow
                 }
                 .overlay(alignment: .trailing) {
                     Text("원")
