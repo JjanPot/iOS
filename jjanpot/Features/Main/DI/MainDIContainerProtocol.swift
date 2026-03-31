@@ -42,6 +42,9 @@ protocol MainDIContainerProtocol {
 
     // 챌린지 상세정보 화면
     func makeChallengeDetailView(challengeId: Int) -> ChallengeDetailView
+    
+    /// 챌린지 대시보드화면
+    func makeChallengeDashboardView(coordinator: MainCoordinator) -> ChallengeDashboardView
 
 }
 
@@ -135,6 +138,27 @@ final class MainDIContainer: MainDIContainerProtocol {
         let vm = makeChallengeDetailViewModel(challengeId: challengeId)
         return ChallengeDetailView(viewModel: vm)
     }
+    
+    // MARK: - 챌린지 대시보드
+    
+    private func makeChallengeDashboardRepository() -> ChallengeDashboardRepositoryProtocol {
+            return ChallengeDashboardRepository(challengeApiClient: challengeApiClient)
+        }
+        private func makeChallengeDashboardUseCase() -> ChallengeDashboardUseCaseProtocol {
+            let repo = makeChallengeDashboardRepository()
+            return ChallengeDashboardUseCase(repository: repo)
+        }
+        private func makeChallengeDashboardViewModel() -> ChallengeDashboardViewModel {
+            let usecase = makeChallengeDashboardUseCase()
+            return ChallengeDashboardViewModel(useCase: usecase)
+        }
+
+        func makeChallengeDashboardView(coordinator: MainCoordinator) -> ChallengeDashboardView {
+            let vm = makeChallengeDashboardViewModel()
+            return ChallengeDashboardView(viewModel: vm, coordinator: coordinator)
+        }
+
+
 }
 
 // MARK: - Mock
@@ -168,6 +192,12 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return ChallengeDetailView(viewModel: vm)
     }
     
+    func makeChallengeDashboardView(coordinator: MainCoordinator) -> ChallengeDashboardView {
+        let usecase = MockChallengeDashboardUseCase()
+        let vm = ChallengeDashboardViewModel(useCase: usecase)
+        return ChallengeDashboardView(viewModel: vm, coordinator: coordinator)
+    }
+    
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
         func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
             throw NetworkError.dataNil
@@ -195,6 +225,9 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         func submitInviteCode(code: String) async throws {
             throw NetworkError.dataNil
         }
+    }
+    struct MockChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
+        
     }
 }
 

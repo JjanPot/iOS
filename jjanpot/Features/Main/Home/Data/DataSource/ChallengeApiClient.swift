@@ -21,11 +21,14 @@ enum ChallengeRouter {
     // 챌린지 상세정보
     case getDetail(id: Int)
     
+    /// 초대코드 입력
     case submitInviteCode(inviteCode: String)
     
-    
-    // 카테고리 조회
+    /// 카테고리 조회
     case getCategories
+    
+    /// 피드 조회
+    case getFeed(challengeId: Int)
 }
 extension ChallengeRouter: Router {
     var baseURL: URL {
@@ -37,7 +40,8 @@ extension ChallengeRouter: Router {
         case .getChallenges,
                 .getChallengeSummary,
                 .getCategories,
-                .getDetail
+                .getDetail,
+                .getFeed
             : .get
             
         case .createChallenge,
@@ -64,6 +68,9 @@ extension ChallengeRouter: Router {
             
         case .submitInviteCode:
             return "/api/users/v1/onboarding/invite-code"
+            
+        case let .getFeed(id):
+            return "/api/certifications/v1/challenge/\(id)"
         }
     }
     
@@ -76,7 +83,8 @@ extension ChallengeRouter: Router {
         case .getChallenges,
              .getChallengeSummary,
              .getCategories,
-                .getDetail
+                .getDetail,
+                .getFeed
             : return nil
             
         case .createChallenge:
@@ -106,7 +114,8 @@ extension ChallengeRouter: Router {
              .getChallengeSummary,
              .getCategories,
              .getDetail,
-             .submitInviteCode
+             .submitInviteCode,
+             .getFeed
             :return nil
 
         case let .createChallenge(dto):

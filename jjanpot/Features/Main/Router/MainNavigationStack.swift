@@ -26,7 +26,7 @@ struct MainNavigationStack: View {
             // 메인 탭 화면
             MainTabView(
                 homeView: AnyView(container.makeHomeView(coordinator: coordinator)),
-                challengeView: AnyView(ContentView()),
+                challengeView: AnyView(container.makeChallengeDashboardView(coordinator: coordinator)),
                 myPotView: AnyView(ContentView2())
             )
             .navigationDestination(for: MainDestination.self) { destination in
