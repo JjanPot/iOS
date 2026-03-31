@@ -49,9 +49,6 @@ struct InviteCodePopupView: View {
     @State var inputCode: String = ""
     @State var isError: Bool = false
     @FocusState private var isFocused: Bool
-    
-//    private let title: String
-//    private let subTitle: String
     private let viewer: Viewer
     
     var body: some View {
@@ -120,6 +117,9 @@ struct InviteCodePopupView: View {
             }
             
             MainButton(title: "확인") {
+                // 키보드 내리기
+                isFocused = false
+                
                 if viewer == .leader || inputCode.isEmpty {
                     onCloseAction()
                 } else {
@@ -131,11 +131,19 @@ struct InviteCodePopupView: View {
         .padding()
         .background(Color.white)
         .rounded(radius: 12)
+        .onChange(of: viewModel.isSuccess) { isSuccess in
+            if isSuccess {
+                NotificationCenter.default.post(name: .shouldRefreshMain, object: nil)
+                onCloseAction()
+            }
+        }
+        
+        
     }
 }
 
 #Preview {
-    InviteCodePopupView(viewModel: InviteCodePopupViewModel(), inviteCode: nil, onCloseAction: {})
+    MockMainDIContainer().makeInviteCodePopupView(inviteCode: nil, onCloseAction: {})
         .padding(20)
         .border(.red)
 }

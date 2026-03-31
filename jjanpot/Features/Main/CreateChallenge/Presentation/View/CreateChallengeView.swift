@@ -278,7 +278,7 @@ struct CreateChallengeView: View {
                 fieldIdentifier: .teamPrice,
                 minPrice: teamTargetMinPrice,
                 maxPrice: 3000000,
-                step: 1000,
+                step: 5000,
                 placeholder: "최대 300만"
             )
         }
@@ -299,7 +299,7 @@ struct CreateChallengeView: View {
                 fieldIdentifier: .personalPrice,
                 minPrice: 5000,
                 maxPrice: 300000,
-                step: 1000,
+                step: 5000,
                 placeholder: "최대 30만"
             )
         }

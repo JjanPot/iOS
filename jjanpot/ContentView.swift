@@ -30,6 +30,10 @@ struct ContentView2: View {
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text("Hello, world2!")
+            
+            Button("로그아웃"){
+                AuthManager.shared.logout()
+            }
         }
         .padding()
     }

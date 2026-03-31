@@ -29,8 +29,8 @@ final class TermsViewModel: ObservableObject {
                 isSuccess = true
                 
             } catch {
-                if let networdError = error as? NetworkError,
-                   networdError.description.contains("이미 약관 동의를 완료")
+                if let networkError = error as? NetworkError,
+                   networkError.description.contains("이미 약관 동의를 완료")
                 {
                     Logger.success("약관 동의 성공")
                     isLoading = false

@@ -21,6 +21,8 @@ enum ChallengeRouter {
     // 챌린지 상세정보
     case getDetail(id: Int)
     
+    case submitInviteCode(inviteCode: String)
+    
     
     // 카테고리 조회
     case getCategories
@@ -38,7 +40,9 @@ extension ChallengeRouter: Router {
                 .getDetail
             : .get
             
-        case .createChallenge: .post
+        case .createChallenge,
+                .submitInviteCode
+            : .post
         
         }
     }
@@ -57,6 +61,9 @@ extension ChallengeRouter: Router {
             
         case let .getDetail(id):
             return "/api/challenges/v1/\(id)/detail"
+            
+        case .submitInviteCode:
+            return "/api/users/v1/onboarding/invite-code"
         }
     }
     
@@ -69,9 +76,8 @@ extension ChallengeRouter: Router {
         case .getChallenges,
              .getChallengeSummary,
              .getCategories,
-//             .createChallenge:
-                .getDetail:
-            return nil
+                .getDetail
+            : return nil
             
         case .createChallenge:
 //            return [
@@ -84,6 +90,13 @@ extension ChallengeRouter: Router {
 //                "goalAmount": dto.goalAmount,
 //                "minPersonalGoalAmount": dto.minPersonalGoalAmount]
             return nil
+            
+            
+        case let .submitInviteCode(code):
+            let params: Parameters = [
+                "inviteCode" : code,
+            ]
+            return params
         }
     }
 
@@ -92,8 +105,9 @@ extension ChallengeRouter: Router {
         case .getChallenges,
              .getChallengeSummary,
              .getCategories,
-             .getDetail:
-            return nil
+             .getDetail,
+             .submitInviteCode
+            :return nil
 
         case let .createChallenge(dto):
             return dto
@@ -125,8 +139,12 @@ protocol ChallengeApiClientProtocol {
     
     /// 챌린지 상세
     func fetchDetail(challengeId: Int) async -> Result<ChallengeDetailResponseDto, NetworkError>
+    
+    /// 초대 코드 입력
+    func submitInviteCode(code: String) async -> Result<SubmitInviteCodeResponseDto, NetworkError>
 
 }
+
 final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientProtocol {
     func fetchChallenges() async -> Result<ChallengeResponseDto, NetworkError> {
         await request(.getChallenges)
@@ -148,7 +166,9 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     func fetchDetail(challengeId: Int) async -> Result<ChallengeDetailResponseDto, NetworkError>{
         await request(.getDetail(id: challengeId))
     }
+    
+    /// 초대 코드 입력
+    func submitInviteCode(code: String) async -> Result<SubmitInviteCodeResponseDto, NetworkError>{
+        await request(.submitInviteCode(inviteCode: code))
+    }
 }
-
-
-

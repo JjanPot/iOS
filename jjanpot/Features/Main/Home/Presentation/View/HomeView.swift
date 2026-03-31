@@ -82,7 +82,6 @@ struct HomeView: View {
         case .createChallenge:
             coordinator.push(.createChallenge)
         case let .detail(id):
-            print(">>>>> detail \(id)")
             coordinator.push(.challengeDetail(id: id))
 
         case .inputInviteCode:

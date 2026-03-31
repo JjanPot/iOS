@@ -80,8 +80,16 @@ final class MainDIContainer: MainDIContainerProtocol {
     
     // MARK: - InviteCode
 
+    private func makeInviteCodePopupRepository() -> InviteCodePopupRepositoryProtocol {
+        return InviteCodePopupRepository(challengeApiClient: challengeApiClient)
+    }
+    private func makeInviteCodePopupUseCase() -> InviteCodePopupUseCaseProtocol {
+        let repo = makeInviteCodePopupRepository()
+        return InviteCodePopupUseCase(repository: repo)
+    }
     private func makeInviteCodeViewModel() -> InviteCodePopupViewModel {
-        return InviteCodePopupViewModel()
+        let usecase = makeInviteCodePopupUseCase()
+        return InviteCodePopupViewModel(useCase: usecase)
     }
 
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
@@ -134,7 +142,7 @@ final class MainDIContainer: MainDIContainerProtocol {
 final class MockMainDIContainer: MainDIContainerProtocol {
     
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
-        let vm = InviteCodePopupViewModel()
+        let vm = InviteCodePopupViewModel(useCase: MockInviteCodePopupUseCase())
         return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: { onCloseAction() })
     }
     
@@ -180,6 +188,11 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         }
         
         func createChallenge(title: String, description: String, teamType: String, maxMemberCount: Int, startDate: Date, categories: [CreateChallengeRequestEntity.CategoryWithAmount], goalAmount: Int, minPersonalGoalAmount: Int) async throws -> CreateChallengeEntity {
+            throw NetworkError.dataNil
+        }
+    }
+    struct MockInviteCodePopupUseCase: InviteCodePopupUseCaseProtocol {
+        func submitInviteCode(code: String) async throws {
             throw NetworkError.dataNil
         }
     }

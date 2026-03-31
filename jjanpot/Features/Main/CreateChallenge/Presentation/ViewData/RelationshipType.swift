@@ -31,10 +31,10 @@ enum RelationshipType: SelectableGridItem {
     var apiValue: String {
         switch self {
         case .friend: return "FRIEND"
-        case .partner: return "PARTNER"
+        case .partner: return "COUPLE"
         case .family: return "FAMILY"
-        case .community: return "COMMUNITY"
-        case .etc: return "ETC"
+        case .community: return "CLUB"
+        case .etc: return "OTHER"
         }
     }
 }
