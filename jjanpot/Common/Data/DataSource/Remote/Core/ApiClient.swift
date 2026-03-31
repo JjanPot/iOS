@@ -54,19 +54,26 @@ public class ApiClient<R: Router> {
             return .failure(.requestFailed(error.localizedDescription))
         }
 
-        guard let data = result.data else {
-            return .failure(.dataNil)
-        }
-
         guard let response = result.response else {
             return .failure(.invalidResponse)
         }
 
         if 200..<300 ~= response.statusCode {
+            // data가 없는 경우 (204 No Content 등)
+            guard let data = result.data else {
+                if T.self == EmptyResponseDto.self {
+                    return .success(EmptyResponseDto() as! T)
+                }
+                return .failure(.dataNil)
+            }
+
             // 1) ResponseBody<T> 시도
             if let wrapped = try? decoder.decode(ResponseBody<T>.self, from: data) {
                 if let payload = wrapped.data {
                     return .success(payload)
+                } else if T.self == EmptyResponseDto.self {
+                    // data 필드가 없는 성공 응답 처리
+                    return .success(EmptyResponseDto() as! T)
                 } else {
                     return .failure(.dataNil)
                 }
@@ -84,6 +91,10 @@ public class ApiClient<R: Router> {
             return .failure(.failToDecode("Unable to decode as ResponseBody or direct T"))
 
         } else { // 실패 (4xx, 5xx)
+            guard let data = result.data else {
+                return .failure(.dataNil)
+            }
+
             // 실패 ResponseBody 파싱 시도
             if let errorBody = try? decoder.decode(ErrorResponseBody.self, from: data) {
                 return .failure(.serverFailed(code: errorBody.status ?? response.statusCode,

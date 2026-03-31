@@ -20,28 +20,28 @@ final class TermsViewModel: ObservableObject {
     
     func agreeTerms(marketingAgreed: Bool ){
         isLoading = true
-        
+        isSuccess = false
         Task {
             do {
                 try await useCase.agreeTerms(marketingConsentAgreed: marketingAgreed)
                 Logger.success("약관 동의 성공")
+                isLoading = false
                 isSuccess = true
                 
             } catch {
-                if let networdError = error as? NetworkError {
-                    print(">>>>> networdError \(networdError)")
-                }
                 if let networdError = error as? NetworkError,
                    networdError.description.contains("이미 약관 동의를 완료")
                 {
                     Logger.success("약관 동의 성공")
+                    isLoading = false
                     isSuccess = true
                     return
                 }
                 Logger.error("약관 동의 실패 \(error.localizedDescription)")
                 toastMessage = "약관 동의 실패"
+                isLoading = false
             }
-            isLoading = false
+            
         }
     }
 }
