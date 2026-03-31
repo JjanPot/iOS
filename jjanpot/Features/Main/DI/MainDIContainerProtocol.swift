@@ -74,7 +74,6 @@ final class MainDIContainer: MainDIContainerProtocol {
     }
 
     func makeHomeView(coordinator: MainCoordinator) -> HomeView {
-        let coordinator = makeMainCoordinator()
         let viewModel = makeHomeViewModel()
         return HomeView(viewModel: viewModel, coordinator: coordinator)
     }
