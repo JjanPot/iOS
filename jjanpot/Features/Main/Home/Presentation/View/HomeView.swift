@@ -56,6 +56,9 @@ struct HomeView: View {
         .onAppear {
             viewModel.loadHomeData()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .shouldRefreshMain), perform: { _ in
+            viewModel.loadHomeData()
+        })
         .loading(viewModel.isLoading)
         .toast(message: $viewModel.toastMessage)
     }
