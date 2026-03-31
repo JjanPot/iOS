@@ -42,9 +42,12 @@ enum MainDestination: Route {
 
 @MainActor
 final class MainCoordinator: ObservableObject {
+    private let container: MainDIContainerProtocol
     @Published var path = NavigationPath()
 
-    init() {}
+    init(container: MainDIContainerProtocol) {
+        self.container = container
+    }
 
     // MARK: - Navigation Methods
 

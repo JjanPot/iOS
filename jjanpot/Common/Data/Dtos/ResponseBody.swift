@@ -35,8 +35,6 @@ public struct ResponseBody<T: Decodable>: Decodable {
     var message: String?
     var data: T?
     
-
-
     enum CodingKeys: String, CodingKey {
         case status
         case message
@@ -46,13 +44,11 @@ public struct ResponseBody<T: Decodable>: Decodable {
 
 // 에러 응답용 (data 없이 code, message만)
 public struct ErrorResponseBody: Decodable {
-    var status: Int
+    var status: Int?
     var message: String?
-    //var data: T?
 
     enum CodingKeys: String, CodingKey {
         case status
         case message
-        //case data
     }
 }

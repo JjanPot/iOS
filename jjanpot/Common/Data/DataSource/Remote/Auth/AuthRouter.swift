@@ -17,6 +17,9 @@ public enum AuthRouter {
     
     // 토큰 재발급
     case refresh(token: String)
+    
+    // 약관동의
+    case agreement(marketingConsentAgreed: Bool)
 }
 
 extension AuthRouter: Router {
@@ -37,6 +40,8 @@ extension AuthRouter: Router {
             
         case .refresh:
             return "api/auth/v1/refresh"
+        case .agreement:
+            return "/api/users/v1/onboarding/agreement"
         }
     }
     
@@ -69,6 +74,15 @@ extension AuthRouter: Router {
                 "refreshToken" : token,
             ]
             return params
+            
+        case let .agreement(marketing):
+            let params: Parameters = [
+                "ageVerified" : true,
+                "termsOfServiceAgreed" : true,
+                "privacyPolicyAgreed" : true,
+                "marketingConsent" : marketing,
+            ]
+            return params
         }
     }
     
@@ -94,10 +108,11 @@ public protocol AuthApiClientProtocol {
     func appleLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError>
     func googleLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError>
     
-    // 토큰 재발급
+    /// 토큰 재발급
     func refreshToken(refreshToken token: String) async -> Result<RefreshDto, NetworkError>
 
-    
+    /// 약관 동의
+    func agreement(marketingConsentAgreed: Bool) async -> Result<EmptyResponseDto, NetworkError>
 }
 
 
@@ -120,6 +135,9 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
     public func refreshToken(refreshToken token: String) async -> Result<RefreshDto, NetworkError> {
         await request(.refresh(token: token))
     }
+    
+    /// 약관 동의
+    public func agreement(marketingConsentAgreed: Bool) async -> Result<EmptyResponseDto, NetworkError> {
+        await request(.agreement(marketingConsentAgreed: marketingConsentAgreed))
+    }
 }
-
-

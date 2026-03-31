@@ -53,21 +53,7 @@ final class LoginCoordinator: ObservableObject {
 
     // MARK: - Navigation Methods
 
-    /// 약관 동의 화면으로 이동
-    func navigateToTerms() {
-        path.append(LoginDestination.terms)
-    }
-
-    /// 프로필 설정 화면으로 이동
-    func navigateToProfileSetup() {
-        path.append(LoginDestination.profileSetup)
-    }
-
-    /// 회원가입 완료 화면으로 이동
-    func navigateToSignUpComplete() {
-        path.append(LoginDestination.signUpComplete)
-    }
-
+   
     /// 특정 화면으로 이동
     func push(_ destination: LoginDestination) {
         path.append(destination)
@@ -89,6 +75,24 @@ final class LoginCoordinator: ObservableObject {
     func popToRoot() {
         path = NavigationPath()
     }
+    
+    // MARK: -
+    
+    /// 약관 동의 화면으로 이동
+    func navigateToTerms() {
+        path.append(LoginDestination.terms)
+    }
+
+    /// 프로필 설정 화면으로 이동
+    func navigateToProfileSetup() {
+        path.append(LoginDestination.profileSetup)
+    }
+
+    /// 회원가입 완료 화면으로 이동
+    func navigateToSignUpComplete() {
+        path.append(LoginDestination.signUpComplete)
+    }
+
 
     // MARK: - View Factory Methods
 

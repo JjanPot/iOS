@@ -10,6 +10,24 @@ import Foundation
 import SwiftUI
 import Alamofire
 
+/*
+   1. 모든 의존성을 생성하는 Factory
+   2. Coordinator도 의존성이므로 DIContainer에서 생성
+   3. self를 Coordinator에 주입해서 Coordinator가 다른 화면들을 만들 수 있게 함
+
+   흐름
+
+   App Start
+     ↓
+   DIContainer 생성
+     ↓
+   DIContainer.makeCoordinator() 호출
+     ↓
+   Coordinator(container: self) 생성
+     ↓
+   Coordinator가 container를 통해 View들을 생성
+ */
+
 protocol MainDIContainerProtocol {
     func makeMainCoordinator() -> MainCoordinator
 
@@ -38,7 +56,7 @@ final class MainDIContainer: MainDIContainerProtocol {
     // MARK: - Coordinator
 
     func makeMainCoordinator() -> MainCoordinator {
-        return MainCoordinator()
+        return MainCoordinator(container: self)
     }
 
     // MARK: - Home
@@ -56,6 +74,7 @@ final class MainDIContainer: MainDIContainerProtocol {
     }
 
     func makeHomeView(coordinator: MainCoordinator) -> HomeView {
+        let coordinator = makeMainCoordinator()
         let viewModel = makeHomeViewModel()
         return HomeView(viewModel: viewModel, coordinator: coordinator)
     }
@@ -121,7 +140,7 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
     
     func makeMainCoordinator() -> MainCoordinator {
-        return MainCoordinator()
+        return MainCoordinator(container: self)
     }
 
     func makeHomeView(coordinator: MainCoordinator) -> HomeView {

@@ -10,13 +10,14 @@ import SwiftUI
 /// 메인 플로우의 독립적인 NavigationStack
 /// App 레벨에서 분기되어 메인 관련 화면들을 관리합니다.
 struct MainNavigationStack: View {
-    @StateObject private var coordinator = MainCoordinator()
+    @StateObject private var coordinator: MainCoordinator
     @StateObject private var popupManager = PopupManager.shared
 
     private let container: MainDIContainerProtocol
 
     init(container: MainDIContainerProtocol) {
         self.container = container
+        self._coordinator = StateObject(wrappedValue: container.makeMainCoordinator())
     }
 
     var body: some View {

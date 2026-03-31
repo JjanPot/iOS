@@ -86,7 +86,8 @@ public class ApiClient<R: Router> {
         } else { // 실패 (4xx, 5xx)
             // 실패 ResponseBody 파싱 시도
             if let errorBody = try? decoder.decode(ErrorResponseBody.self, from: data) {
-                return .failure(.serverFailed(code: errorBody.status, message: errorBody.message ?? "no message"))
+                return .failure(.serverFailed(code: errorBody.status ?? response.statusCode,
+                                              message: errorBody.message ?? "no message"))
             }
             // 파싱 실패하면 기존 에러
             return .failure(.serverError(response.statusCode))

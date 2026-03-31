@@ -8,10 +8,9 @@
 import Foundation
 import SwiftUI
 
-
-
 struct TermsView: View {
 
+    @StateObject var viewModel: TermsViewModel
     private let coordinator: LoginCoordinator
 
     @State private var allChecked = false
@@ -29,7 +28,8 @@ struct TermsView: View {
     /// 마케팅 수신동의약관  띄우기(웹뷰)
     @State private var showMarketingTemrs: Bool = false
 
-    init(coordinator: LoginCoordinator) {
+    init(viewModel: TermsViewModel, coordinator: LoginCoordinator) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
 
@@ -71,11 +71,13 @@ struct TermsView: View {
             Spacer()
 
             MainButton(title: "다음", size: .large, colorType: .fill, isDisabled: !(ageAgreed && termsAgreed && privacyAgreed)) {
-                coordinator.navigateToProfileSetup()
+                viewModel.agreeTerms(marketingAgreed: marketingAgreed)
             }
             .padding()
         }
         .navigationTitle("이용약관")
+        .loading(viewModel.isLoading)
+        .toast(message: $viewModel.toastMessage)
         .fullScreenCover(isPresented: $showTermsOfService) {
             coordinator.makeWebView(url: AppConstants.URLs.termsOfService) {
                 showTermsOfService = false
@@ -95,8 +97,12 @@ struct TermsView: View {
                 showMarketingTemrs = false
             }
         }
+        .onChange(of: viewModel.isSuccess) { isSuccess in
+            if isSuccess {
+                coordinator.path.append(LoginDestination.profileSetup)
+            }
+        }
     }
-
 }
 
 
@@ -104,5 +110,5 @@ struct TermsView: View {
 #Preview {
     let mockDIContainer = MockLoginDIContainer()
     let coordinator = LoginCoordinator(loginDIContainer: mockDIContainer)
-    return TermsView(coordinator: coordinator)
+    return mockDIContainer.makeTermsView(coordinator: coordinator)
 }

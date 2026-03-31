@@ -63,9 +63,21 @@ final class LoginDIContainer: LoginDIContainerProtocol {
     }
 
     // MARK: - Terms
+    private func makeTermsRepository() -> TermsRepositoryProtocol {
+        return TermsRepository(authApiClient: authApiClient)
+    }
+    private func makeTermsUseCase() -> TermsUseCaseProtocol {
+        let repo = makeTermsRepository()
+        return TermsUseCase(repository: repo)
+    }
+    private func makeTermsViewModel() -> TermsViewModel {
+        let usecase = makeTermsUseCase()
+        return TermsViewModel(useCase: usecase)
+    }
 
     func makeTermsView(coordinator: LoginCoordinator) -> TermsView {
-        return TermsView(coordinator: coordinator)
+        let vm = makeTermsViewModel()
+        return TermsView(viewModel: vm, coordinator: coordinator)
     }
 
     // MARK: - ProfileSetup
@@ -143,7 +155,9 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
     }
 
     func makeTermsView(coordinator: LoginCoordinator) -> TermsView {
-        return TermsView(coordinator: coordinator)
+        let usecase = MockTermsUseCase()
+        let vm = TermsViewModel(useCase: usecase)
+        return TermsView(viewModel: vm, coordinator: coordinator)
     }
 
     func makeProfileSetupView(coordinator: LoginCoordinator) -> ProfileSetupView {
@@ -175,6 +189,11 @@ struct MockLoginUseCase: LoginUseCaseProtocol {
         throw NetworkError.dataNil
     }
     func loginWithGoogle() async throws -> LoginEntity {
+        throw NetworkError.dataNil
+    }
+}
+struct MockTermsUseCase: TermsUseCaseProtocol {
+    func agreeTerms(marketingConsentAgreed: Bool) async throws {
         throw NetworkError.dataNil
     }
 }

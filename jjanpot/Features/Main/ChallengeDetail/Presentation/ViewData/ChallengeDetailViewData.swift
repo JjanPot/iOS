@@ -51,7 +51,7 @@ struct ChallengeDetailViewDataMapper {
             memberCount: "\(entity.team.maxMemberCount)명",
             description: entity.description
         )
-    }
+    }     
     
     private func categories(_ categories: [CategoryEntity]) -> String {
         categories.map{$0.name}.joined(separator: ", ")
