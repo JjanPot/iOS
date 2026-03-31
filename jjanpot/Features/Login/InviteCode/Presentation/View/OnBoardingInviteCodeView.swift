@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-// 초대코드 입력 화면
+// 초대코드 입력 화면 (온보딩)
 
-struct InviteCodeView: View {
+struct OnBoardingInviteCodeView: View {
     
     @StateObject var viewModel: InviteCodeViewModel
     @State var code: String = ""
@@ -63,5 +63,5 @@ struct InviteCodeView: View {
 }
 
 #Preview {
-    InviteCodeView(viewModel: InviteCodeViewModel(), hasSkip: true)
+    OnBoardingInviteCodeView(viewModel: InviteCodeViewModel(), hasSkip: true)
 }

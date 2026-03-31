@@ -22,7 +22,7 @@ protocol LoginDIContainerProtocol {
     func makeProfileSetupView(coordinator: LoginCoordinator) -> ProfileSetupView
     
     // 초대 코드 화면
-    func makeInviteCodeView(hasSkip: Bool) -> InviteCodeView
+    func makeInviteCodeView(hasSkip: Bool) -> OnBoardingInviteCodeView
 
     // 회원가입 완료 화면
     func makeSignUpCompleteView(onNavigateToMain: @escaping () -> Void) -> SignUpCompleteView
@@ -103,9 +103,9 @@ final class LoginDIContainer: LoginDIContainerProtocol {
         return InviteCodeViewModel()
     }
 
-    func makeInviteCodeView(hasSkip: Bool = true) -> InviteCodeView {
+    func makeInviteCodeView(hasSkip: Bool = true) -> OnBoardingInviteCodeView {
         let vm = makeInviteCodeViewModel()
-        return InviteCodeView(viewModel: vm, hasSkip: hasSkip)
+        return OnBoardingInviteCodeView(viewModel: vm, hasSkip: hasSkip)
     }
 
     // MARK: - Web view
@@ -172,8 +172,8 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
         return AnyView(EmptyView())
     }
     
-    func makeInviteCodeView(hasSkip: Bool = true) -> InviteCodeView {
-        return InviteCodeView(viewModel: InviteCodeViewModel(), hasSkip: hasSkip)
+    func makeInviteCodeView(hasSkip: Bool = true) -> OnBoardingInviteCodeView {
+        return OnBoardingInviteCodeView(viewModel: InviteCodeViewModel(), hasSkip: hasSkip)
     }
 }
 
