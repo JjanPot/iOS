@@ -54,7 +54,7 @@ struct ChallengeInProgressView : View {
                     onAction(.detail(challengeId: viewData.challengeId))
                 }
                 CapsuleButton(title: "인증하기", colorType: .fill, isDisabled: false){
-                    onAction(.submitSavingsProof)
+                    onAction(.submitSavingsProof(challengeId: viewData.challengeId))
                 }
             }
         }

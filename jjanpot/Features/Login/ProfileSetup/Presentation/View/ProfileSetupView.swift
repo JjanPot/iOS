@@ -18,7 +18,7 @@ struct ProfileSetupView: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var isShowingPhotoPicker = false
     
-    // 권한 재요청
+    // 앨범 접근 권한 재요청
     @State private var showPermissionAlert = false
 
     init(viewModel: ProfileSetupViewModel, coordinator: LoginCoordinator) {

@@ -51,6 +51,9 @@ struct MainNavigationStack: View {
 
         case let .challengeDetail(id):
             container.makeChallengeDetailView(challengeId: id)
+            
+        case let .challengePost(id):
+            container.makeChallengePostView(challengeId: id)
         }
     }
 }

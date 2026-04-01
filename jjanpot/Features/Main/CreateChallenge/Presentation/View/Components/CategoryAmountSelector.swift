@@ -17,7 +17,7 @@ struct CategoryAmountSelector: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             
-            Text("\(category.displayTitle) | 한 번 구매할 때 얼마나 쓰시나요?\n(이 금액을 기준으로 절약액을 계산해요.)")
+            Text("\(category.displayTitle) | 1회 기준 금액을 얼마로 정하시겠어요?\n(이 금액을 기준으로 절약액을 계산해요.)")
                 .font(.pretendard(.medium, size: 12))
                 .foregroundStyle(Color.black500)
             

@@ -11,6 +11,7 @@ import Combine
 enum MainDestination: Route {
     case createChallenge
     case challengeDetail(id: Int)
+    case challengePost(id: Int)
 
     var id: String {
         switch self {
@@ -18,6 +19,9 @@ enum MainDestination: Route {
             return "createChallenge"
         case .challengeDetail:
             return "challengeDetail"
+            
+        case .challengePost:
+            return "challengePost"
         }
     }
 
@@ -27,6 +31,8 @@ enum MainDestination: Route {
             return "main_create_challenge"
         case .challengeDetail:
             return "challenge_detail"
+        case .challengePost:
+            return "challengePost"
         }
     }
 
@@ -35,6 +41,8 @@ enum MainDestination: Route {
         case .createChallenge:
             return true
         case .challengeDetail:
+            return false
+        case .challengePost:
             return false
         }
     }

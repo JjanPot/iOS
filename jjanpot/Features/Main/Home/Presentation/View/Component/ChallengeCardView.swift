@@ -43,7 +43,7 @@ enum ChallengeCardAction {
     // 초대코드 복사
     case copyInviteCode(inviteCode: String?)
     // 인증하기
-    case submitSavingsProof
+    case submitSavingsProof(challengeId: Int)
 }
 
 #Preview {

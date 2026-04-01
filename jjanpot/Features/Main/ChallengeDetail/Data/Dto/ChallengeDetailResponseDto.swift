@@ -33,6 +33,7 @@ struct ChallengeDetailResponseDto: Codable {
         }
     }
     
+    // 선택된 절약 카테고리 , 기본금액
     struct Category: Codable {
         let categoryId: Int
         let name: String

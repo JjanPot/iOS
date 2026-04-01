@@ -80,10 +80,10 @@ struct ChallengeDashboardView: View {
             
             HStack (alignment: .bottom, spacing: .zero){
                 Text("261,000원 ")
-                    .font(.pretendard(.semiBold, size: 26))
+                    .font(.pretendard(.semiBold, size: 30))
                     .foregroundStyle(.black)
                 Text("/ 300,000원")
-                    .font(.pretendard(.medium, size: 15))
+                    .font(.pretendard(.medium, size: 16))
                     .foregroundStyle(.black500)
             }
             

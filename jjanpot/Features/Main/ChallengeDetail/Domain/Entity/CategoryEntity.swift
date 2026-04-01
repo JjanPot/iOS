@@ -12,6 +12,7 @@ struct CategoryEntity {
     let categoryId: Int
     let name: String
     let iconURL: String?
+    // 기준금액
     let amount: Int
 }
 

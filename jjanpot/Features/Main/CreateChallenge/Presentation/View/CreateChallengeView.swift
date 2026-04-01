@@ -175,7 +175,7 @@ struct CreateChallengeView: View {
                     .focused($focusedField, equals: .challengeDescription)
                     .onChange(of: description) { newValue in
                         if newValue.count > 80 {
-                            challengeName = String(newValue.prefix(80))
+                            description = String(newValue.prefix(80))
                         }
                     }
                     .padding(.vertical, 10)

@@ -93,8 +93,8 @@ struct HomeView: View {
         case let .copyInviteCode(code):
             PopupManager.shared.showInviteCodeCopy(code: code)
 
-        case .submitSavingsProof:
-            print(">>>>> submitSavingsProof")
+        case let .submitSavingsProof(id):
+            coordinator.push(.challengePost(id: id))
         }
     }
 }
