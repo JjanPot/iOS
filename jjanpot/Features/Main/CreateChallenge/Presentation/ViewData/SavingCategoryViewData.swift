@@ -38,26 +38,26 @@ extension SavingCategoryViewData {
     init(from entity: SavingCategoryEntity) {
         
         let krName: String
-        switch entity.name {
-        case "FOOD_DELIVERY": krName = "외식/배달"
-        case "CAFE_DESSERT": krName =  "카페/디저트"
-        case "TRANSPORT": krName =  "교통"
-        case "FASHION_BEAUTY": krName =  "패션/뷰티"
-        case "HOBBY_CULTURE": krName =  "취미/문화"
-        case "ALCOHOL_ENTERTAINMENT": krName =  "술/유흥"
-        case "OTHER": krName = "기타"
+        switch entity.categoryId {
+        case 1: krName = "외식/배달"
+        case 2: krName =  "카페/디저트"
+        case 3: krName =  "교통"
+        case 4: krName =  "패션/뷰티"
+        case 5: krName =  "취미/문화"
+        case 6: krName =  "술/유흥"
+        case 7: krName = "기타"
         default: krName = ""
         }
         
         let imageName: String
-        switch entity.name {
-        case "FOOD_DELIVERY": imageName = "icon_category_food"
-        case "CAFE_DESSERT": imageName = "icon_category_cafe"
-        case "TRANSPORT": imageName = "icon_category_car"
-        case "FASHION_BEAUTY": imageName = "icon_category_fashion"
-        case "HOBBY_CULTURE": imageName = "icon_category_hobby"
-        case "ALCOHOL_ENTERTAINMENT": imageName = "icon_category_bear"
-        case "OTHER": imageName = "icon_category_etc"
+        switch entity.categoryId {
+        case 1: imageName = "icon_category_food"
+        case 2: imageName = "icon_category_cafe"
+        case 3: imageName = "icon_category_car"
+        case 4: imageName = "icon_category_fashion"
+        case 5: imageName = "icon_category_hobby"
+        case 6: imageName = "icon_category_bear"
+        case 7: imageName = "icon_category_etc"
         default: imageName = ""
         }
         

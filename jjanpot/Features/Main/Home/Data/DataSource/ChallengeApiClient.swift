@@ -7,6 +7,7 @@
 
 import Foundation
 import Alamofire
+import UIKit
 
 enum ChallengeRouter {
     // 챌린지 조회 (홈화면)
@@ -43,11 +44,11 @@ extension ChallengeRouter: Router {
                 .getDetail,
                 .getFeed
             : .get
-            
+
         case .createChallenge,
                 .submitInviteCode
             : .post
-        
+
         }
     }
     
@@ -59,16 +60,16 @@ extension ChallengeRouter: Router {
             return "/api/challenges/v1/\(id)/stats"
         case .getCategories:
             return "/api/categories/v1"
-            
+
         case .createChallenge:
             return "/api/challenges/v1"
-            
+
         case let .getDetail(id):
             return "/api/challenges/v1/\(id)/detail"
-            
+
         case .submitInviteCode:
             return "/api/users/v1/onboarding/invite-code"
-            
+
         case let .getFeed(id):
             return "/api/certifications/v1/challenge/\(id)"
         }
@@ -87,7 +88,6 @@ extension ChallengeRouter: Router {
                 "Accept" : "application/json",
                 "Content-Type" : "application/json",
             ]
-        
         }
     }
     
@@ -100,8 +100,8 @@ extension ChallengeRouter: Router {
                 .getFeed,
                 .createChallenge
             : return nil
-            
-            
+
+
         case let .submitInviteCode(code):
             let params: Parameters = [
                 "inviteCode" : code,
@@ -147,12 +147,15 @@ protocol ChallengeApiClientProtocol {
 
     /// 챌린지 생성
     func createChallenge(dto: CreateChallengeRequestDto) async -> Result<CreateChallengeResponseDto, NetworkError>
-    
+
     /// 챌린지 상세
     func fetchDetail(challengeId: Int) async -> Result<ChallengeDetailResponseDto, NetworkError>
-    
+
     /// 초대 코드 입력
     func submitInviteCode(code: String) async -> Result<SubmitInviteCodeResponseDto, NetworkError>
+
+    /// 챌린지 인증 (이미지 포함)
+    func postChallenge(dto: ChallengePostRequestDto, image: UIImage?) async -> Result<EmptyResponseDto, NetworkError>
 
 }
 
@@ -172,14 +175,20 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     func createChallenge(dto: CreateChallengeRequestDto) async -> Result<CreateChallengeResponseDto, NetworkError> {
         await request(.createChallenge(dto: dto))
     }
-    
-    
+
+
     func fetchDetail(challengeId: Int) async -> Result<ChallengeDetailResponseDto, NetworkError>{
         await request(.getDetail(id: challengeId))
     }
-    
+
     /// 초대 코드 입력
     func submitInviteCode(code: String) async -> Result<SubmitInviteCodeResponseDto, NetworkError>{
         await request(.submitInviteCode(inviteCode: code))
     }
+
+    /// 챌린지 인증
+    func postChallenge(dto: ChallengePostRequestDto, image: UIImage?) async -> Result<EmptyResponseDto, NetworkError> {
+        return .failure(.cancelled)
+    }
+        
 }

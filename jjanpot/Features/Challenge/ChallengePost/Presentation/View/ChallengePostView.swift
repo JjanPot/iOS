@@ -17,33 +17,30 @@ enum ChallengePostTab {
 
 struct ChallengePostView: View {
     @StateObject var viewModel: ChallengePostViewModel
-//    private let coordinator: MainCoordinator
+    private let coordinator: MainCoordinator
     
-    init(viewModel: ChallengePostViewModel) {
+    init(viewModel: ChallengePostViewModel, coordinator: MainCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-//        self.coordinator = coordinator
+        self.coordinator = coordinator
     }
     
+    @State private var selectedTab: ChallengePostTab = .expense
     
-    @State var selectedTab: ChallengePostTab = .expense
-    @State var selectedCategory: CategorySelectorViewData? = nil
-    @State var price: String = ""
-    @State var description: String = ""
+    @State private var price: String = ""
+    @State private var description: String = ""
     
     @FocusState private var isPriceFocused: Bool
     @FocusState private var isMemoFocused: Bool
     
     @State private var isShowingPicker = false
-    @State var date: Date = Date()
+    @State private var selectedDate: Date = Date()
     
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var isShowingPhotoPicker = false
-    @State var selectedImage: Image? = nil
+    @State private var selectedImage: Image? = nil
     // 앨범 접근 권한 재요청
     @State private var showPermissionAlert = false
-    
-    
-    
+        
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -51,13 +48,8 @@ struct ChallengePostView: View {
                 
                 // 카테고리
                 CategorySelector(
-                    selected: $selectedCategory,
-                    categories: [
-                        .init(title: "카페/디저트", icon: "icon_category_cafe"),
-                        .init(title: "교통", icon: "icon_category_car"),
-                        .init(title: "패션/뷰티", icon: "icon_category_car"),
-                    ])
-                
+                    selected: $viewModel.selectedCategory,
+                    categories: viewModel.categoryViewData)
                 
                 // 금액
                 priceTextField
@@ -71,20 +63,41 @@ struct ChallengePostView: View {
                 // 사진 업로드
                 images
                 
-                MainButton(title: "등록하기", isDisabled: price.isEmpty || selectedCategory == nil) {
-                    print(">>>>> 등록하기")
+                MainButton(title: "등록하기", isDisabled: (selectedTab == .expense) ? (price.isEmpty || viewModel.selectedCategory == nil) : (viewModel.selectedCategory == nil)) {
+                    viewModel.submit(
+                        expenseType: selectedTab,
+                        category: viewModel.selectedCategory,
+                        price: price,
+                        description: description,
+                        date: selectedDate,
+                        selectedImage: selectedImage)
                 }
-                
             }
             .padding(.horizontal, 20)
         }
+        .task {
+            viewModel.getDetail()
+        }
         .navigationTitle("인증하기")
         .scrollDismissesKeyboard(.interactively)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("완료") {
+                    // 모든 포커스 해제
+                    isPriceFocused = false
+                    isMemoFocused = false
+                }
+                .foregroundStyle(.orange500)
+            }
+        }
+        .loading(viewModel.isLoading)
+        .toast(message: $viewModel.toastMessage)
         .sheet(isPresented: $isShowingPicker) {
             VStack(spacing: 10) {
                         DatePicker(
                             "날짜를 선택하세요",
-                            selection: $date,
+                            selection: $selectedDate,
                             displayedComponents: [.date, .hourAndMinute]
                         )
                         .datePickerStyle(.graphical) // 달력 형태로 표시
@@ -101,7 +114,6 @@ struct ChallengePostView: View {
             Task {
                 if let data = try? await newItem?.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data) {
-                    //viewModel.profileImage = Image(uiImage: uiImage)
                     selectedImage = Image(uiImage: uiImage)
                 }
             }
@@ -116,6 +128,11 @@ struct ChallengePostView: View {
         } message: {
             Text("앨범의 사진을 불러오려면 설정에서 사진 접근 권한을 허용해주세요.")
         }
+        .onChange(of: viewModel.isSuccess) { isSuccess in
+            if isSuccess {
+                coordinator.pop()
+            }
+        }
     }
     
     // 금액
@@ -123,19 +140,29 @@ struct ChallengePostView: View {
         VStack(alignment: .leading, spacing: 10) {
             PostTitleView(title: "금액", isNeccessary: true)
             HStack {
-                TextField("", text: $price, prompt:
-                            Text("오늘 쓴 금액을 기록해 주세요")
+                if selectedTab == .expense {
+                    TextField("", text: $price, prompt:
+                                Text("오늘 쓴 금액을 기록해 주세요")
+                        .font(.pretendard(.regular, size: 14))
+                        .foregroundColor(Color.black200)
+                    )
+                    .disabled(selectedTab == .noExpense)
+                    .keyboardType(.numberPad)
+                    .focused($isPriceFocused)
                     .font(.pretendard(.regular, size: 14))
-                    .foregroundColor(Color.black200)
-                )
-                .keyboardType(.numberPad)
-                .focused($isPriceFocused)
-                .font(.pretendard(.regular, size: 14))
-                .foregroundColor(Color.black700)
-                .onSubmit {
-                    isPriceFocused = false
+                    .foregroundColor(Color.black700)
+                    .onSubmit {
+                        isPriceFocused = false
+                    }
+                } else {
+                    if let amount = viewModel.selectedCategory?.amount {
+                        Text("\(amount)")
+                            .font(.pretendard(.regular, size: 14))
+                            .foregroundColor(Color.black700)
+                            .padding(.vertical, 2)
+                    }
+                    Spacer()
                 }
-
 
                 Text("원")
                     .font(.pretendard(.regular, size: 14))
@@ -194,7 +221,7 @@ struct ChallengePostView: View {
                 isShowingPicker = true
             } label: {
                 HStack(spacing: 10) {
-                    Text(date.toString(format: "M월 d일 hh:mm", locale: .kr))
+                    Text(selectedDate.toString(format: "M월 d일 hh:mm", locale: .kr))
                         .font(.pretendard(.semiBold, size: 14))
                         .foregroundStyle(Color.black500)
                     
@@ -261,5 +288,5 @@ struct ChallengePostView: View {
 
 #Preview {
     let di = MockMainDIContainer()
-    di.makeChallengePostView(challengeId: 1)
+    di.makeChallengePostView(challengeId: 1, coordinator: di.makeMainCoordinator())
 }

@@ -9,9 +9,12 @@ import SwiftUI
 
 
 struct CategorySelectorViewData: Identifiable {
-    let id: UUID = UUID()
-    let title: String
+    //categoryId
+    let id: Int
+    let name: String
     let icon: String
+    // 기준금액
+    let amount: Int
 }
 struct CategorySelector: View {
     
@@ -34,14 +37,14 @@ struct CategorySelector: View {
                             .resizable()
                             .frame(width: 28, height: 28)
                         
-                        Text(category.title)
+                        Text(category.name)
                             .font(.pretendard(.medium, size: 14))
                             .foregroundStyle(.black900)
                         
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 88)
-                    .roundedBorder(color: (selected?.title == category.title) ? .orange500 : .black100, radius: 12)
+                    .roundedBorder(color: (selected?.id == category.id) ? .orange500 : .black100, radius: 12)
                 }
             }
         }
@@ -53,8 +56,9 @@ struct CategorySelector: View {
     CategorySelector(
         selected: .constant(nil),
         categories: [
-            .init(title: "카페/디저트", icon: "icon_category_cafe"),
-            .init(title: "교통", icon: "icon_category_car"),
-            .init(title: "패션/뷰티", icon: "icon_category_car"),
+            .init(id: 0, name: "카페/디저트", icon: "icon_category_cafe", amount: 10000),
+            .init(id: 1, name: "교통", icon: "icon_category_cafe", amount: 15000),
+            .init(id: 2, name: "패션/뷰티", icon: "icon_category_car", amount: 20000),
         ])
 }
+

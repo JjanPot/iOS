@@ -47,7 +47,7 @@ protocol MainDIContainerProtocol {
     func makeChallengeDashboardView(coordinator: MainCoordinator) -> ChallengeDashboardView
     
     /// 지출,무지출 인증
-    func makeChallengePostView(challengeId: Int) -> ChallengePostView
+    func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView 
     
 }
 
@@ -177,9 +177,9 @@ final class MainDIContainer: MainDIContainerProtocol {
         return ChallengePostViewModel(challengeId: challengeId, useCase: usecase)
     }
     
-    func makeChallengePostView(challengeId: Int) -> ChallengePostView {
+    func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView {
         let vm = makeChallengePostViewModel(challengeId: challengeId)
-        return ChallengePostView(viewModel: vm)
+        return ChallengePostView(viewModel: vm, coordinator: coordinator)
     }
 }
 
@@ -221,10 +221,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
     
     
-    func makeChallengePostView(challengeId: Int) -> ChallengePostView {
+    func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView {
         let usecase = MockChallengePostUseCase()
         let viewModel = ChallengePostViewModel(challengeId: challengeId, useCase: usecase)
-        return ChallengePostView(viewModel: viewModel)
+        return ChallengePostView(viewModel: viewModel, coordinator: coordinator)
     }
     
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
@@ -256,7 +256,15 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         }
     }
     struct MockChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {}
-    struct MockChallengePostUseCase: ChallengePostUseCaseProtocol {}
+    struct MockChallengePostUseCase: ChallengePostUseCaseProtocol {
+        func postChallenge(entity: ChallengePostRequestEntity, image: UIImage?) async throws {
+            throw NetworkError.dataNil
+        }
+        
+        func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
+            throw NetworkError.dataNil
+        }
+    }
 }
 
 
