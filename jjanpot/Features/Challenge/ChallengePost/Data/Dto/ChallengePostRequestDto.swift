@@ -32,7 +32,7 @@ struct ChallengePostRequestDto: Encodable {
 
 extension ChallengePostRequestDto {
     init(from entity: ChallengePostRequestEntity){
-        self.challengeId = entity.categoryId
+        self.challengeId = entity.challengeId
         self.spendType = entity.spendType
         self.categoryId = entity.categoryId
         self.spentAmount = entity.spentAmount

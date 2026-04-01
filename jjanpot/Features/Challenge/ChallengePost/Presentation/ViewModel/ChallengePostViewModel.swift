@@ -41,7 +41,7 @@ final class ChallengePostViewModel: ObservableObject {
         selectedImage: Image?
     ){
         // 필수값 체크
-        guard let category, price.isNotEmpty else {
+        guard let category else {
             toastMessage = "필수 항목을 입력해주세요"
             return
         }
@@ -60,14 +60,16 @@ final class ChallengePostViewModel: ObservableObject {
                 let spendType = expenseType == .expense ? "SPEND" : "NO_SPEND"
 
                 // 가격을 Int로 변환
-                let spentAmount: Int? = nil
+                var spentAmount: Int? = nil
                 if expenseType == .expense {
-                    guard let spentAmount = Int(price) else {
+                    guard let priceInt = Int(price) else {
                         toastMessage = "올바른 금액을 입력해주세요"
                         isLoading = false
                         return
                     }
+                    spentAmount = priceInt
                 }
+                
 
                 //  생성
                 let entity = ChallengePostRequestEntity(

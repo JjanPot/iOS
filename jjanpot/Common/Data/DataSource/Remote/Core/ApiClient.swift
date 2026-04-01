@@ -8,6 +8,7 @@
 
 import Foundation
 import Alamofire
+import UIKit
 
 public class ApiClient<R: Router> {
     
@@ -101,6 +102,103 @@ public class ApiClient<R: Router> {
                                               message: errorBody.message ?? "no message"))
             }
             // 파싱 실패하면 기존 에러
+            return .failure(.serverError(response.statusCode))
+        }
+    }
+
+    /// Multipart 업로드 (JSON + 이미지)
+    public func upload<T: Decodable, E: Encodable>(
+        _ router: R,
+        body: E,
+        image: UIImage?
+    ) async -> Result<T, NetworkError> {
+        let url = router.baseURL.appendingPathComponent(router.path)
+
+        let uploadEncoder = JSONEncoder()
+        guard let jsonData = try? uploadEncoder.encode(body) else {
+            return .failure(.failToDecode(""))
+        }
+        
+//        if let object = try? JSONSerialization.jsonObject(with: jsonData),
+//           let prettyData = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
+//           let prettyString = String(data: prettyData, encoding: .utf8)
+//        {
+//            print(prettyString)
+//        } else {
+//            print("❌ JSON 변환 실패")
+//        }
+        
+        let result = await session.upload(
+            multipartFormData: { formData in
+                formData.append(jsonData, withName: "request", mimeType: "application/json")
+
+                if let image = image,
+                   let imageData = image.jpegData(compressionQuality: 0.8) {
+                    formData.append(imageData, withName: "image", fileName: "image.jpg", mimeType: "image/jpeg")
+                }
+            },
+            to: url,
+            headers: router.headers
+        )
+        .serializingData()
+        .response
+
+        // 에러 처리
+        if let error = result.error {
+            if let afError = error.asAFError {
+                switch afError {
+                case .sessionTaskFailed(let underlying as URLError) where underlying.code == .notConnectedToInternet:
+                    return .failure(.noInternet)
+                case .explicitlyCancelled:
+                    return .failure(.cancelled)
+                default:
+                    return .failure(.requestFailed(afError.localizedDescription))
+                }
+            }
+            return .failure(.requestFailed(error.localizedDescription))
+        }
+
+        guard let response = result.response else {
+            return .failure(.invalidResponse)
+        }
+
+        if 200..<300 ~= response.statusCode {
+            guard let data = result.data else {
+                if T.self == EmptyResponseDto.self {
+                    return .success(EmptyResponseDto() as! T)
+                }
+                return .failure(.dataNil)
+            }
+
+            if let wrapped = try? decoder.decode(ResponseBody<T>.self, from: data) {
+                if let payload = wrapped.data {
+                    return .success(payload)
+                } else if T.self == EmptyResponseDto.self {
+                    return .success(EmptyResponseDto() as! T)
+                } else {
+                    return .failure(.dataNil)
+                }
+            }
+
+            if let direct = try? decoder.decode(T.self, from: data) {
+                return .success(direct)
+            }
+
+            if let jsonString = String(data: data, encoding: .utf8) {
+                Logger.error("Decoding failed for: \(jsonString)")
+            }
+
+            return .failure(.failToDecode("Unable to decode as ResponseBody or direct T"))
+
+        } else {
+            guard let data = result.data else {
+                return .failure(.dataNil)
+            }
+
+            if let errorBody = try? decoder.decode(ErrorResponseBody.self, from: data) {
+                return .failure(.serverFailed(code: errorBody.status ?? response.statusCode,
+                                              message: errorBody.message ?? "no message"))
+            }
             return .failure(.serverError(response.statusCode))
         }
     }
