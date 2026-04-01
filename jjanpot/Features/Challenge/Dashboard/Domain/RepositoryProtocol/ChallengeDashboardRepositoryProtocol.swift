@@ -7,5 +7,6 @@
 
 
 protocol ChallengeDashboardRepositoryProtocol {
-    
+    func fetchChallengeOverview(challengeId: Int) async throws -> OverviewEntity
+    func fetchFeed(challengeId: Int) async throws -> FeedResponseEntity
 }

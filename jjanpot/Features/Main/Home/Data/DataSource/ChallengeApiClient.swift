@@ -29,8 +29,15 @@ enum ChallengeRouter {
     case getCategories
     
     /// 피드 조회
-    case getFeed(challengeId: Int)
+    case fetchFeed(challengeId: Int)
+
+    /// 챌린지 인증
+    case postChallenge
+    
+    /// 챌린지 오버뷰 가져오기
+    case fetchChallengeOverview(challengeId: Int)
 }
+
 extension ChallengeRouter: Router {
     var baseURL: URL {
         URL(string: NetworkConfig.baseURL)!
@@ -42,13 +49,14 @@ extension ChallengeRouter: Router {
                 .getChallengeSummary,
                 .getCategories,
                 .getDetail,
-                .getFeed
+                .fetchFeed,
+                .fetchChallengeOverview
             : .get
 
         case .createChallenge,
-                .submitInviteCode
+                .submitInviteCode,
+                .postChallenge
             : .post
-
         }
     }
     
@@ -70,24 +78,24 @@ extension ChallengeRouter: Router {
         case .submitInviteCode:
             return "/api/users/v1/onboarding/invite-code"
 
-        case let .getFeed(id):
+        case let .fetchFeed(id):
             return "/api/certifications/v1/challenge/\(id)"
+
+        case .postChallenge:
+            return "/api/certifications/v1"
+            
+        case let .fetchChallengeOverview(id):
+            return "/api/challenges/v1/\(id)/members"
         }
     }
-    
+
     var headers: HTTPHeaders? {
         switch self {
-        case .getChallenges,
-                .getChallengeSummary,
-                .getCategories,
-                .getDetail,
-                .getFeed,
-                .createChallenge,
-                .submitInviteCode
-            : return [
-                "Accept" : "application/json",
-                "Content-Type" : "application/json",
-            ]
+        case .postChallenge:
+            return ["Accept" : "application/json"]
+        default:
+            return [ "Accept" : "application/json",
+                "Content-Type" : "application/json"]
         }
     }
     
@@ -97,8 +105,10 @@ extension ChallengeRouter: Router {
              .getChallengeSummary,
              .getCategories,
                 .getDetail,
-                .getFeed,
-                .createChallenge
+                .fetchFeed,
+                .createChallenge,
+                .postChallenge,
+                .fetchChallengeOverview
             : return nil
 
 
@@ -112,16 +122,10 @@ extension ChallengeRouter: Router {
 
     var body: Encodable? {
         switch self {
-        case .getChallenges,
-             .getChallengeSummary,
-             .getCategories,
-             .getDetail,
-             .submitInviteCode,
-             .getFeed
-            :return nil
-
         case let .createChallenge(dto):
             return dto
+            
+        default: return nil
         }
     }
 
@@ -156,6 +160,13 @@ protocol ChallengeApiClientProtocol {
 
     /// 챌린지 인증 (이미지 포함)
     func postChallenge(dto: ChallengePostRequestDto, image: UIImage?) async -> Result<EmptyResponseDto, NetworkError>
+    
+    
+    /// 챌린지 오버뷰 가져오기
+    func fetchChallengeOverview(challengeId: Int) async -> Result<OverviewDto, NetworkError>
+    
+    /// 챌린지 피드 가져오기
+    func fetchFeed(challengeId: Int) async -> Result <FeedResponseDto,NetworkError>
 
 }
 
@@ -188,7 +199,16 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
 
     /// 챌린지 인증
     func postChallenge(dto: ChallengePostRequestDto, image: UIImage?) async -> Result<EmptyResponseDto, NetworkError> {
-        return .failure(.cancelled)
+        await upload(.postChallenge, body: dto, image: image)
     }
-        
+    
+    /// 챌린지 오버뷰 가져오기
+    func fetchChallengeOverview(challengeId: Int) async -> Result<OverviewDto, NetworkError> {
+        await request(.fetchChallengeOverview(challengeId: challengeId))
+    }
+    
+    /// 챌린지 피드 가져오기
+    func fetchFeed(challengeId: Int) async -> Result <FeedResponseDto,NetworkError> {
+        await request(.fetchFeed(challengeId: challengeId))
+    }
 }
