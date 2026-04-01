@@ -31,8 +31,8 @@ public final class APIRequestInterceptor: RequestInterceptor {
         var request = urlRequest
 
         // 기본 헤더 추가
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        //request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        //request.setValue("application/json", forHTTPHeaderField: "Accept")
 
         
         // 인증 토큰 있으면 추가

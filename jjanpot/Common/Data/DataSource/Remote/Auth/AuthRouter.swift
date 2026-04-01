@@ -87,7 +87,10 @@ extension AuthRouter: Router {
     }
     
     public var headers: HTTPHeaders? {
-        return nil
+        return [
+            "Accept" : "application/json",
+            "Content-Type" : "application/json",
+        ]
     }
 
     public var body: Encodable? {

@@ -75,7 +75,20 @@ extension ChallengeRouter: Router {
     }
     
     var headers: HTTPHeaders? {
-        nil
+        switch self {
+        case .getChallenges,
+                .getChallengeSummary,
+                .getCategories,
+                .getDetail,
+                .getFeed,
+                .createChallenge,
+                .submitInviteCode
+            : return [
+                "Accept" : "application/json",
+                "Content-Type" : "application/json",
+            ]
+        
+        }
     }
     
     var parameters: Parameters? {
@@ -84,20 +97,9 @@ extension ChallengeRouter: Router {
              .getChallengeSummary,
              .getCategories,
                 .getDetail,
-                .getFeed
+                .getFeed,
+                .createChallenge
             : return nil
-            
-        case .createChallenge:
-//            return [
-//                "title": dto.title,
-//                "description": dto.description,
-//                "teamType": dto.teamType,
-//                "maxMemberCount": dto.maxMemberCount,
-//                "startDate": dto.startDate,
-//                "categories": dto.categories.map { ["categoryId": $0.id, "amount": $0.amount] },
-//                "goalAmount": dto.goalAmount,
-//                "minPersonalGoalAmount": dto.minPersonalGoalAmount]
-            return nil
             
             
         case let .submitInviteCode(code):
