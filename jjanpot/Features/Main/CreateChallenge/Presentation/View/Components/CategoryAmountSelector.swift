@@ -72,7 +72,7 @@ struct AmountOptionButton: View {
                     id: 1,
                     name: "외식/배달",
                     nameUS: "FOOD_DELIVERY",
-                    iconURL: nil,
+                    iconName: "icon_category_food",
                     amountOptions: [10000, 15000, 20000, 30000]
                 ),
                 selectedAmount: $selectedAmount
