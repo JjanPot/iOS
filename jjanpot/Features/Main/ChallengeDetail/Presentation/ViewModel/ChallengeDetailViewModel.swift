@@ -52,15 +52,17 @@ final class ChallengeDetailViewModel: ObservableObject {
         Task {
             do {
                 try await useCase.cancel(challengeId: challengeId)
-                ToastManager.shared.show("챌린지 취소 완료")
+                ToastManager.shared.show("챌린지가 취소되었습니다.")
                 isShowCancelAlert = false
                 isCancelled = true
+                // 홈화면 리로드
+                NotificationCenter.default.post(name: .shouldRefreshMain, object: nil)
             } catch {
                 if let networkError = error as? NetworkError {
-                    Logger.error("챌린지 인증 실패: \(networkError.description)")
+                    Logger.error("챌린지 취소하기 실패: \(networkError.description)")
                     ToastManager.shared.show(networkError.description)
                 } else {
-                    Logger.error("챌린지 인증 실패: \(error.localizedDescription)")
+                    Logger.error("챌린지 취소하기 실패: \(error.localizedDescription)")
                     toastMessage = "취소하기 실패 \(error.localizedDescription)"
                 }
             }
