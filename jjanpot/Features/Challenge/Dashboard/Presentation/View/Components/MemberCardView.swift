@@ -44,7 +44,7 @@ struct MemberCardView: View {
                     .font(.pretendard(.semiBold, size: 14))
                     .foregroundStyle(.black500)
                 
-                Text("\(viewData.amount)")
+                Text("\(viewData.amount)원")
                     .font(.pretendard(.semiBold, size: 14))
                     .foregroundStyle(.black500)
             }

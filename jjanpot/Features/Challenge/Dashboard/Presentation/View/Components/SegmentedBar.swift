@@ -20,12 +20,16 @@ struct SegmentedBar: View {
                 }
             }
         }
-        .background(Color.black100)
+        .background(Color.white)
         .frame(height: height)
         .clipShape(Capsule())
         .overlay(
                 Capsule()
-                    .stroke(.white, lineWidth: 2)
+                    .stroke(.white, lineWidth: 4)
+            )
+        .overlay(
+                Capsule()
+                    .stroke(.orange400, lineWidth: 1)
             )
     }
 }
@@ -33,11 +37,14 @@ struct SegmentedBar: View {
 #Preview {
     SegmentedBar(
         segments: [
-            .init(ratio: 0.2, color: .red),
-            .init(ratio: 0.25, color: .orange),
-            .init(ratio: 0.15, color: .yellow),
-            .init(ratio: 0.3, color: .brown),
-            .init(ratio: 0.1, color: .black)
+            .init(ratio: 0.125, color: ColorPalette.chartColors[0]),
+            .init(ratio: 0.125, color: ColorPalette.chartColors[1]),
+            .init(ratio: 0.125, color: ColorPalette.chartColors[2]),
+            .init(ratio: 0.125, color: ColorPalette.chartColors[3]),
+            .init(ratio: 0.125, color: ColorPalette.chartColors[4]),
+            .init(ratio: 0.125, color: ColorPalette.chartColors[5]),
+            .init(ratio: 0.125, color: ColorPalette.chartColors[6]),
+            .init(ratio: 0.125, color: ColorPalette.chartColors[7]),
         ]
     )
     .padding(.horizontal, 20)

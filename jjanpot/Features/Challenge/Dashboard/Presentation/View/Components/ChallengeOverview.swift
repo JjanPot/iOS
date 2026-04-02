@@ -79,7 +79,7 @@ struct ChallengeOverview: View {
                 .background(Color.white)
                 .clipShape(Capsule())
         }
-        .padding(.vertical, 70)
+        .padding(.vertical, 50)
     }
 
 }

@@ -16,7 +16,6 @@ struct FeedHeaderView: View {
             Spacer()
                 
         }
-        .padding(.bottom, 12)
     }
 }
 
