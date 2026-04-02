@@ -16,7 +16,7 @@ public class ApiClient<R: Router> {
     private let imageQualityStart: CGFloat = 0.5  // 초기 품질 (0.0~1.0)
     private let imageQualityDecrement: CGFloat = 0.1  // 매번 감소할 품질 (0.0~1.0)
     private let imageQualityMinimum: CGFloat = 0.1  // 최소 품질 (이 이상으로 유지)
-    private let imageMaxSizeBytes: Int = 1 * 1024 * 1024  // 최대 크기: 5MB
+    private let imageMaxSizeBytes: Int = 5 * 1024 * 1024  // 최대 크기: 5MB
 
     private let session: Session
     private let decoder: JSONDecoder
