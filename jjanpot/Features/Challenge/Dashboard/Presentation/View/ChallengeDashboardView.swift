@@ -79,9 +79,7 @@ struct ChallengeDashboardView: View {
                         }
                         
                         Spacer()
-                            .frame(height: 100)
-                        
-                        
+
                     }
                     .background(Color.white)
                     
