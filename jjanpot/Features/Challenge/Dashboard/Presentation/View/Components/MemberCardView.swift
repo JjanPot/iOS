@@ -55,6 +55,7 @@ struct MemberCardView: View {
         Color.black100
             .overlay(alignment: .center) {
                 Image("person")
+                    .resizable()
                     .frame(width: 24, height: 24)
             }
             .frame(width: 44, height: 44)

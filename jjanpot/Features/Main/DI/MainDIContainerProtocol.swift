@@ -47,7 +47,9 @@ protocol MainDIContainerProtocol {
     func makeChallengeDashboardView(coordinator: MainCoordinator) -> ChallengeDashboardView
     
     /// 지출,무지출 인증
-    func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView 
+    func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView
+    
+    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView
     
 }
 
@@ -181,6 +183,26 @@ final class MainDIContainer: MainDIContainerProtocol {
         let vm = makeChallengePostViewModel(challengeId: challengeId)
         return ChallengePostView(viewModel: vm, coordinator: coordinator)
     }
+    
+    
+    // MARK: - 마이페이지 (마이팟)
+
+    private func makeMyPotRepository() -> MyPotRepositoryProtocol {
+        return MyPotRepository(challengeApiClient: challengeApiClient)
+    }
+    private func makeMyPotUseCase() -> MyPotUseCaseProtocol {
+        let repo = makeMyPotRepository()
+        return MyPotUseCase(repository: repo)
+    }
+    private func makeMyPotViewModel() -> MyPotViewModel {
+        let usecase = makeMyPotUseCase()
+        return MyPotViewModel(useCase: usecase)
+    }
+    
+    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView {
+        let vm = makeMyPotViewModel()
+        return MyPotView(viewModel: vm, coordinator: coordinator)
+    }
 }
 
 // MARK: - Mock
@@ -225,6 +247,11 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         let usecase = MockChallengePostUseCase()
         let viewModel = ChallengePostViewModel(challengeId: challengeId, useCase: usecase)
         return ChallengePostView(viewModel: viewModel, coordinator: coordinator)
+    }
+    
+    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView {
+        let vm = MyPotViewModel(useCase: MockMyPotUseCase())
+        return MyPotView(viewModel: vm, coordinator: coordinator)
     }
     
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
@@ -272,6 +299,9 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
             throw NetworkError.dataNil
         }
+    }
+    struct MockMyPotUseCase: MyPotUseCaseProtocol {
+        
     }
 }
 
