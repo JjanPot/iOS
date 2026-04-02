@@ -261,7 +261,7 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         }
     }
     struct MockChallengePostUseCase: ChallengePostUseCaseProtocol {
-        func postChallenge(entity: ChallengePostRequestEntity, image: UIImage?) async throws {
+        func postChallenge(entity: ChallengePostRequestEntity, imageData: Data?) async throws {
             throw NetworkError.dataNil
         }
         

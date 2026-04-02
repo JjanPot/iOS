@@ -39,17 +39,6 @@ public final class APINetworkLogger: EventMonitor {
         case .data(let data):
             Logger.network("   Type: Data (\(data.count) bytes)")
             
-            if let object = try? JSONSerialization.jsonObject(with: data),
-                let prettyData = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
-                let prettyString = String(data: prettyData, encoding: .utf8)
-            {
-                print(prettyString)
-                Logger.network("   Body: \(prettyString)")
-            } else {
-                print("❌ JSON 변환 실패")
-            }
-            
-            
         case .file(let fileURL, _):
             Logger.network("   Type: File (\(fileURL.lastPathComponent))")
         case .stream(let inputStream):
@@ -61,8 +50,7 @@ public final class APINetworkLogger: EventMonitor {
     // Event called when multipart form data is created
     public func request(_ request: UploadRequest, didCreateMultipartFormData multipartFormData: MultipartFormData) {
         #if DEBUG
-        Logger.network("📦 [MULTIPART] Content-Type: \(multipartFormData.contentType)")
-        Logger.network("   Content-Length: \(multipartFormData.contentLength) bytes")
+        Logger.network("📦 [MULTIPART] Content-Length: \(multipartFormData.contentLength) bytes")
         #endif
     }
 

@@ -37,7 +37,7 @@ struct ChallengePostView: View {
     
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var isShowingPhotoPicker = false
-    @State private var selectedImage: Image? = nil
+    @State private var selectedImage: (data: Data, image: Image)? = nil
     // 앨범 접근 권한 재요청
     @State private var showPermissionAlert = false
         
@@ -70,7 +70,7 @@ struct ChallengePostView: View {
                         price: price,
                         description: description,
                         date: selectedDate,
-                        selectedImage: selectedImage)
+                        selectedImageData: selectedImage?.data)
                 }
             }
             .padding(.horizontal, 20)
@@ -113,8 +113,8 @@ struct ChallengePostView: View {
         .onChange(of: selectedPhotoItem) { newItem in
             Task {
                 if let data = try? await newItem?.loadTransferable(type: Data.self),
-                   let uiImage = UIImage(data: data) {
-                    selectedImage = Image(uiImage: uiImage)
+                   let uiImage = UIImage(data: data){
+                    selectedImage = (data, Image(uiImage: uiImage))
                 }
             }
         }
@@ -248,16 +248,26 @@ struct ChallengePostView: View {
                             .frame(width: 23, height: 23)
                             .foregroundStyle(.black300)
                     }
-                
-                // 업로드된 사진
-                if let selectedImage {
-                    selectedImage
-                        .resizable()
-                        .frame(width: 84, height: 84)
-                        .rounded(radius: 12)
-                }
             }
             
+            // 업로드된 사진
+            if let contentImage = selectedImage?.image {
+                contentImage
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 84, height: 84)
+                    .rounded(radius: 12)
+                    .overlay(alignment: .topTrailing) {
+                        Button {
+                            // 사진 삭제
+                            self.selectedImage = nil
+                        } label: {
+                            Image(systemName: "x.circle.fill")
+                                .foregroundStyle(Color.orange500)
+                                .padding(4)
+                        }
+                    }
+            }
         }
     }
     

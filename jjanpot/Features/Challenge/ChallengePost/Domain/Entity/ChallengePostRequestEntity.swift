@@ -15,13 +15,4 @@ struct ChallengePostRequestEntity {
     let memo: String
     /// "2026-03-29T10:30:00"
     let spentAt: Date
-
-    enum CodingKeys: String, CodingKey {
-        case challengeId
-        case spendType
-        case categoryId
-        case spentAmount
-        case memo
-        case spentAt
-    }
 }

@@ -55,6 +55,8 @@ struct FeedCardView: View {
                         .foregroundStyle(.black600)
                 }
                 Spacer()
+                
+                // 이미지
                 if let image = viewData.imageUrl {
                     KFImage(URL(string: image))
                         .placeholder {

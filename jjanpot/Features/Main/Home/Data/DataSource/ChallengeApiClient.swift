@@ -83,7 +83,7 @@ extension ChallengeRouter: Router {
 
         case .postChallenge:
             return "/api/certifications/v1"
-            
+
         case let .fetchChallengeOverview(id):
             return "/api/challenges/v1/\(id)/members"
         }
@@ -92,7 +92,8 @@ extension ChallengeRouter: Router {
     var headers: HTTPHeaders? {
         switch self {
         case .postChallenge:
-            return ["Accept" : "application/json"]
+            // multipart upload는 Alamofire가 자동으로 Content-Type 설정
+            return [ "Accept" : "application/json"]
         default:
             return [ "Accept" : "application/json",
                 "Content-Type" : "application/json"]
@@ -124,7 +125,10 @@ extension ChallengeRouter: Router {
         switch self {
         case let .createChallenge(dto):
             return dto
-            
+        case .postChallenge:
+            // upload() 메서드에서 별도로 처리하므로 body는 nil
+            return nil
+
         default: return nil
         }
     }
@@ -159,7 +163,7 @@ protocol ChallengeApiClientProtocol {
     func submitInviteCode(code: String) async -> Result<SubmitInviteCodeResponseDto, NetworkError>
 
     /// 챌린지 인증 (이미지 포함)
-    func postChallenge(dto: ChallengePostRequestDto, image: UIImage?) async -> Result<EmptyResponseDto, NetworkError>
+    func postChallenge(dto: ChallengePostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError>
     
     
     /// 챌린지 오버뷰 가져오기
@@ -198,8 +202,8 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     }
 
     /// 챌린지 인증
-    func postChallenge(dto: ChallengePostRequestDto, image: UIImage?) async -> Result<EmptyResponseDto, NetworkError> {
-        await upload(.postChallenge, body: dto, image: image)
+    func postChallenge(dto: ChallengePostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError> {
+        await upload(.postChallenge, body: dto, imageData: imageData)
     }
     
     /// 챌린지 오버뷰 가져오기

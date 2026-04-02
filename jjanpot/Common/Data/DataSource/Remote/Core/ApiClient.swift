@@ -11,7 +11,13 @@ import Alamofire
 import UIKit
 
 public class ApiClient<R: Router> {
-    
+
+    // MARK: - 이미지 압축 설정
+    private let imageQualityStart: CGFloat = 0.5  // 초기 품질 (0.0~1.0)
+    private let imageQualityDecrement: CGFloat = 0.1  // 매번 감소할 품질 (0.0~1.0)
+    private let imageQualityMinimum: CGFloat = 0.1  // 최소 품질 (이 이상으로 유지)
+    private let imageMaxSizeBytes: Int = 1 * 1024 * 1024  // 최대 크기: 5MB
+
     private let session: Session
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
@@ -110,30 +116,28 @@ public class ApiClient<R: Router> {
     public func upload<T: Decodable, E: Encodable>(
         _ router: R,
         body: E,
-        image: UIImage?
+        imageData: Data?
     ) async -> Result<T, NetworkError> {
-        let url = router.baseURL.appendingPathComponent(router.path)
 
+        let url = router.baseURL.appendingPathComponent(router.path)
         let uploadEncoder = JSONEncoder()
-        guard let jsonData = try? uploadEncoder.encode(body) else {
-            return .failure(.failToDecode(""))
+
+        let jsonData: Data
+        do {
+            jsonData = try uploadEncoder.encode(body)
+        } catch {
+            Logger.error("JSON encoding failed: \(error.localizedDescription)")
+            return .failure(.failToDecode("JSON encoding failed: \(error.localizedDescription)"))
         }
-        
-//        if let object = try? JSONSerialization.jsonObject(with: jsonData),
-//           let prettyData = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
-//           let prettyString = String(data: prettyData, encoding: .utf8)
-//        {
-//            print(prettyString)
-//        } else {
-//            print("❌ JSON 변환 실패")
-//        }
-        
+
+        // 이미지 데이터 압축
+        let compressedImageData = imageData.flatMap { self.compressImage($0) }
+
         let result = await session.upload(
             multipartFormData: { formData in
                 formData.append(jsonData, withName: "request", mimeType: "application/json")
 
-                if let image = image,
-                   let imageData = image.jpegData(compressionQuality: 0.8) {
+                if let imageData = compressedImageData {
                     formData.append(imageData, withName: "image", fileName: "image.jpg", mimeType: "image/jpeg")
                 }
             },
@@ -201,6 +205,24 @@ public class ApiClient<R: Router> {
             }
             return .failure(.serverError(response.statusCode))
         }
+    }
+
+    // MARK: - Private Methods
+
+    private func compressImage(_ data: Data) -> Data? {
+        if let uiImage = UIImage(data: data) {
+            var quality: CGFloat = imageQualityStart
+            var compressedData = uiImage.jpegData(compressionQuality: quality) ?? data
+
+            // 최대 크기 초과시 품질 낮춰서 재압축
+            while compressedData.count > imageMaxSizeBytes && quality > imageQualityMinimum {
+                quality -= imageQualityDecrement
+                compressedData = uiImage.jpegData(compressionQuality: quality) ?? data
+            }
+
+            return compressedData.count <= imageMaxSizeBytes ? compressedData : nil
+        }
+        return data.count <= imageMaxSizeBytes ? data : nil
     }
 }
 

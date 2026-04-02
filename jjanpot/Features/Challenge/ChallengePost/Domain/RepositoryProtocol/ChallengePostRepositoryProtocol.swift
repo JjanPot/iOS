@@ -10,5 +10,5 @@ import UIKit
 
 protocol ChallengePostRepositoryProtocol {
     func fetchDetail(challengeId: Int) async throws -> ChallengeDetailEntity
-    func postChallenge(entity: ChallengePostRequestEntity, image: UIImage?) async throws 
+    func postChallenge(entity: ChallengePostRequestEntity, imageData: Data?) async throws
 }

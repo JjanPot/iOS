@@ -10,7 +10,7 @@ import UIKit
 
 protocol ChallengePostUseCaseProtocol {
     func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity
-    func postChallenge(entity: ChallengePostRequestEntity, image: UIImage?) async throws
+    func postChallenge(entity: ChallengePostRequestEntity, imageData: Data?) async throws
 }
 
 struct ChallengePostUseCase: ChallengePostUseCaseProtocol {
@@ -23,7 +23,7 @@ struct ChallengePostUseCase: ChallengePostUseCaseProtocol {
         try await repository.fetchDetail(challengeId: challengeId)
     }
 
-    func postChallenge(entity: ChallengePostRequestEntity, image: UIImage?) async throws {
-        try await repository.postChallenge(entity: entity, image: image)
+    func postChallenge(entity: ChallengePostRequestEntity, imageData: Data?) async throws {
+        try await repository.postChallenge(entity: entity, imageData: imageData)
     }
 }

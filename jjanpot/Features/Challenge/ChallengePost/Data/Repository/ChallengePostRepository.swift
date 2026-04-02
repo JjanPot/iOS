@@ -27,9 +27,9 @@ struct ChallengePostRepository: ChallengePostRepositoryProtocol {
         }
     }
 
-    func postChallenge(entity: ChallengePostRequestEntity, image: UIImage?) async throws {
+    func postChallenge(entity: ChallengePostRequestEntity, imageData: Data?) async throws {
         let dto = ChallengePostRequestDto(from: entity)
-        let result = await apiClient.postChallenge(dto: dto, image: image)
+        let result = await apiClient.postChallenge(dto: dto, imageData: imageData)
 
         switch result {
         case .success:

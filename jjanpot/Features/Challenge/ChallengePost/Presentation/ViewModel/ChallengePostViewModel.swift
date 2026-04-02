@@ -38,7 +38,7 @@ final class ChallengePostViewModel: ObservableObject {
         price: String,
         description: String,
         date: Date,
-        selectedImage: Image?
+        selectedImageData: Data?
     ){
         // 필수값 체크
         guard let category else {
@@ -51,10 +51,10 @@ final class ChallengePostViewModel: ObservableObject {
         Task {
             do {
                 // Image를 UIImage로 변환
-                let uiImage: UIImage? = selectedImage.flatMap { image in
-                    let renderer = ImageRenderer(content: image)
-                    return renderer.uiImage
-                }
+//                let uiImage: UIImage? = selectedImage.flatMap { image in
+//                    let renderer = ImageRenderer(content: image)
+//                    return renderer.uiImage
+//                }
 
                 // spendType 결정
                 let spendType = expenseType == .expense ? "SPEND" : "NO_SPEND"
@@ -69,7 +69,6 @@ final class ChallengePostViewModel: ObservableObject {
                     }
                     spentAmount = priceInt
                 }
-                
 
                 //  생성
                 let entity = ChallengePostRequestEntity(
@@ -82,7 +81,7 @@ final class ChallengePostViewModel: ObservableObject {
                 )
 
                 // API 호출
-                try await useCase.postChallenge(entity: entity, image: uiImage)
+                try await useCase.postChallenge(entity: entity, imageData: selectedImageData)
 
                 isLoading = false
                 ToastManager.shared.show("인증되었습니다")
