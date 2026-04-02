@@ -44,9 +44,14 @@ final class ProfileSetupViewModel: ObservableObject {
                 if let networkError = error as? NetworkError {
                     toastMessage = networkError.description
                 } else {
-                    toastMessage = "프로필 설정 실패"
+                    if let networkError = error as? NetworkError {
+                        toastMessage = networkError.description
+                    } else {
+                        toastMessage = "프로필 설정 실패"
+                    }
                 }
             }
+            isLoading = false
         }
         
     }

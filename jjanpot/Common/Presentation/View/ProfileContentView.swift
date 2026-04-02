@@ -11,6 +11,7 @@ struct ProfileContentView: View {
     @Binding var profileImage: Image?
     @Binding var nickname: String
     @Binding var nicknameErrorMessage: String?
+    let onSubmit: (() -> Void)?
     let onProfileImageTapped: (() -> Void)?
     
     var body: some View {
@@ -62,7 +63,10 @@ struct ProfileContentView: View {
                 isNeccessary: true,
                 textLimit: 10,
                 errorMessage: $nicknameErrorMessage
-            )
+            ) {
+                hideKeyboard()
+                onSubmit?()
+            }
         }
         
     }
@@ -73,6 +77,7 @@ struct ProfileContentView: View {
         profileImage: .constant(nil),
         nickname: .constant(""),
         nicknameErrorMessage: .constant(nil),
+        onSubmit: {},
         onProfileImageTapped: {}
     )
 }

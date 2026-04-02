@@ -38,7 +38,7 @@ struct LoginNavigationStack: View {
                 case .signUpComplete:
                     loginDIContainer.makeSignUpCompleteView(onNavigateToMain: onLoginSuccess)
                 case .inviteCode:
-                    loginDIContainer.makeInviteCodeView(hasSkip: true)
+                    loginDIContainer.makeInviteCodeView(coordinator: coordinator, hasSkip: true)
                 }
             }
         }

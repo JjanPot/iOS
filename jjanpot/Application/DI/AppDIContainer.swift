@@ -44,7 +44,7 @@ final class AppDIContainer {
     }()
     
     lazy var loginDIContainer: LoginDIContainerProtocol = {
-        LoginDIContainer(authApiClient: authApiClient)
+        LoginDIContainer(authApiClient: authApiClient, challengeApiClient: challengeApiClient)
     }()
 
     lazy var mainDIContainer: MainDIContainerProtocol = {

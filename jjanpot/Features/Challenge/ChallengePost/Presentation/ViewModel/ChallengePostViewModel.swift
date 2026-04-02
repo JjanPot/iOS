@@ -84,7 +84,7 @@ final class ChallengePostViewModel: ObservableObject {
             } catch {
                 Logger.error("챌린지 인증 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
-                    ToastManager.shared.show(networkError.description)
+                    toastMessage = networkError.description
                 } else {
                     toastMessage = "인증에 실패했습니다"
                 }

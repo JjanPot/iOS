@@ -1,5 +1,5 @@
 //
-//  InviteCodePopupViewModel.swift
+//  InviteCodeViewModel.swift
 //  jjanpot
 //
 //  Created by 임주희 on 3/27/26.
@@ -8,10 +8,11 @@
 import Foundation
 import Combine
 
-final class InviteCodePopupViewModel: ObservableObject {
+final class InviteCodeViewModel: ObservableObject {
     
     @Published var isLoading = false
     @Published var toastMessage: String?
+    @Published var inviteCodeErrorMessage: String? = nil
     @Published var isSuccess = false
     
     private let useCase: InviteCodePopupUseCaseProtocol
@@ -34,6 +35,10 @@ final class InviteCodePopupViewModel: ObservableObject {
                     Logger.error("초대코드 입력 실패 \(networkError.description)")
                 } else {
                     Logger.error("초대코드 입력 실패 \(error.localizedDescription)")
+                    if let networkError = error as? NetworkError {
+                        ToastManager.shared.show(networkError.description)
+                        //inviteCodeErrorMessage = networkError.description
+                    }
                 }
                 isLoading = false
             }

@@ -30,11 +30,11 @@ struct InviteCodePopupView: View {
         }
     }
     
-    @StateObject var viewModel: InviteCodePopupViewModel
+    @StateObject var viewModel: InviteCodeViewModel
     let inviteCode: String?
     let onCloseAction: () -> Void
     
-    init(viewModel: InviteCodePopupViewModel, inviteCode: String?, onCloseAction: @escaping () -> Void) {
+    init(viewModel: InviteCodeViewModel, inviteCode: String?, onCloseAction: @escaping () -> Void) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.inviteCode = inviteCode
         self.onCloseAction = onCloseAction

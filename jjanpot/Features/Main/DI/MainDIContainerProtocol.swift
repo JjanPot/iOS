@@ -93,9 +93,9 @@ final class MainDIContainer: MainDIContainerProtocol {
         let repo = makeInviteCodePopupRepository()
         return InviteCodePopupUseCase(repository: repo)
     }
-    private func makeInviteCodeViewModel() -> InviteCodePopupViewModel {
+    private func makeInviteCodeViewModel() -> InviteCodeViewModel {
         let usecase = makeInviteCodePopupUseCase()
-        return InviteCodePopupViewModel(useCase: usecase)
+        return InviteCodeViewModel(useCase: usecase)
     }
     
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
@@ -189,7 +189,7 @@ final class MainDIContainer: MainDIContainerProtocol {
 final class MockMainDIContainer: MainDIContainerProtocol {
     
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
-        let vm = InviteCodePopupViewModel(useCase: MockInviteCodePopupUseCase())
+        let vm = InviteCodeViewModel(useCase: MockInviteCodePopupUseCase())
         return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: { onCloseAction() })
     }
     
@@ -256,11 +256,6 @@ final class MockMainDIContainer: MainDIContainerProtocol {
             throw NetworkError.dataNil
         }
     }
-    struct MockInviteCodePopupUseCase: InviteCodePopupUseCaseProtocol {
-        func submitInviteCode(code: String) async throws {
-            throw NetworkError.dataNil
-        }
-    }
     struct MockChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
         func getChallengeDashboardData() async throws -> ChallengeDashboardEntity {
             throw NetworkError.dataNil
@@ -276,5 +271,9 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         }
     }
 }
-
+struct MockInviteCodePopupUseCase: InviteCodePopupUseCaseProtocol {
+    func submitInviteCode(code: String) async throws {
+        throw NetworkError.dataNil
+    }
+}
 

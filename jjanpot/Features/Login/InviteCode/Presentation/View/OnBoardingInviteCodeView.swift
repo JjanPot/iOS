@@ -10,13 +10,14 @@ import SwiftUI
 // 초대코드 입력 화면 (온보딩)
 
 struct OnBoardingInviteCodeView: View {
-    
     @StateObject var viewModel: InviteCodeViewModel
+    private let coordinator: LoginCoordinator
     @State var code: String = ""
     private let hasSkip: Bool
     
-    init(viewModel: InviteCodeViewModel,hasSkip: Bool) {
+    init(viewModel: InviteCodeViewModel, coordinator: LoginCoordinator, hasSkip: Bool) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.coordinator = coordinator
         self.hasSkip = hasSkip
     }
     
@@ -34,15 +35,18 @@ struct OnBoardingInviteCodeView: View {
                 isNeccessary: false,
                 textLimit: nil,
                 errorMessage: $viewModel.inviteCodeErrorMessage,
-                keyboardType: .numberPad
-            )
+                keyboardType: .default
+            ){
+                hideKeyboard()
+                viewModel.checkInviteCode(code)
+            }
             
             Spacer()
             
             VStack(spacing: 22) {
                 if hasSkip {
                     Button {
-                        print(">>>>> 스킵")
+                        coordinator.navigateToSignUpComplete()
                     } label: {
                         Text("초대 코드가 없어요!")
                             .font(.pretendard(.regular, size: 14))
@@ -52,16 +56,24 @@ struct OnBoardingInviteCodeView: View {
                 }
                 
                 MainButton(title: "다음") {
-                    print(">>>>> 다음")
+                    hideKeyboard()
+                    viewModel.checkInviteCode(code)
                 }
-                
             }
             
-        }
+        }//Vstack
         .padding()
+        .loading(viewModel.isLoading)
+        .onChange(of: viewModel.isSuccess) { isSuccess in
+            if isSuccess {
+                coordinator.navigateToSignUpComplete()
+            }
+        }
     }
 }
 
 #Preview {
-    OnBoardingInviteCodeView(viewModel: InviteCodeViewModel(), hasSkip: true)
+    let di = MockLoginDIContainer()
+    di.makeInviteCodeView(coordinator: di.makeLoginCoordinator(), hasSkip: true)
+    
 }

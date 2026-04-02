@@ -22,7 +22,7 @@ protocol LoginDIContainerProtocol {
     func makeProfileSetupView(coordinator: LoginCoordinator) -> ProfileSetupView
     
     // 초대 코드 화면
-    func makeInviteCodeView(hasSkip: Bool) -> OnBoardingInviteCodeView
+    func makeInviteCodeView(coordinator: LoginCoordinator, hasSkip: Bool) -> OnBoardingInviteCodeView
 
     // 회원가입 완료 화면
     func makeSignUpCompleteView(onNavigateToMain: @escaping () -> Void) -> SignUpCompleteView
@@ -34,9 +34,11 @@ protocol LoginDIContainerProtocol {
 final class LoginDIContainer: LoginDIContainerProtocol {
 
     private let authApiClient: AuthApiClientProtocol
+    private let challengeApiClient: ChallengeApiClientProtocol
 
-    init(authApiClient: AuthApiClientProtocol) {
+    init(authApiClient: AuthApiClientProtocol, challengeApiClient: ChallengeApiClientProtocol) {
         self.authApiClient = authApiClient
+        self.challengeApiClient = challengeApiClient
     }
 
     // MARK: - Coordinator
@@ -108,13 +110,22 @@ final class LoginDIContainer: LoginDIContainerProtocol {
     
     // MARK: - InviteCode
 
-    private func makeInviteCodeViewModel() -> InviteCodeViewModel {
-        return InviteCodeViewModel()
+    private func makeInviteCodePopupRepository() -> InviteCodePopupRepositoryProtocol {
+        return InviteCodePopupRepository(challengeApiClient: challengeApiClient)
     }
-
-    func makeInviteCodeView(hasSkip: Bool = true) -> OnBoardingInviteCodeView {
+    
+    private func makeInviteCodePopupUseCase() -> InviteCodePopupUseCaseProtocol {
+        let repo = makeInviteCodePopupRepository()
+        return InviteCodePopupUseCase(repository: repo)
+    }
+    private func makeInviteCodeViewModel() -> InviteCodeViewModel {
+        let usecase = makeInviteCodePopupUseCase()
+        return InviteCodeViewModel(useCase: usecase)
+    }
+    
+    func makeInviteCodeView(coordinator: LoginCoordinator, hasSkip: Bool = true) -> OnBoardingInviteCodeView {
         let vm = makeInviteCodeViewModel()
-        return OnBoardingInviteCodeView(viewModel: vm, hasSkip: hasSkip)
+        return OnBoardingInviteCodeView(viewModel: vm, coordinator: coordinator, hasSkip: hasSkip)
     }
 
     // MARK: - Web view
@@ -183,9 +194,11 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
         return AnyView(EmptyView())
     }
     
-    func makeInviteCodeView(hasSkip: Bool = true) -> OnBoardingInviteCodeView {
-        return OnBoardingInviteCodeView(viewModel: InviteCodeViewModel(), hasSkip: hasSkip)
+    func makeInviteCodeView(coordinator: LoginCoordinator, hasSkip: Bool) -> OnBoardingInviteCodeView {
+        let vm = InviteCodeViewModel(useCase: MockInviteCodePopupUseCase())
+        return OnBoardingInviteCodeView(viewModel: vm, coordinator: coordinator, hasSkip: hasSkip)
     }
+    
 }
 
 // -------- Mock struct ------ //

@@ -17,8 +17,9 @@ struct MainTextField: View {
     let textLimit: Int?
     @Binding var errorMessage: String?
     let keyboardType: UIKeyboardType
+    let submit: (()->Void)?
     
-    init(title: String, placeHolder: String, textValue: Binding<String>, isNeccessary: Bool, textLimit: Int?, errorMessage: Binding<String?>, keyboardType: UIKeyboardType = .default) {
+    init(title: String, placeHolder: String, textValue: Binding<String>, isNeccessary: Bool, textLimit: Int?, errorMessage: Binding<String?>, keyboardType: UIKeyboardType = .default, submit: (()->Void)? = nil) {
         self.title = title
         self.placeHolder = placeHolder
         self._textValue = textValue
@@ -26,6 +27,7 @@ struct MainTextField: View {
         self.textLimit = textLimit
         self._errorMessage = errorMessage
         self.keyboardType = keyboardType
+        self.submit = submit
     }
     
     var body: some View {
@@ -60,6 +62,10 @@ struct MainTextField: View {
                             textValue = String(newValue.prefix(limitCount))
                         }
                     }
+                    .onSubmit {
+                        submit?()
+                    }
+
                     
                     if let limit = textLimit {
                         Text("\(textValue.count)/\(limit)")
@@ -93,5 +99,6 @@ struct MainTextField: View {
         isNeccessary: true,
         textLimit: 10,
         errorMessage: .constant("유효하지 않습니다."),
-        keyboardType: .numberPad)
+        keyboardType: .numberPad,
+        submit: {})
 }

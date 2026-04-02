@@ -42,6 +42,9 @@ struct ProfileSetupView: View {
                         profileImage: $viewModel.profileImage,
                         nickname: $viewModel.nickname,
                         nicknameErrorMessage: $viewModel.nicknameErrorMessage,
+                        onSubmit: {
+                            viewModel.setProfile()
+                        },
                         onProfileImageTapped: {
                             requestPhotoLibraryPermission()
                         }
@@ -69,11 +72,14 @@ struct ProfileSetupView: View {
             } // ~ScrollView
             
             MainButton(title: "다음", size: .large, colorType: .fill, isDisabled: (viewModel.nickname.isEmpty)) {
+                hideKeyboard()
                 viewModel.setProfile()
             }
             .padding(20)
         } // ~VStack
         .navigationTitle("프로필 생성")
+        .loading(viewModel.isLoading)
+        .toast(message: $viewModel.toastMessage)
         .sheet(isPresented: $isShowingPicker) {
                     VStack {
                         DatePicker(
