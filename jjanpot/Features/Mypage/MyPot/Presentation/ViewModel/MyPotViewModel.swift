@@ -20,4 +20,7 @@ final class MyPotViewModel: ObservableObject {
     func logout(){
         
     }
+    func signout(){
+        
+    }
 }

@@ -19,6 +19,8 @@ struct MyPotView: View {
     }
     
     @State var isShowLogoutPopup: Bool = false
+    @State var isShowSignoutPopup: Bool = false
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 40) {
@@ -50,7 +52,9 @@ struct MyPotView: View {
                             MenuButton("로그아웃") {
                                 isShowLogoutPopup = true
                             }
-                            MenuButton("탈퇴하기") {}
+                            MenuButton("탈퇴하기") {
+                                isShowSignoutPopup = true
+                            }
                         }
                     } // ~메뉴 뷰
                     
@@ -67,6 +71,19 @@ struct MyPotView: View {
                     }
                     ModalButton(title: "로그아웃") {
                         viewModel.logout()
+                        isShowLogoutPopup = false
+                    }
+                }
+        }
+        .popup(isPresented: $isShowSignoutPopup) {
+            Modal(title: "정말 탈퇴 하시겠습니까?", content: "탈퇴하면 계정은 삭제되어 복구되지 않습니다.")
+                .buttons {
+                    ModalButton(title: "탈퇴하기", colorType: .secondary) {
+                        viewModel.signout()
+                        isShowSignoutPopup = false
+                    }
+                    ModalButton(title: "함께하기") {
+                        isShowSignoutPopup = false
                     }
                 }
         }
