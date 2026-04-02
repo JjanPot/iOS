@@ -27,7 +27,7 @@ struct OverviewDto: Codable {
     struct Member: Codable {
         let userId: Int
         let nickname: String
-        let profileImageURL: String
+        let profileImageURL: String?
         let savedAmount: Int
         let isMe: Bool
         

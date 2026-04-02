@@ -7,18 +7,18 @@
 
 import Foundation
 
-struct FeedResponseEntity {
+struct FeedEntity {
     let certificationId: Int
     let spendType: String
     let categoryName: String
     let userNickname: String
-    let memo: String
+    let memo: String?
     let savedAmount: Int
-    let imageURL: String
+    let imageURL: String?
     let createdAt: String
     let likeCount: Int
 }
-extension FeedResponseEntity {
+extension FeedEntity {
     init(from dto: FeedResponseDto) {
         self.certificationId = dto.certificationId
         self.spendType = dto.spendType

@@ -7,13 +7,8 @@
 
 import SwiftUI
 
-struct SegmentedBar: View {
-    struct Segment {
-        let ratio: CGFloat   // 0 ~ 1 (합이 1)
-        let color: Color
-    }
-    
-    let segments: [Segment]
+struct SegmentedBar: View {    
+    let segments: [SegmentedBarViewData]
     let height: CGFloat = 18
     
     var body: some View {
@@ -31,11 +26,8 @@ struct SegmentedBar: View {
                 Capsule()
                     .stroke(.white, lineWidth: 2)
             )
-        
     }
 }
-
-
 
 #Preview {
     SegmentedBar(

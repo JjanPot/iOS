@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 struct OverviewEntity {
     let challengeId: Int
     let title: String
@@ -19,7 +20,7 @@ struct OverviewEntity {
     struct Member  {
         let userId: Int
         let nickname: String
-        let profileImageURL: String
+        let profileImageURL: String?
         let savedAmount: Int
         let isMe: Bool
     }
@@ -43,3 +44,5 @@ extension OverviewEntity.Member {
         self.isMe = dto.isMe
     }
 }
+
+

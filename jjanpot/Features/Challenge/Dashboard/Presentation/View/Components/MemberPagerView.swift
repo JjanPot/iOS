@@ -90,39 +90,10 @@ private extension MemberPagerView {
 
 #Preview {
     MemberPagerView(members: [
-        .init(imageUrl: "https://picsum.photos/50/50",
-              color: .red,
-              name: "닉네임",
-              amount: 10000),
-        .init(imageUrl: "https://picsum.photos/50/50",
-              color: .blue,
-              name: "닉네임",
-              amount: 10000),
-        .init(imageUrl: "https://picsum.photos/50/50",
-              color: .yellow,
-              name: "닉네임",
-              amount: 10000),
-        .init(imageUrl: "https://picsum.photos/50/50",
-              color: .green,
-              name: "닉네임",
-              amount: 10000),
-        .init(imageUrl: "https://picsum.photos/50/50",
-              color: .purple,
-              name: "닉네임",
-              amount: 10000),
-        .init(imageUrl: "https://picsum.photos/50/50",
-              color: .brown,
-              name: "닉네임",
-              amount: 10000),
-        .init(imageUrl: "https://picsum.photos/50/50",
-              color: .teal,
-              name: "닉네임",
-              amount: 10000),
-        .init(imageUrl: "https://picsum.photos/50/50",
-              color: .gray,
-              name: "닉네임",
-              amount: 10000),
-        
-    ])
+        .init(userId: 0, nickname: "닉네임0", imageUrl: "", color: .red, amount: 10000),
+        .init(userId: 0, nickname: "닉네임2", imageUrl: "", color: .black, amount: 12000),
+        .init(userId: 0, nickname: "닉네임3", imageUrl: "", color: .blue, amount: 13000),
+        .init(userId: 0, nickname: "닉네임4", imageUrl: "", color: .green, amount: 14000),
+             ])
     .padding(20)
 }

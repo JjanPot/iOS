@@ -7,8 +7,7 @@
 
 
 protocol ChallengeDashboardUseCaseProtocol {
-    func fetchChallengeOverview(challengeId: Int) async throws -> OverviewEntity
-    func fetchFeed(challengeId: Int) async throws -> FeedResponseEntity
+    func getChallengeDashboardData() async throws -> ChallengeDashboardEntity
 }
 struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
     private let repository: ChallengeDashboardRepositoryProtocol
@@ -16,12 +15,39 @@ struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
         self.repository = repository
     }
     
-    func fetchChallengeOverview(challengeId: Int) async throws -> OverviewEntity {
-        try await repository.fetchChallengeOverview(challengeId: challengeId)
-    }
-    func fetchFeed(challengeId: Int) async throws -> FeedResponseEntity {
-        try await repository.fetchFeed(challengeId: challengeId)
+    /// 챌린지 정보 가져오기
+    func getChallengeDashboardData() async throws -> ChallengeDashboardEntity {
+        // 1. 유저의 챌린지 가져오기
+        let challengeEntity = try await getChallengeData()
+        
+        switch challengeEntity.status {
+        case .none:
+            return .none
+            
+        case let .waiting(entity):
+            return .waiting(id: entity.challengeId)
+            
+        case let .inProgress(entity):
+            // 2. 진행중일 경우, 오버뷰, 피드 가져오기
+            let overview = try await getChallengeOverview(challengeId: entity.challengeId)
+            let feeds = try await getFeeds(challengeId: entity.challengeId)
+            return .inProgress(id: entity.challengeId, overview: overview, feeds: feeds)
+        }
     }
     
+    
+    /// 챌린지 아이디, 상태 가져오기 from 챌린지 정보 가져오기 (홈화면용)
+    private func getChallengeData() async throws -> CurrentChallengeEntity {
+        return try await repository.fetchCurrentChallenge()
+    }
+    
+    /// 진행중인 챌린지 오버뷰 가져오기
+    private func getChallengeOverview(challengeId: Int) async throws -> OverviewEntity {
+        try await repository.fetchChallengeOverview(challengeId: challengeId)
+    }
+    
+    /// 진행중인 챌린지 피드 가져오기
+    private func getFeeds(challengeId: Int) async throws -> [FeedEntity] {
+        try await repository.fetchFeeds(challengeId: challengeId)
+    }
 }
-

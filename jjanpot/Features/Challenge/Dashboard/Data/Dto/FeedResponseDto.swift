@@ -9,9 +9,10 @@ import Foundation
 
 struct FeedResponseDto: Codable {
     let certificationId: Int
-    let spendType, categoryName, userNickname, memo: String
+    let spendType, categoryName, userNickname: String
+    let memo: String?
     let savedAmount: Int
-    let imageURL: String
+    let imageURL: String?
     let createdAt: String
     let likeCount: Int
 

@@ -166,7 +166,7 @@ protocol ChallengeApiClientProtocol {
     func fetchChallengeOverview(challengeId: Int) async -> Result<OverviewDto, NetworkError>
     
     /// 챌린지 피드 가져오기
-    func fetchFeed(challengeId: Int) async -> Result <FeedResponseDto,NetworkError>
+    func fetchFeed(challengeId: Int) async -> Result <[FeedResponseDto],NetworkError>
 
 }
 
@@ -208,7 +208,7 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     }
     
     /// 챌린지 피드 가져오기
-    func fetchFeed(challengeId: Int) async -> Result <FeedResponseDto,NetworkError> {
+    func fetchFeed(challengeId: Int) async -> Result <[FeedResponseDto],NetworkError> {
         await request(.fetchFeed(challengeId: challengeId))
     }
 }
