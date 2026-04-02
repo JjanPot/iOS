@@ -20,6 +20,7 @@ struct SegmentedBar: View {
                 }
             }
         }
+        .background(Color.black100)
         .frame(height: height)
         .clipShape(Capsule())
         .overlay(

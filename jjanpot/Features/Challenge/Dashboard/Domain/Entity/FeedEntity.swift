@@ -15,7 +15,7 @@ struct FeedEntity {
     let memo: String?
     let savedAmount: Int
     let imageURL: String?
-    let createdAt: String
+    let createdAt: Date
     let likeCount: Int
 }
 extension FeedEntity {
@@ -27,7 +27,8 @@ extension FeedEntity {
         self.memo = dto.memo
         self.savedAmount = dto.savedAmount
         self.imageURL = dto.imageURL
-        self.createdAt = dto.createdAt
+        /// "2027-08-15T09:35:00"
+        self.createdAt = dto.createdAt.toDate(.iso8601) ?? Date()
         self.likeCount = dto.likeCount
     }
 }

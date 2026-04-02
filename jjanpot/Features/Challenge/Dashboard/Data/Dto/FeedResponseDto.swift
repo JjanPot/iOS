@@ -13,6 +13,7 @@ struct FeedResponseDto: Codable {
     let memo: String?
     let savedAmount: Int
     let imageURL: String?
+    /// "2027-08-15T09:35:00"
     let createdAt: String
     let likeCount: Int
 

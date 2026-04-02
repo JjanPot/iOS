@@ -21,12 +21,12 @@ struct ChallengeDashboardView: View {
     var body: some View {
         VStack (alignment: .leading, spacing: .zero){
             VStack (alignment: .center, spacing: .zero){
+                
                 MainHeader()
                 
                 // MARK: 오버뷰 //
                 
                 ChallengeOverview(viewData: viewModel.viewData)
-                
                 
             }
             .background(Color.orange50)
@@ -46,15 +46,29 @@ struct ChallengeDashboardView: View {
                     .padding(.bottom, 24)
                     
                     // 게시물 목록 //
-                    FeedHeaderView()
-                    FeedCardView(viewData: FeedCardViewData(
-                        category: "카페/디저트",
-                        title: "오므라이스 최고",
-                        content: "텀블러에 담아서 먹었는데 그럭저럭 먹을만하더라구요. 다들 맛있게 절약하세요.",
-                        price: "+3,500원",
-                        likeCount: 3,
-                        date: "2027.09.18 18:30"
-                    ))
+                    switch viewModel.viewData {
+                    
+                    case let .inProgress(_, _, feeds):
+                        ForEach(feeds) { feed in
+                            switch feed {
+                            case let .header(_, date):
+                                FeedHeaderView(title: date)
+                            case let .item(_, feed):
+                                FeedCardView(viewData: feed)
+                                
+                            case .bottom:
+                                Spacer()
+                                    .frame(height: 100)
+                            }
+                        }
+                        
+                    default: Spacer()
+                    }
+                    
+                    
+                    
+                    
+                    
                     
                 }
                 .padding(.horizontal, 20)

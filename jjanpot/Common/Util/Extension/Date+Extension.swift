@@ -45,6 +45,9 @@ extension Date {
         /// "yyyy-MM-dd HH:mm:ss"
         case dateTime = "yyyy-MM-dd HH:mm:ss"
         
+        /// "yyyy.MM.dd HH:mm"
+        case dateTime2 = "yyyy.MM.dd HH:mm"
+        
         /// "yyyy-MM-dd"
         case dateOnly = "yyyy-MM-dd"
         

@@ -38,6 +38,7 @@ public final class APINetworkLogger: EventMonitor {
         switch uploadable {
         case .data(let data):
             Logger.network("   Type: Data (\(data.count) bytes)")
+            
             if let object = try? JSONSerialization.jsonObject(with: data),
                 let prettyData = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
                 let prettyString = String(data: prettyData, encoding: .utf8)

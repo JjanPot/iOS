@@ -26,11 +26,23 @@ struct ChallengeOverviewViewDataMapper {
         )
     }
 
-    private func segments(from members: [OverviewEntity.Member], totalSavedAmount: Int) -> [SegmentedBarViewData] {
+    private func segments(
+        from members: [OverviewEntity.Member],
+        totalSavedAmount: Int
+    ) -> [SegmentedBarViewData] {
 
-        members.enumerated().map { index, member in
+        guard totalSavedAmount > 0 else {
+            return members.enumerated().map { index, _ in
+                SegmentedBarViewData(
+                    ratio: 0,
+                    color: ColorPalette.chartColors[index]
+                )
+            }
+        }
+
+        return members.enumerated().map { index, member in
             SegmentedBarViewData(
-                ratio: Double(member.savedAmount / totalSavedAmount),
+                ratio: Double(member.savedAmount) / Double(totalSavedAmount),
                 color: ColorPalette.chartColors[index]
             )
         }

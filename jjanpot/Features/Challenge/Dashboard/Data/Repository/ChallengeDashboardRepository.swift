@@ -7,14 +7,12 @@
 
 import Foundation
 
-
 struct ChallengeDashboardRepository: ChallengeDashboardRepositoryProtocol {
     private let apiClient: ChallengeApiClientProtocol
 
     init(challengeApiClient: ChallengeApiClientProtocol) {
         self.apiClient = challengeApiClient
     }
-
     
     /// 챌린지 정보 가져오기 (홈화면용)
     func fetchCurrentChallenge() async throws -> CurrentChallengeEntity {

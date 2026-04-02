@@ -34,8 +34,21 @@ struct ChallengeOverviewViewData {
     let members: [MemberCardViewData]
 }
 
-enum ChallengeFeedViewData {
-    case header(date: String)
-    case item(feed: FeedCardViewData)
-    case bottom
+enum ChallengeFeedViewData: Identifiable {
+    case header(id: UUID, date: String)
+    case item(id: UUID, feed: FeedCardViewData)
+    case bottom(id: UUID)
+    
+    var id: UUID {
+            switch self {
+            case let .header(id, _):
+                return id
+            case let .item(id, _):
+                return id
+            case let .bottom(id):
+                return id
+            }
+        }
 }
+
+

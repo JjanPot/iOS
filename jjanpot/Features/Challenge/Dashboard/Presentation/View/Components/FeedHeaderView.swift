@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct FeedHeaderView: View {
+    let title: String
     var body: some View {
         HStack {
-            Text("2027.08.15")
+            Text(title)
                 .font(.pretendard(.semiBold, size: 16))
             Spacer()
                 
@@ -27,5 +28,7 @@ struct FeedBottomView: View {
 }
 
 #Preview {
-    FeedHeaderView()
+    FeedHeaderView(
+        title: "2027.08.15"
+    )
 }

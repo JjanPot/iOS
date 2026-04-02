@@ -29,11 +29,13 @@ final class ChallengeDashboardViewModel: ObservableObject {
                 switch entity {
                 case .none:
                     self.viewData = ChallengeDashboardViewData.noneChallenge
+                    
                 case .waiting:
                     self.viewData = ChallengeDashboardViewData.waiting
+                    
                 case let .inProgress(id, overview, feeds):
                     let overview = ChallengeOverviewViewDataMapper().map(from: overview)
-                    let feed: [ChallengeFeedViewData] = []
+                    let feed: [ChallengeFeedViewData] = ChallengeFeedViewDataMapper().map(from: feeds)
                     self.viewData = ChallengeDashboardViewData.inProgress(
                         challengeId: id,
                         overviewViewData: overview,

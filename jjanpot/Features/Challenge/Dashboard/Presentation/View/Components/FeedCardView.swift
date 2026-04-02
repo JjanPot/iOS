@@ -8,15 +8,6 @@
 import SwiftUI
 import Kingfisher
 
-struct FeedCardViewData {
-    let category: String
-    let title: String
-    let content: String
-    let price: String
-    let likeCount: Int
-    let date: String
-}
-
 struct FeedCardView: View {
     let viewData: FeedCardViewData
     var body: some View {
@@ -30,6 +21,8 @@ struct FeedCardView: View {
                 
                 Spacer()
                 
+                
+                // 메뉴 버튼
 //                Button {
 //                    
 //                } label: {
@@ -55,26 +48,31 @@ struct FeedCardView: View {
                         .foregroundStyle(.black600)
                         .padding(.bottom, 8)
                     
+                    Spacer()
+                    
                     Text(viewData.price)
                         .font(.pretendard(.semiBold, size: 16))
                         .foregroundStyle(.black600)
                 }
                 Spacer()
-                KFImage(URL(string: "https://picsum.photos/50/50"))
-                    .placeholder {
-                        Placeholder()
-                            .frame(width: 85, height: 85)
-                            .rounded(radius: 12)
-                    }
-                    .retry(maxCount: 3, interval: .seconds(2))
-                    .onFailure { error in
-                        Logger.error("Image load failed: \(error.localizedDescription)")
-                    }
-                    .fade(duration: 0.25)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 85, height: 85)
-                    .rounded(radius: 12)
+                if let image = viewData.imageUrl {
+                    KFImage(URL(string: image))
+                        .placeholder {
+                            Placeholder()
+                                .frame(width: 85, height: 85)
+                                .rounded(radius: 12)
+                        }
+                        .retry(maxCount: 3, interval: .seconds(2))
+                        .onFailure { error in
+                            Logger.error("Image load failed: \(error.localizedDescription)")
+                        }
+                        .fade(duration: 0.25)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 85, height: 85)
+                        .rounded(radius: 12)
+                } 
+                
             }
             .padding(.bottom, 10)
             
@@ -112,7 +110,8 @@ struct FeedCardView: View {
         content: "텀블러에 담아서 먹었는데 그럭저럭 먹을만하더라구요. 다들 맛있게 절약하세요.",
         price: "+3,500원",
         likeCount: 3,
-        date: "2027.09.18 18:30"
+        date: "2027.09.18 18:30",
+        imageUrl: "https://picsum.photos/50/50"
         
     ))
 }

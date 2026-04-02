@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ChallengeOverview: View {
-    
     let viewData: ChallengeDashboardViewData?
     
     var body: some View {
@@ -29,7 +28,6 @@ struct ChallengeOverview: View {
                 message: "LOADING..."
             )
         }
-        
     }
     
     private func overview(_ viewData: ChallengeOverviewViewData) -> some View {
@@ -49,6 +47,7 @@ struct ChallengeOverview: View {
                 Text("\(viewData.totalSavedAmount)원")
                     .font(.pretendard(.semiBold, size: 30))
                     .foregroundStyle(.black)
+                    .frame(minWidth: 100, alignment: .trailing)
                 Text("/ \(viewData.goalAmount)원")
                     .font(.pretendard(.medium, size: 16))
                     .foregroundStyle(.black500)
@@ -91,7 +90,7 @@ struct ChallengeOverview: View {
                         overviewViewData: ChallengeOverviewViewData(
                             title: "카페는 이제 그만!",
                             description: "7월 15일부터 현재까지 절약 금액",
-                            totalSavedAmount: 261000,
+                            totalSavedAmount: 206100,
                             goalAmount: 300000,
                             segments: [
                                 .init(ratio: 0.2, color: .red),
