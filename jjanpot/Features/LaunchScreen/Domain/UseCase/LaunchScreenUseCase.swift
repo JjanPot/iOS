@@ -35,7 +35,8 @@ class LaunchScreenUseCase: LaunchScreenUseCaseProtocol {
         )
 
         // 4. 유저 정보 조회 및 저장
-        let user = try await repository.getUserInfo()
+        //let user = try await repository.getUserInfo()
+        let user = UserEntity(userId: tokenEntity.userId, nickname: "주희")
         await repository.updateUser(user)
     }
 }

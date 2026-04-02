@@ -64,6 +64,10 @@ final class MockMyPageDIContainer: MyPageDIContainerProtocol {
     }
 
     struct MockMyPotUseCase: MyPotUseCaseProtocol {
+        func logout() async throws {
+            throw NetworkError.dataNil
+        }
+        
 
     }
 }

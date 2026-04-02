@@ -20,6 +20,8 @@ public enum AuthRouter {
     
     // 약관동의
     case agreement(marketingConsentAgreed: Bool)
+    
+    case logout(userId: Int)
 }
 
 extension AuthRouter: Router {
@@ -42,6 +44,9 @@ extension AuthRouter: Router {
             return "api/auth/v1/refresh"
         case .agreement:
             return "/api/users/v1/onboarding/agreement"
+            
+        case .logout:
+            return "/api/auth/v1/logout"
         }
     }
     
@@ -89,6 +94,12 @@ extension AuthRouter: Router {
                 "marketingConsent" : marketing,
             ]
             return params
+            
+        case let .logout(userId):
+            let params: Parameters = [
+                "userId" : userId,
+            ]
+            return params
         }
     }
     
@@ -122,6 +133,9 @@ public protocol AuthApiClientProtocol {
 
     /// 약관 동의
     func agreement(marketingConsentAgreed: Bool) async -> Result<EmptyResponseDto, NetworkError>
+    
+    /// 로그아웃
+    func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError>
 }
 
 
@@ -147,5 +161,10 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
     /// 약관 동의
     public func agreement(marketingConsentAgreed: Bool) async -> Result<EmptyResponseDto, NetworkError> {
         await request(.agreement(marketingConsentAgreed: marketingConsentAgreed))
+    }
+    
+    /// 로그아웃
+    public func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError> {
+        await request(.logout(userId: userId))
     }
 }

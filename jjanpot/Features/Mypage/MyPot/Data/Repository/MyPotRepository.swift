@@ -13,14 +13,14 @@ struct MyPotRepository: MyPotRepositoryProtocol {
         self.authApiClient = authApiClient
     }
 
-    /*
-    func agreeMyPot(marketingConsentAgreed: Bool ) async throws {
-        let result = await challengeApiClient.agreement(marketingConsentAgreed: marketingConsentAgreed)
+    
+    func logout(userId: Int) async throws {
+        let result = await authApiClient.logout(userId: userId)
         switch result {
         case .success:
             return
         case .failure(let error):
             throw error
         }
-    }*/
+    }
 }

@@ -35,14 +35,14 @@ struct jjanpotApp: App {
                     case .launching:
                         // 스플래시 화면 (토큰 체크)
                         container.makeLaunchScreenView(appCoordinator: appCoordinator)
-                        
+
                     case .login:
                         // 로그인 플로우 (독립적인 NavigationStack)
                         LoginNavigationStack {
                             // 로그인 성공 → 메인 화면으로 전환
                             appCoordinator.navigateToMain()
                         }
-                        
+
                     case .main:
                         // 메인 플로우 (독립적인 NavigationStack)
                         container.makeMainNavigationStack()
@@ -56,6 +56,10 @@ struct jjanpotApp: App {
                         GIDSignIn.sharedInstance.handle(url)
                     }
                 })
+                // 로그아웃 notification 수신
+                .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("userDidLogout"))) { _ in
+                    appCoordinator.navigateToLogin()
+                }
             }
         }
     }

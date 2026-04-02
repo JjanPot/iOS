@@ -22,6 +22,7 @@ struct MenuButton: View {
                 Text(title)
                     .font(.pretendard(.medium, size: 16))
                     .foregroundStyle(.black600)
+                
                 Spacer()
                 Image(systemName: "chevron.right")
                     .foregroundStyle(.black600)
