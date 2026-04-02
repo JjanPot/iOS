@@ -14,9 +14,11 @@ struct MainNavigationStack: View {
     @StateObject private var popupManager = PopupManager.shared
 
     private let container: MainDIContainerProtocol
+    private let myPageContainer: MyPageDIContainerProtocol
 
-    init(container: MainDIContainerProtocol) {
+    init(container: MainDIContainerProtocol, myPageContainer: MyPageDIContainerProtocol) {
         self.container = container
+        self.myPageContainer = myPageContainer
         self._coordinator = StateObject(wrappedValue: container.makeMainCoordinator())
     }
 
@@ -27,7 +29,7 @@ struct MainNavigationStack: View {
             MainTabView(
                 homeView: AnyView(container.makeHomeView(coordinator: coordinator)),
                 challengeView: AnyView(container.makeChallengeDashboardView(coordinator: coordinator)),
-                myPotView: AnyView(ContentView2())
+                myPotView: AnyView(MyPageNavigationStack(container: myPageContainer))
             )
             .navigationDestination(for: MainDestination.self) { destination in
                 destinationView(for: destination)
@@ -59,5 +61,5 @@ struct MainNavigationStack: View {
 }
 
 #Preview {
-    MainNavigationStack(container: MockMainDIContainer())
+    MainNavigationStack(container: MockMainDIContainer(), myPageContainer: MockMyPageDIContainer())
 }

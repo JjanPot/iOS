@@ -32,6 +32,9 @@ final class AppDIContainer {
     private lazy var authApiClient: AuthApiClientProtocol = {
         AuthApiClient(session: session)
     }()
+    private lazy var challengeApiClient: ChallengeApiClientProtocol = {
+        ChallengeApiClient(session: session)
+    }()
     
     private lazy var launchScreenDIContainer: LaunchScreenDIContainer = {
         LaunchScreenDIContainer(
@@ -45,7 +48,11 @@ final class AppDIContainer {
     }()
 
     lazy var mainDIContainer: MainDIContainerProtocol = {
-        MainDIContainer( session: session )
+        MainDIContainer(challengeApiClient: challengeApiClient)
+    }()
+    
+    lazy var mypageDiContainer: MyPageDIContainerProtocol = {
+        MyPageDIContainer(authApiClient: authApiClient)
     }()
 }
 
@@ -68,6 +75,6 @@ extension AppDIContainer {
 // MARK: - Main Feature
 extension AppDIContainer {
     func makeMainNavigationStack() -> MainNavigationStack {
-        return MainNavigationStack(container: mainDIContainer)
+        return MainNavigationStack(container: mainDIContainer, myPageContainer: mypageDiContainer)
     }
 }

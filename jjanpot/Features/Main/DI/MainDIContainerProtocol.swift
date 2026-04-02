@@ -30,35 +30,33 @@ import Alamofire
 
 protocol MainDIContainerProtocol {
     func makeMainCoordinator() -> MainCoordinator
-    
+
     // 홈 화면
     func makeHomeView(coordinator: MainCoordinator) -> HomeView
-    
+
     // 초대 코드 화면
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView
-    
+
     // 챌린지 생성 화면
     func makeCreateChallengeView(coordinator: MainCoordinator) -> CreateChallengeView
-    
+
     // 챌린지 상세정보 화면
     func makeChallengeDetailView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeDetailView
-    
+
     /// 챌린지 대시보드화면
     func makeChallengeDashboardView(coordinator: MainCoordinator) -> ChallengeDashboardView
-    
+
     /// 지출,무지출 인증
     func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView
-    
-    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView
-    
+
 }
 
 final class MainDIContainer: MainDIContainerProtocol {
-    
+
     private let challengeApiClient: ChallengeApiClientProtocol
-    
-    init(session: Session) {
-        self.challengeApiClient = ChallengeApiClient(session: session)
+
+    init(challengeApiClient: ChallengeApiClientProtocol) {
+        self.challengeApiClient = challengeApiClient
     }
     
     // MARK: - Coordinator
@@ -184,25 +182,6 @@ final class MainDIContainer: MainDIContainerProtocol {
         return ChallengePostView(viewModel: vm, coordinator: coordinator)
     }
     
-    
-    // MARK: - 마이페이지 (마이팟)
-
-    private func makeMyPotRepository() -> MyPotRepositoryProtocol {
-        return MyPotRepository(challengeApiClient: challengeApiClient)
-    }
-    private func makeMyPotUseCase() -> MyPotUseCaseProtocol {
-        let repo = makeMyPotRepository()
-        return MyPotUseCase(repository: repo)
-    }
-    private func makeMyPotViewModel() -> MyPotViewModel {
-        let usecase = makeMyPotUseCase()
-        return MyPotViewModel(useCase: usecase)
-    }
-    
-    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView {
-        let vm = makeMyPotViewModel()
-        return MyPotView(viewModel: vm, coordinator: coordinator)
-    }
 }
 
 // MARK: - Mock
@@ -249,11 +228,7 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return ChallengePostView(viewModel: viewModel, coordinator: coordinator)
     }
     
-    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView {
-        let vm = MyPotViewModel(useCase: MockMyPotUseCase())
-        return MyPotView(viewModel: vm, coordinator: coordinator)
-    }
-    
+
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
         func cancel(challengeId: Int) async throws {
             throw NetworkError.dataNil
@@ -299,9 +274,6 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
             throw NetworkError.dataNil
         }
-    }
-    struct MockMyPotUseCase: MyPotUseCaseProtocol {
-        
     }
 }
 

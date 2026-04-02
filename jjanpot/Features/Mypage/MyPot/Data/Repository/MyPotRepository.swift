@@ -7,10 +7,10 @@
 
 
 struct MyPotRepository: MyPotRepositoryProtocol {
-    private let challengeApiClient: ChallengeApiClientProtocol
+    private let authApiClient: AuthApiClientProtocol
 
-    init(challengeApiClient: ChallengeApiClientProtocol) {
-        self.challengeApiClient = challengeApiClient
+    init(authApiClient: AuthApiClientProtocol) {
+        self.authApiClient = authApiClient
     }
 
     /*
