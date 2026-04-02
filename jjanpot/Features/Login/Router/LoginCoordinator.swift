@@ -12,6 +12,7 @@ enum LoginDestination: Route {
     case terms
     case profileSetup
     case signUpComplete
+    case inviteCode
 
     var id: String {
         switch self {
@@ -21,17 +22,20 @@ enum LoginDestination: Route {
             return "profileSetup"
         case .signUpComplete:
             return "signUpComplete"
+        case .inviteCode: return "inviteCode"
         }
     }
 
     var analyticsName: String {
         switch self {
         case .terms:
-            return "login_terms_agreement"
+            return "onboarding_terms_agreement"
         case .profileSetup:
-            return "login_profile_setup"
+            return "onboarding_profile_setup"
         case .signUpComplete:
-            return "login_signup_complete"
+            return "onboarding_signup_complete"
+        case .inviteCode:
+            return "onboarding_inviteCode"
         }
     }
 
@@ -91,6 +95,9 @@ final class LoginCoordinator: ObservableObject {
     /// 회원가입 완료 화면으로 이동
     func navigateToSignUpComplete() {
         path.append(LoginDestination.signUpComplete)
+    }
+    func navigateToInviteCode() {
+        path.append(LoginDestination.inviteCode)
     }
 
 

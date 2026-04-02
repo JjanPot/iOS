@@ -37,6 +37,8 @@ struct LoginNavigationStack: View {
                     loginDIContainer.makeProfileSetupView(coordinator: coordinator)
                 case .signUpComplete:
                     loginDIContainer.makeSignUpCompleteView(onNavigateToMain: onLoginSuccess)
+                case .inviteCode:
+                    loginDIContainer.makeInviteCodeView(hasSkip: true)
                 }
             }
         }

@@ -69,7 +69,7 @@ struct ProfileSetupView: View {
             } // ~ScrollView
             
             MainButton(title: "다음", size: .large, colorType: .fill, isDisabled: (viewModel.nickname.isEmpty)) {
-                coordinator.navigateToSignUpComplete()
+                viewModel.setProfile()
             }
             .padding(20)
         } // ~VStack
@@ -110,6 +110,11 @@ struct ProfileSetupView: View {
         } message: {
             Text("앨범의 사진을 불러오려면 설정에서 사진 접근 권한을 허용해주세요.")
         }
+        .onChange(of: viewModel.isSuccess) { isSuccess in
+            if isSuccess {
+                coordinator.navigateToInviteCode()
+            }
+        }
     }
     
     
@@ -143,6 +148,5 @@ struct ProfileSetupView: View {
 
 #Preview {
     let mockDIContainer = MockLoginDIContainer()
-    let coordinator = LoginCoordinator(loginDIContainer: mockDIContainer)
-    return ProfileSetupView(viewModel: ProfileSetupViewModel(), coordinator: coordinator)
+    return mockDIContainer.makeProfileSetupView(coordinator: mockDIContainer.makeLoginCoordinator())
 }

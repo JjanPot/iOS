@@ -21,6 +21,9 @@ public enum AuthRouter {
     // 약관동의
     case agreement(marketingConsentAgreed: Bool)
     
+    // 프로필 설정  birthDate "2000-01-15"
+    case setProfile(nickname: String, birthDate: String?, imageUrl: String?)
+    
     case logout(userId: Int)
 }
 
@@ -44,6 +47,9 @@ extension AuthRouter: Router {
             return "api/auth/v1/refresh"
         case .agreement:
             return "/api/users/v1/onboarding/agreement"
+            
+        case .setProfile:
+            return "/api/users/v1/onboarding/profile"
             
         case .logout:
             return "/api/auth/v1/logout"
@@ -95,6 +101,18 @@ extension AuthRouter: Router {
             ]
             return params
             
+        case let .setProfile(nickname, birthDate, imageUrl):
+            var params: Parameters = [
+                "nickname" : nickname,
+            ]
+            if let birthDate {
+                params["birthDate"] = birthDate
+            }
+            if let imageUrl {
+                params["profileImageUrl"] = imageUrl
+            }
+            return params
+            
         case let .logout(userId):
             let params: Parameters = [
                 "userId" : userId,
@@ -134,6 +152,9 @@ public protocol AuthApiClientProtocol {
     /// 약관 동의
     func agreement(marketingConsentAgreed: Bool) async -> Result<EmptyResponseDto, NetworkError>
     
+    /// 프로필 설정
+    func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async -> Result<SetProfileDto, NetworkError>
+    
     /// 로그아웃
     func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError>
 }
@@ -163,8 +184,15 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
         await request(.agreement(marketingConsentAgreed: marketingConsentAgreed))
     }
     
+    /// 프로필 설정
+    public func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async -> Result<SetProfileDto, NetworkError> {
+        await request(.setProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl))
+    }
+    
     /// 로그아웃
     public func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError> {
         await request(.logout(userId: userId))
     }
 }
+
+

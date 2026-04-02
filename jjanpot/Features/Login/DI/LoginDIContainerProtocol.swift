@@ -82,14 +82,23 @@ final class LoginDIContainer: LoginDIContainerProtocol {
 
     // MARK: - ProfileSetup
 
-    private func makeProfileSetupViewModel() -> ProfileSetupViewModel {
-        return ProfileSetupViewModel()
-    }
 
-    func makeProfileSetupView(coordinator: LoginCoordinator) -> ProfileSetupView {
-        let vm = makeProfileSetupViewModel()
-        return ProfileSetupView(viewModel: vm, coordinator: coordinator)
-    }
+    private func makeProfileSetupRepository() -> ProfileSetupRepositoryProtocol {
+            return ProfileSetupRepository(authApiClient: authApiClient)
+        }
+        private func makeProfileSetupUseCase() -> ProfileSetupUseCaseProtocol {
+            let repo = makeProfileSetupRepository()
+            return ProfileSetupUseCase(repository: repo)
+        }
+        private func makeProfileSetupViewModel() -> ProfileSetupViewModel {
+            let usecase = makeProfileSetupUseCase()
+            return ProfileSetupViewModel(useCase: usecase)
+        }
+
+        func makeProfileSetupView(coordinator: LoginCoordinator) -> ProfileSetupView {
+            let vm = makeProfileSetupViewModel()
+            return ProfileSetupView(viewModel: vm, coordinator: coordinator)
+        }
 
     // MARK: - SignUpComplete
 
@@ -161,7 +170,9 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
     }
 
     func makeProfileSetupView(coordinator: LoginCoordinator) -> ProfileSetupView {
-        return ProfileSetupView(viewModel: ProfileSetupViewModel(), coordinator: coordinator)
+        let usecase = MockProfileSetupUseCase()
+        let vm = ProfileSetupViewModel(useCase: usecase )
+        return ProfileSetupView(viewModel: vm, coordinator: coordinator)
     }
 
     func makeSignUpCompleteView(onNavigateToMain: @escaping () -> Void) -> SignUpCompleteView {
@@ -194,6 +205,11 @@ struct MockLoginUseCase: LoginUseCaseProtocol {
 }
 struct MockTermsUseCase: TermsUseCaseProtocol {
     func agreeTerms(marketingConsentAgreed: Bool) async throws {
+        throw NetworkError.dataNil
+    }
+}
+struct MockProfileSetupUseCase: ProfileSetupUseCaseProtocol {
+    func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async throws {
         throw NetworkError.dataNil
     }
 }
