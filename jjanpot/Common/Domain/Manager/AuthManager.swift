@@ -14,11 +14,16 @@ final class AuthManager: ObservableObject {
 
     static let shared = AuthManager()
 
-    // MARK: - Storage (Keychain only)
+    // MARK: - Storage (Keychain)
 
     @Keychain(key: "accessToken") private var accessToken: String?
     @Keychain(key: "refreshToken") private var refreshToken: String?
+    
+    // MARK: - Storage (UserDefault)
 
+    @UserDefault(key: "fcmToken", defaultValue: nil)
+    private var fcmToken: String?
+    
     // MARK: - Published Properties
 
     /// 현재 로그인 여부 (토큰 유무로 판단)
@@ -79,6 +84,10 @@ final class AuthManager: ObservableObject {
     func getRefreshToken() -> String? {
         return refreshToken
     }
+    
+    func getFcmToken() -> String? {
+        return fcmToken
+    }
 
     /// 닉네임 업데이트
     func updateNickname(_ nickname: String) {
@@ -94,6 +103,11 @@ final class AuthManager: ObservableObject {
     func updateUser(_ user: UserEntity) {
         currentUser = user
         Logger.success("사용자 정보 업데이트: \(user.nickname)")
+    }
+    
+    func updateFcm(token: String?){
+        fcmToken = token
+        Logger.success("fcm token 업데이트 \(token ?? "-missing token-")")
     }
 
     // MARK: - Private Methods

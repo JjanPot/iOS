@@ -6,6 +6,9 @@
 //
 
 
+import Foundation
+import UIKit
+
 struct LoginRepository: LoginRepositoryProtocol {
     
     private let authApiClient: AuthApiClientProtocol
@@ -16,19 +19,27 @@ struct LoginRepository: LoginRepositoryProtocol {
     
     // MARK: - socail loings..
 
-    func kakaoLogin(accessToken token: String) async -> Result<LoginEntity, NetworkError> {
-        let result = await authApiClient.kakaoLogin(accessToken: token)
+    func kakaoLogin(accessToken token: String, deviceUuid uuid: String, fcmToken: String?) async -> Result<LoginEntity, NetworkError> {
+        let result = await authApiClient.kakaoLogin(accessToken: token, deviceUuid: uuid, fcmToken: fcmToken)
         return mapToEntity(result)
     }
 
-    func appleLogin(accessToken token: String) async -> Result<LoginEntity, NetworkError> {
-        let result = await authApiClient.appleLogin(accessToken: token)
+    func appleLogin(accessToken token: String, deviceUuid uuid: String, fcmToken: String?) async -> Result<LoginEntity, NetworkError> {
+        let result = await authApiClient.appleLogin(accessToken: token, deviceUuid: uuid, fcmToken: fcmToken)
         return mapToEntity(result)
     }
 
-    func googleLogin(accessToken token: String) async -> Result<LoginEntity, NetworkError> {
-        let result = await authApiClient.googleLogin(accessToken: token)
+    func googleLogin(accessToken token: String, deviceUuid uuid: String, fcmToken: String?) async -> Result<LoginEntity, NetworkError> {
+        let result = await authApiClient.googleLogin(accessToken: token, deviceUuid: uuid, fcmToken: fcmToken)
         return mapToEntity(result)
+    }
+    
+    
+    func getUUID() -> String {
+        return UIDevice.current.identifierForVendor!.uuidString
+    }
+    func getFcmToken() async -> String? {
+        AuthManager.shared.getFcmToken()
     }
     
 }

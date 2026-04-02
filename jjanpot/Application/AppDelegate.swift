@@ -74,8 +74,9 @@ extension AppDelegate: MessagingDelegate {
         
         // FCM 토큰이 갱신됐을 때 호출되는 메서드
         // 여기서 받은 FCM 토큰을 서버에 전달해주어야함
-        print("Firebase registration token: \(String(describing: fcmToken))")
-        
+        Task {
+            AuthManager.shared.updateFcm(token: fcmToken)
+        }
         
         let dataDict: [String: String] = ["token": fcmToken ?? ""]
         NotificationCenter.default.post(

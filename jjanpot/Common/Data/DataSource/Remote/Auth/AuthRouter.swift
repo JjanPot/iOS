@@ -11,9 +11,9 @@ import Alamofire
 
 public enum AuthRouter {
     // 소셜 로그인
-    case kakaoLogin(accessToken: String)
-    case appleLogin(accessToken: String)
-    case googleLogin(accessToken: String)
+    case kakaoLogin(accessToken: String, deviceUuid: String, fcmToken: String?)
+    case appleLogin(accessToken: String, deviceUuid: String, fcmToken: String?)
+    case googleLogin(accessToken: String, deviceUuid: String, fcmToken: String?)
     
     // 토큰 재발급
     case refresh(token: String)
@@ -51,21 +51,27 @@ extension AuthRouter: Router {
     
     public var parameters: Parameters? {
         switch self {
-        case let .kakaoLogin(token):
+        case let .kakaoLogin(token, deviceUuid, fcmToken):
             let params: Parameters = [
                 "accessToken" : token,
+                "deviceUuid" : deviceUuid,
+                "fcmToken" : fcmToken,
             ]
             return params
            
-        case let .appleLogin(token):
+        case let .appleLogin(token, deviceUuid, fcmToken):
             let params: Parameters = [
                 "accessToken" : token,
+                "deviceUuid" : deviceUuid,
+                "fcmToken" : fcmToken,
             ]
             return params
             
-        case let .googleLogin(token):
+        case let .googleLogin(token, deviceUuid, fcmToken):
             let params: Parameters = [
                 "accessToken" : token,
+                "deviceUuid" : deviceUuid,
+                "fcmToken" : fcmToken,
             ]
             return params
             
@@ -107,9 +113,9 @@ extension AuthRouter: Router {
 // MARK: - API Client Protocol
 
 public protocol AuthApiClientProtocol {
-    func kakaoLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError>
-    func appleLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError>
-    func googleLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError>
+    func kakaoLogin(accessToken: String, deviceUuid: String, fcmToken: String?) async -> Result<LoginResponseDto, NetworkError>
+    func appleLogin(accessToken: String, deviceUuid: String, fcmToken: String?) async -> Result<LoginResponseDto, NetworkError>
+    func googleLogin(accessToken: String, deviceUuid: String, fcmToken: String?) async -> Result<LoginResponseDto, NetworkError>
     
     /// 토큰 재발급
     func refreshToken(refreshToken token: String) async -> Result<RefreshDto, NetworkError>
@@ -123,15 +129,14 @@ public protocol AuthApiClientProtocol {
 
 public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
    
-    
-    public func appleLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError> {
-        await request(AuthRouter.appleLogin(accessToken: token))
+    public func appleLogin(accessToken token: String, deviceUuid uuid: String, fcmToken: String?) async -> Result<LoginResponseDto, NetworkError> {
+        await request(AuthRouter.appleLogin(accessToken: token, deviceUuid: uuid, fcmToken: fcmToken))
     }
-    public func kakaoLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError> {
-        await request(AuthRouter.kakaoLogin(accessToken: token))
+    public func kakaoLogin(accessToken token: String, deviceUuid uuid: String, fcmToken: String?) async -> Result<LoginResponseDto, NetworkError> {
+        await request(AuthRouter.kakaoLogin(accessToken: token, deviceUuid: uuid, fcmToken: fcmToken))
     }
-    public func googleLogin(accessToken token: String) async -> Result<LoginResponseDto, NetworkError> {
-        await request(AuthRouter.googleLogin(accessToken: token))
+    public func googleLogin(accessToken token: String, deviceUuid uuid: String, fcmToken: String?) async -> Result<LoginResponseDto, NetworkError> {
+        await request(AuthRouter.googleLogin(accessToken: token, deviceUuid: uuid, fcmToken: fcmToken))
     }
     
     // 토큰 재발급

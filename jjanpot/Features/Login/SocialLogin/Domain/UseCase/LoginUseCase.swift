@@ -51,9 +51,12 @@ final class LoginUseCase: LoginUseCaseProtocol {
             tempSocialLogin.delegate = SocialLoginDelegateWrapper(continuation: continuation)
             tempSocialLogin.login()
         }
+        
+        let fcmToken = await repository.getFcmToken()
+        let uuid = repository.getUUID()
 
         // 서버 로그인 처리
-        let result = await performLogin(type: type, accessToken: token)
+        let result = await performLogin(type: type, accessToken: token, deviceUuid: uuid, fcmToken: fcmToken)
 
         switch result {
         case .success(let entity):
@@ -64,14 +67,14 @@ final class LoginUseCase: LoginUseCaseProtocol {
         }
     }
     
-    private func performLogin(type: LoginType, accessToken: String) async -> Result<LoginEntity, NetworkError> {
+    private func performLogin(type: LoginType, accessToken: String, deviceUuid: String, fcmToken: String?) async -> Result<LoginEntity, NetworkError> {
         switch type {
         case .apple:
-            return await repository.appleLogin(accessToken: accessToken)
+            return await repository.appleLogin(accessToken: accessToken, deviceUuid: deviceUuid, fcmToken: fcmToken)
         case .kakao:
-            return await repository.kakaoLogin(accessToken: accessToken)
+            return await repository.kakaoLogin(accessToken: accessToken, deviceUuid: deviceUuid, fcmToken: fcmToken)
         case .google:
-            return await repository.googleLogin(accessToken: accessToken)
+            return await repository.googleLogin(accessToken: accessToken, deviceUuid: deviceUuid, fcmToken: fcmToken)
         }
     }
 }
