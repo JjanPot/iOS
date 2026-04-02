@@ -13,6 +13,7 @@ protocol ChallengePostUseCaseProtocol {
     func postChallenge(entity: ChallengePostRequestEntity, imageData: Data?) async throws
 }
 
+// MARK: - ChallengePostUseCase
 struct ChallengePostUseCase: ChallengePostUseCaseProtocol {
     private let repository: ChallengePostRepositoryProtocol
     init(repository: ChallengePostRepositoryProtocol) {

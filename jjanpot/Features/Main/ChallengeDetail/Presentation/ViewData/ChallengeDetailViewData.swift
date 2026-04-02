@@ -32,6 +32,9 @@ struct ChallengeDetailViewData {
     
     // 챌린지 설명
     let description: String
+    
+    
+    let hasCancelButton: Bool
 }
 
 

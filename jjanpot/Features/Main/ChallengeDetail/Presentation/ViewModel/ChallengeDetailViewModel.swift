@@ -16,6 +16,10 @@ final class ChallengeDetailViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var toastMessage: String?
     
+    @Published var isShowCancelAlert: Bool = false
+    @Published var isCancelled: Bool = false
+    
+    
     private let useCase: ChallengeDetailUseCaseProtocol
 
     init(challengeId: Int, useCase: ChallengeDetailUseCaseProtocol) {
@@ -39,5 +43,28 @@ final class ChallengeDetailViewModel: ObservableObject {
             }
             isLoading = false
         }
+    }
+    
+    @MainActor
+    func cancel(){
+        isCancelled = false
+        isLoading = true
+        Task {
+            do {
+                try await useCase.cancel(challengeId: challengeId)
+                ToastManager.shared.show("챌린지 취소 완료")
+                isShowCancelAlert = false
+                isCancelled = true
+            } catch {
+                if let networkError = error as? NetworkError {
+                    Logger.error("챌린지 인증 실패: \(networkError.description)")
+                    ToastManager.shared.show(networkError.description)
+                } else {
+                    Logger.error("챌린지 인증 실패: \(error.localizedDescription)")
+                    toastMessage = "취소하기 실패 \(error.localizedDescription)"
+                }
+            }
+        }
+        isLoading = false
     }
 }

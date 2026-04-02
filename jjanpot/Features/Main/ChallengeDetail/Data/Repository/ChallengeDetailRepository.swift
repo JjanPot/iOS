@@ -25,6 +25,17 @@ final class ChallengeDetailRepository: ChallengeDetailRepositoryProtocol {
             throw error
         }
     }
+    
+    func cancelChallenge(challengeId: Int) async throws {
+        let result = await apiClient.deleteChallenge(challengeId: challengeId)
+        
+        switch result {
+        case .success:
+            break
+        case .failure(let error):
+            throw error
+        }
+    }
 }
 
 

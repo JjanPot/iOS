@@ -7,37 +7,13 @@
 
 import SwiftUI
 
-struct Modal: View {
+struct Modal {
     let title: String
     let content: String?
 
     init(title: String, content: String? = nil) {
         self.title = title
         self.content = content
-    }
-
-    var body: some View {
-        VStack(alignment: .center, spacing: 24){
-
-            // 제목, 컨텐츠
-            VStack(alignment: .center, spacing: 8) {
-                Text(title)
-                    .font(.H3)
-                    .foregroundStyle(Color.black50)
-
-                if let content {
-                    Text(content)
-                        .font(.Body2)
-                        .foregroundStyle(Color.black300)
-                        .multilineTextAlignment(.center)
-                }
-            }
-        }
-        .padding(.top, 32)
-        .padding([.bottom, .horizontal], 20)
-        .frame(maxWidth: .infinity)
-        .background(Color.black900)
-        .cornerRadius(16)
     }
 
     func buttons<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
@@ -50,19 +26,24 @@ private struct ModalWithButtons<Buttons: View>: View {
     let buttons: Buttons
 
     var body: some View {
-        VStack(alignment: .center, spacing: 24){
+        VStack(alignment: .center, spacing: 20){
 
             // 제목, 컨텐츠
-            VStack(alignment: .center, spacing: 8) {
+            VStack(alignment: .center, spacing: 12) {
                 Text(modal.title)
-                    .font(.H3)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(Color.black50)
+                    .font(.pretendard(.semiBold, size: 20))
+                    .foregroundStyle(Color.black)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
 
                 if let content = modal.content {
                     Text(content)
-                        .font(.Body2)
-                        .foregroundStyle(Color.black300)
+                        .font(.pretendard(.semiBold, size: 16))
+                        .foregroundStyle(Color.black400)
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
 
@@ -75,12 +56,10 @@ private struct ModalWithButtons<Buttons: View>: View {
         .padding(.top, 32)
         .padding([.bottom, .horizontal], 20)
         .frame(maxWidth: .infinity)
-        .background(Color.black900)
+        .background(Color.white)
         .cornerRadius(16)
     }
 }
-
-
 
 
 
@@ -110,17 +89,17 @@ struct PopupTestView: View {
             if showSingleButton {
                 Modal(title: "알림", content: "저장되었습니다")
                     .buttons {
-                        MainButton(title: "확인", size: .large) {
+                        ModalButton(title: "확인", size: .large) {
                             isPresented = false
                         }
                     }
             } else {
                 Modal(title: "삭제", content: "정말 삭제하시겠습니까?")
                     .buttons {
-                        MainButton(title: "취소", size: .middle, colorType: .border) {
+                        ModalButton(title: "취소", size: .middle, colorType: .secondary) {
                             isPresented = false
                         }
-                        MainButton(title: "확인", size: .middle) {
+                        ModalButton(title: "확인", size: .middle) {
                             print("삭제됨")
                             isPresented = false
                         }

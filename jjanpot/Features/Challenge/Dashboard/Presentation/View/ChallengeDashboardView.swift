@@ -20,8 +20,6 @@ struct ChallengeDashboardView: View {
     
     var body: some View {
         ZStack {
-            
-            
             VStack {
                 Color.orange50
                     .ignoresSafeArea(edges: .top)
@@ -91,6 +89,8 @@ struct ChallengeDashboardView: View {
             } // ScrollView
             
         } //Zstack
+        .loading(viewModel.isLoading)
+        .toast(message: $viewModel.toastMessage)
         .task {
             viewModel.loadChallengeDashboard()
         }

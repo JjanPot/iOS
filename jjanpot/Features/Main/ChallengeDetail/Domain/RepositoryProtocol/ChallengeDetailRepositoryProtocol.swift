@@ -8,4 +8,5 @@
 
 protocol ChallengeDetailRepositoryProtocol {
     func fetchDetail(challengeId: Int) async throws -> ChallengeDetailEntity
+    func cancelChallenge(challengeId: Int) async throws
 }

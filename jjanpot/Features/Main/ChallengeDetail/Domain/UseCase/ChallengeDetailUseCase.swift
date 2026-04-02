@@ -9,7 +9,10 @@ import Foundation
 
 protocol ChallengeDetailUseCaseProtocol {
     func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity
+    func cancel(challengeId: Int) async throws
 }
+
+// MARK: - ChallengeDetailUseCase
 
 final class ChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
     
@@ -21,5 +24,9 @@ final class ChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
     
     func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
         try await repository.fetchDetail(challengeId: challengeId)
+    }
+    
+    func cancel(challengeId: Int) async throws {
+        try await repository.cancelChallenge(challengeId: challengeId)
     }
 }

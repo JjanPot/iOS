@@ -19,6 +19,9 @@ enum ChallengeRouter {
     // 챌린지 생성
     case createChallenge(dto: CreateChallengeRequestDto)
     
+    // 챌린지 취소
+    case deleteChallenge(challengeId: Int)
+    
     // 챌린지 상세정보
     case getDetail(id: Int)
     
@@ -55,7 +58,8 @@ extension ChallengeRouter: Router {
 
         case .createChallenge,
                 .submitInviteCode,
-                .postChallenge
+                .postChallenge,
+                .deleteChallenge
             : .post
         }
     }
@@ -86,6 +90,9 @@ extension ChallengeRouter: Router {
 
         case let .fetchChallengeOverview(id):
             return "/api/challenges/v1/\(id)/members"
+            
+        case let .deleteChallenge(id):
+            return "/api/challenges/v1/\(id)/cancel"
         }
     }
 
@@ -109,7 +116,8 @@ extension ChallengeRouter: Router {
                 .fetchFeed,
                 .createChallenge,
                 .postChallenge,
-                .fetchChallengeOverview
+                .fetchChallengeOverview,
+                .deleteChallenge
             : return nil
 
 
@@ -171,6 +179,9 @@ protocol ChallengeApiClientProtocol {
     
     /// 챌린지 피드 가져오기
     func fetchFeed(challengeId: Int) async -> Result <[FeedResponseDto],NetworkError>
+    
+    /// 챌린지 취소하기
+    func deleteChallenge(challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>
 
 }
 
@@ -214,5 +225,10 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     /// 챌린지 피드 가져오기
     func fetchFeed(challengeId: Int) async -> Result <[FeedResponseDto],NetworkError> {
         await request(.fetchFeed(challengeId: challengeId))
+    }
+    
+    /// 챌린지 취소하기
+    func deleteChallenge(challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>{
+        await request(.deleteChallenge(challengeId: challengeId))
     }
 }

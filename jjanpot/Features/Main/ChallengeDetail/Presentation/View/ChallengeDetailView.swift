@@ -10,9 +10,13 @@ import SwiftUI
 // 챌린지 상세 정보
 struct ChallengeDetailView: View {
     @StateObject var viewModel: ChallengeDetailViewModel
-    init(viewModel: ChallengeDetailViewModel) {
+    private let coordinator: MainCoordinator
+    
+    init(viewModel: ChallengeDetailViewModel, coordinator: MainCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.coordinator = coordinator
     }
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
@@ -25,6 +29,17 @@ struct ChallengeDetailView: View {
                 
                 // 챌린지 가이드 라인
                 ChallengeGuideLine()
+                
+                if viewModel.viewData?.hasCancelButton ?? false {
+                    Button {
+                        viewModel.isShowCancelAlert = true
+                    } label: {
+                        Text("취소하기")
+                            .font(.pretendard(.medium, size: 14))
+                            .foregroundStyle(Color.orange500)
+                    }
+                }
+
             }
             .padding(.horizontal, 20)
         }
@@ -35,6 +50,22 @@ struct ChallengeDetailView: View {
         }
         .background(Color.orange50)
         .navigationTitle("상세 정보")
+        .popup(isPresented: $viewModel.isShowCancelAlert) {
+            Modal(title: "챌린지 취소하기", content: "시작전에만 취소가 가능합니다.")
+                .buttons {
+                    ModalButton(title: "유지하기", size: .middle, colorType: .secondary) {
+                        viewModel.isShowCancelAlert = false
+                    }
+                    ModalButton(title: "취소하기", size: .middle) {
+                        viewModel.cancel()
+                    }
+                }
+        }
+        .onChange(of: viewModel.isCancelled) { isCancelled in
+            if isCancelled {
+                coordinator.pop()
+            }
+        }
     }
     
     
@@ -98,9 +129,10 @@ struct ChallengeDetailView: View {
     }
 }
 
-//#Preview {
-//    ChallengeDetailView(viewModel: )
-//}
+#Preview {
+    let di = MockMainDIContainer()
+    di.makeChallengeDetailView(challengeId: 1, coordinator: di.makeMainCoordinator())
+}
 
 
 

@@ -50,12 +50,6 @@ final class ChallengePostViewModel: ObservableObject {
 
         Task {
             do {
-                // Image를 UIImage로 변환
-//                let uiImage: UIImage? = selectedImage.flatMap { image in
-//                    let renderer = ImageRenderer(content: image)
-//                    return renderer.uiImage
-//                }
-
                 // spendType 결정
                 let spendType = expenseType == .expense ? "SPEND" : "NO_SPEND"
 

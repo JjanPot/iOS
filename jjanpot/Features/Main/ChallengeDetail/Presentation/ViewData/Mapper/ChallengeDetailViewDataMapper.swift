@@ -22,7 +22,8 @@ struct ChallengeDetailViewDataMapper {
             relationshipType: entity.team.teamType,
             during: during,
             memberCount: "\(entity.team.maxMemberCount)명",
-            description: entity.description
+            description: entity.description,
+            hasCancelButton: (entity.isLeader && entity.status.contains("대기중"))
         )
     }     
     

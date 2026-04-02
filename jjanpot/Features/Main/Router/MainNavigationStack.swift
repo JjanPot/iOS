@@ -50,7 +50,7 @@ struct MainNavigationStack: View {
             container.makeCreateChallengeView(coordinator: coordinator)
 
         case let .challengeDetail(id):
-            container.makeChallengeDetailView(challengeId: id)
+            container.makeChallengeDetailView(challengeId: id, coordinator: coordinator)
             
         case let .challengePost(id):
             container.makeChallengePostView(challengeId: id, coordinator: coordinator)

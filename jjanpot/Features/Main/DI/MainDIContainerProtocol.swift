@@ -41,7 +41,7 @@ protocol MainDIContainerProtocol {
     func makeCreateChallengeView(coordinator: MainCoordinator) -> CreateChallengeView
     
     // 챌린지 상세정보 화면
-    func makeChallengeDetailView(challengeId: Int) -> ChallengeDetailView
+    func makeChallengeDetailView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeDetailView
     
     /// 챌린지 대시보드화면
     func makeChallengeDashboardView(coordinator: MainCoordinator) -> ChallengeDashboardView
@@ -137,9 +137,9 @@ final class MainDIContainer: MainDIContainerProtocol {
         let useCase = makeChallengeDetailUseCase()
         return ChallengeDetailViewModel(challengeId: challengeId, useCase: useCase)
     }
-    func makeChallengeDetailView(challengeId: Int) -> ChallengeDetailView {
+    func makeChallengeDetailView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeDetailView {
         let vm = makeChallengeDetailViewModel(challengeId: challengeId)
-        return ChallengeDetailView(viewModel: vm)
+        return ChallengeDetailView(viewModel: vm, coordinator: coordinator)
     }
     
     // MARK: - 챌린지 대시보드
@@ -208,10 +208,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return CreateChallengeView(viewModel: viewModel, coordinator: coordinator)
     }
     
-    func makeChallengeDetailView(challengeId: Int) -> ChallengeDetailView {
+    func makeChallengeDetailView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeDetailView {
         let usecase = MockChallengeDetailUseCase()
         let vm = ChallengeDetailViewModel(challengeId: challengeId, useCase: usecase)
-        return ChallengeDetailView(viewModel: vm)
+        return ChallengeDetailView(viewModel: vm, coordinator: coordinator)
     }
     
     func makeChallengeDashboardView(coordinator: MainCoordinator) -> ChallengeDashboardView {
@@ -228,6 +228,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
     
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
+        func cancel(challengeId: Int) async throws {
+            throw NetworkError.dataNil
+        }
+        
         func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
             throw NetworkError.dataNil
         }
