@@ -39,6 +39,9 @@ enum ChallengeRouter {
     
     /// 챌린지 오버뷰 가져오기
     case fetchChallengeOverview(challengeId: Int)
+    
+    /// mypage 챌린지 통계 조회
+    case getChallengeStats
 }
 
 extension ChallengeRouter: Router {
@@ -53,7 +56,8 @@ extension ChallengeRouter: Router {
                 .getCategories,
                 .getDetail,
                 .fetchFeed,
-                .fetchChallengeOverview
+                .fetchChallengeOverview,
+                .getChallengeStats
             : .get
 
         case .createChallenge,
@@ -61,6 +65,7 @@ extension ChallengeRouter: Router {
                 .postChallenge,
                 .deleteChallenge
             : .post
+            
         }
     }
     
@@ -93,6 +98,9 @@ extension ChallengeRouter: Router {
             
         case let .deleteChallenge(id):
             return "/api/challenges/v1/\(id)/cancel"
+            
+        case .getChallengeStats:
+            return "/api/users/v1/challenge-stats"
         }
     }
 
@@ -117,8 +125,10 @@ extension ChallengeRouter: Router {
                 .createChallenge,
                 .postChallenge,
                 .fetchChallengeOverview,
-                .deleteChallenge
+                .deleteChallenge,
+                .getChallengeStats
             : return nil
+        
 
 
         case let .submitInviteCode(code):
@@ -182,8 +192,13 @@ protocol ChallengeApiClientProtocol {
     
     /// 챌린지 취소하기
     func deleteChallenge(challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>
+    
+    /// mypage 챌린지 통계 조회
+    func getChallengeStats() async -> Result<ChallengeStatsDto, NetworkError>
 
 }
+
+    // MARK: - ChallengeApiClient
 
 final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientProtocol {
     func fetchChallenges() async -> Result<ChallengeResponseDto, NetworkError> {
@@ -230,5 +245,10 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     /// 챌린지 취소하기
     func deleteChallenge(challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>{
         await request(.deleteChallenge(challengeId: challengeId))
+    }
+    
+    /// mypage 챌린지 통계 조회
+    public func getChallengeStats() async -> Result<ChallengeStatsDto, NetworkError> {
+        await request(.getChallengeStats)
     }
 }

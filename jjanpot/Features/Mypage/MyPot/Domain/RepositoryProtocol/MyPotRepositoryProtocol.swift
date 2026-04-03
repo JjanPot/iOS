@@ -7,5 +7,6 @@
 
 
 protocol MyPotRepositoryProtocol {
-    
+    func getMyChallengeStats() async throws -> ChallengeStatsEntity
 }
+

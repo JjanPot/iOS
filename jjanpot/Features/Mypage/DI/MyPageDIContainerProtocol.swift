@@ -18,9 +18,11 @@ protocol MyPageDIContainerProtocol {
 final class MyPageDIContainer: MyPageDIContainerProtocol {
 
     private let authApiClient: AuthApiClientProtocol
+    private let challengeApiClient: ChallengeApiClientProtocol
 
-    init(authApiClient: AuthApiClientProtocol) {
+    init(authApiClient: AuthApiClientProtocol, challengeApiClient: ChallengeApiClientProtocol) {
         self.authApiClient = authApiClient
+        self.challengeApiClient = challengeApiClient
     }
 
     // MARK: - Coordinator
@@ -32,7 +34,7 @@ final class MyPageDIContainer: MyPageDIContainerProtocol {
     // MARK: - MyPage (MyPot)
 
     private func makeMyPotRepository() -> MyPotRepositoryProtocol {
-        return MyPotRepository(authApiClient: authApiClient)
+        return MyPotRepository(authApiClient: authApiClient, challengeApiClient: challengeApiClient)
     }
 
     private func makeMyPotUseCase() -> MyPotUseCaseProtocol {
@@ -84,6 +86,9 @@ final class MockMyPageDIContainer: MyPageDIContainerProtocol {
     }
 
     struct MockMyPotUseCase: MyPotUseCaseProtocol {
+        func getMyChallengeStats() async throws -> ChallengeStatsEntity {
+            ChallengeStatsEntity(totalCount: 10, successCount: 3, failCount: 7, successRate: 10)
+        }
         
     }
     

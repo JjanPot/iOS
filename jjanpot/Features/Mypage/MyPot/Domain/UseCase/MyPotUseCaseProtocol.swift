@@ -7,7 +7,7 @@
 
 
 protocol MyPotUseCaseProtocol {
-    
+    func getMyChallengeStats() async throws -> ChallengeStatsEntity
 }
 struct MyPotUseCase: MyPotUseCaseProtocol {
     private let repository: MyPotRepositoryProtocol
@@ -17,6 +17,10 @@ struct MyPotUseCase: MyPotUseCaseProtocol {
     
     
     
+    func getMyChallengeStats() async throws  -> ChallengeStatsEntity{
+        try await repository.getMyChallengeStats()
+        
+    }
 }
 
 

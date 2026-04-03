@@ -52,7 +52,7 @@ final class AppDIContainer {
     }()
     
     lazy var mypageDiContainer: MyPageDIContainerProtocol = {
-        MyPageDIContainer(authApiClient: authApiClient)
+        MyPageDIContainer(authApiClient: authApiClient, challengeApiClient: challengeApiClient)
     }()
 }
 

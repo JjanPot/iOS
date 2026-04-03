@@ -24,6 +24,9 @@ public enum AuthRouter {
     // 프로필 설정  birthDate "2000-01-15"
     case setProfile(nickname: String, birthDate: String?, imageUrl: String?)
     
+    // MARK : mypage
+    
+    /// 로그아웃
     case logout(userId: Int)
 }
 
@@ -118,6 +121,7 @@ extension AuthRouter: Router {
                 "userId" : userId,
             ]
             return params
+            
         }
     }
     
@@ -157,6 +161,7 @@ public protocol AuthApiClientProtocol {
     
     /// 로그아웃
     func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError>
+    
 }
 
 
@@ -194,5 +199,3 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
         await request(.logout(userId: userId))
     }
 }
-
-
