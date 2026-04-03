@@ -11,7 +11,6 @@ import SwiftUI
 /// App 레벨에서 분기되어 메인 관련 화면들을 관리합니다.
 struct MainNavigationStack: View {
     @StateObject private var coordinator: MainCoordinator
-    @StateObject private var popupManager = PopupManager.shared
 
     private let container: MainDIContainerProtocol
     private let myPageContainer: MyPageDIContainerProtocol
@@ -34,13 +33,11 @@ struct MainNavigationStack: View {
             .navigationDestination(for: MainDestination.self) { destination in
                 destinationView(for: destination)
             }
-            .popup(isPresented: $popupManager.showInviteCodePopup, onDismiss: {
-                popupManager.inviteCode = nil
-            }) {
-                // 초대코드 팝업
-                container.makeInviteCodePopupView(inviteCode: popupManager.inviteCode, onCloseAction: {
-                    popupManager.dismiss()
-                })
+            .popup(isPresented: Binding(
+                get: { coordinator.activePopup != nil },
+                set: { if !$0 { coordinator.activePopup = nil } }
+            )) {
+                popupContentView
             }
         }
     }
@@ -58,7 +55,24 @@ struct MainNavigationStack: View {
             container.makeChallengePostView(challengeId: id, coordinator: coordinator)
         }
     }
-   
+    
+    @ViewBuilder
+    private var popupContentView: some View {
+        switch coordinator.activePopup {
+        case .inviteCode_Input: // 초대코드 팝업
+            container.makeInviteCodePopupView(inviteCode: nil, onCloseAction: {
+                coordinator.activePopup = nil
+            })
+            
+        case let .inviteCode_Copy(inviteCode):
+            container.makeInviteCodePopupView(inviteCode: inviteCode, onCloseAction: {
+                coordinator.activePopup = nil
+            })
+            
+        case .none:
+            EmptyView()
+        }
+    }
 }
 
 #Preview {

@@ -47,11 +47,16 @@ enum MainDestination: Route {
         }
     }
 }
+enum MainPopupDestination {
+    case inviteCode_Input
+    case inviteCode_Copy(inviteCode: String)
+}
 
 @MainActor
 final class MainCoordinator: ObservableObject {
     private let container: MainDIContainerProtocol
     @Published var path = NavigationPath()
+    @Published var activePopup: MainPopupDestination?
 
     init(container: MainDIContainerProtocol) {
         self.container = container

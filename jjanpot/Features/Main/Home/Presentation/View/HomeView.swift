@@ -91,10 +91,11 @@ struct HomeView: View {
             coordinator.push(.challengeDetail(id: id))
 
         case .inputInviteCode:
-            PopupManager.shared.showInviteCodeInput()
+            coordinator.activePopup = .inviteCode_Input
 
         case let .copyInviteCode(code):
-            PopupManager.shared.showInviteCodeCopy(code: code)
+            guard let code else { return }
+            coordinator.activePopup = .inviteCode_Copy(inviteCode: code)
 
         case let .submitSavingsProof(id):
             coordinator.push(.challengePost(id: id))
