@@ -13,9 +13,8 @@ struct SettingsView: View {
         case privacyPolicy
         case marketingTemrs
         case useGuide
-        
-        
     }
+    
     @StateObject var viewModel: SettingsViewModel
     private let coordinator: MyPageCoordinator
     
@@ -50,12 +49,14 @@ struct SettingsView: View {
                     MenuButton("로그아웃") {
                         isShowLogoutPopup = true
                     }
-//                    MenuButton("탈퇴하기") {
-//                        isShowSignoutPopup = true
-//                    }
+                    /*
+                    MenuButton("탈퇴하기") {
+                        isShowSignoutPopup = true
+                    }
+                     */
                 }
             } // ~VStack
-            .padding(.horizontal, 20)
+            .padding(20)
         } // ~ScrollView
         .navigationTitle("설정")
         .popup(isPresented: $isShowLogoutPopup) {
