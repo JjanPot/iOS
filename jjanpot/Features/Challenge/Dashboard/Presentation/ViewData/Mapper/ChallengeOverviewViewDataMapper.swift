@@ -13,7 +13,7 @@ struct ChallengeOverviewViewDataMapper {
     func map(from entity: OverviewEntity) -> ChallengeOverviewViewData{
 
         let date = entity.startDate.toString(format: "M월d일", locale: .kr)
-        let segments = segments(from: entity.members, totalSavedAmount: entity.totalSavedAmount)
+        let segments = segments(from: entity.members, totalSavedAmount: entity.goalAmount)
         let members = members(from: entity.members)
 
         return ChallengeOverviewViewData(
