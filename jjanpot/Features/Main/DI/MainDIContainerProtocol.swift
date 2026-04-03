@@ -48,6 +48,9 @@ protocol MainDIContainerProtocol {
 
     /// 지출,무지출 인증
     func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView
+    
+    /// 챌린지 결과
+    func makeChallengeReportView(coordinator: MainCoordinator) -> ChallengeReportView
 
 }
 
@@ -182,6 +185,25 @@ final class MainDIContainer: MainDIContainerProtocol {
         return ChallengePostView(viewModel: vm, coordinator: coordinator)
     }
     
+    
+    // MARK: - 챌린지 결과화면
+    
+    private func makeChallengeReportRepository() -> ChallengeReportRepositoryProtocol {
+        return ChallengeReportRepository(challengeApiClient: challengeApiClient)
+    }
+    private func makeChallengeReportUseCase() -> ChallengeReportUseCaseProtocol {
+        let repo = makeChallengeReportRepository()
+        return ChallengeReportUseCase(repository: repo)
+    }
+    private func makeChallengeReportViewModel() -> ChallengeReportViewModel {
+        let usecase = makeChallengeReportUseCase()
+        return ChallengeReportViewModel(useCase: usecase)
+    }
+    
+    func makeChallengeReportView(coordinator: MainCoordinator) -> ChallengeReportView {
+        let vm = makeChallengeReportViewModel()
+        return ChallengeReportView(viewModel: vm, coordinator: coordinator)
+    }
 }
 
 // MARK: - Mock
@@ -228,6 +250,12 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return ChallengePostView(viewModel: viewModel, coordinator: coordinator)
     }
     
+    func makeChallengeReportView(coordinator: MainCoordinator) -> ChallengeReportView {
+        let usecase = MockChallengeReportUseCase()
+        let viewModel = ChallengeReportViewModel(useCase: usecase)
+        return ChallengeReportView(viewModel: viewModel, coordinator: coordinator)
+    }
+    
 
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
         func cancel(challengeId: Int) async throws {
@@ -269,6 +297,9 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
             throw NetworkError.dataNil
         }
+    }
+    struct MockChallengeReportUseCase: ChallengeReportUseCaseProtocol {
+        
     }
 }
 struct MockInviteCodePopupUseCase: InviteCodePopupUseCaseProtocol {
