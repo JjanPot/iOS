@@ -23,6 +23,9 @@ enum AppConstants {
         /// 마케팅 수신 활용
         static let marketingTemrs = "https://patch-carpenter-1ef.notion.site/32dcf10cd2e7800ab06ddd5b40e35110?source=copy_link"
         
+        /// 이용가이드
+        static let useGuide = "https://patch-carpenter-1ef.notion.site/JJANPOT-FAQ-32fcf10cd2e780cab8efe04e712cc180?source=copy_link"
+        
     }
 
     // MARK: - App Info

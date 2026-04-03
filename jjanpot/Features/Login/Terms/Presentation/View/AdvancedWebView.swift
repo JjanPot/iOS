@@ -11,6 +11,36 @@ import UIKit
 import SwiftUI
 import WebKit
 
+struct WebView: View {
+    let url: String
+    let onDismiss: () -> Void
+    
+    init(url: String, onDismiss: @escaping () -> Void) {
+        self.url = url
+        self.onDismiss = onDismiss
+    }
+    
+    var body: some View {
+        NavigationStack {
+            AdvancedWebView(
+                url: URL(string: url)!,
+                isLoading: .constant(false)
+            )
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        onDismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
+        }
+    }
+}
+
 struct AdvancedWebView: UIViewRepresentable {
     let url: URL
     @Binding var isLoading: Bool
