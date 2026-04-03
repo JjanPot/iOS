@@ -55,6 +55,8 @@ struct HomeView: View {
             }
         } // ~VStack
         .onAppear {
+            viewModel.requestAuthorization()
+            
             viewModel.loadHomeData()
         }
         .onReceive(NotificationCenter.default.publisher(for: .shouldRefreshMain), perform: { _ in
