@@ -14,14 +14,16 @@ struct ChallengeDetailViewDataMapper {
         let during = "\(entity.startDate.toString(.dateOnly2)) - \(entity.endDate.toString(.dateOnly2)) (1주)"
         
         return ChallengeDetailViewData(
-            teamName: entity.title,
-            goals: "\(targetAmount) 목표로 1주동안 함께 절약하기",
-            category: categories(entity.categories),
-            teamTargetAmount: targetAmount,
-            personTargetAmound: "\(personTargetAmound) 이상",
-            relationshipType: entity.team.teamType,
-            during: during,
-            memberCount: "\(entity.team.maxMemberCount)명",
+            basicInfo: ChallengeBasicInfoViewData(
+                teamName: entity.title,
+                goals: "\(targetAmount) 목표로 1주동안 함께 절약하기",
+                category: categories(entity.categories),
+                teamTargetAmount: targetAmount,
+                personTargetAmound: "\(personTargetAmound) 이상",
+                relationshipType: entity.team.teamType,
+                during: during,
+                memberCount: "\(entity.team.maxMemberCount)명"
+            ),
             description: entity.description,
             hasCancelButton: (entity.isLeader && entity.status.contains("대기중"))
         )

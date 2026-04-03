@@ -123,7 +123,7 @@ struct MainButtonStyle {
             // Secondary - Normal
             return MainButtonStyle(
                 backgroundColor: .white,
-                foregroundColor: .black500,
+                foregroundColor: .black900,
                 borderColor: .orange500
             )
         }

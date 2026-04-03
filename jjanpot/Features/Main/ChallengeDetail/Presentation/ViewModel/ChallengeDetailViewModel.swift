@@ -19,7 +19,6 @@ final class ChallengeDetailViewModel: ObservableObject {
     @Published var isShowCancelAlert: Bool = false
     @Published var isCancelled: Bool = false
     
-    
     private let useCase: ChallengeDetailUseCaseProtocol
 
     init(challengeId: Int, useCase: ChallengeDetailUseCaseProtocol) {
