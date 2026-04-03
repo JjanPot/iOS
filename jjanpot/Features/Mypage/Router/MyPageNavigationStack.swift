@@ -25,6 +25,9 @@ struct MyPageNavigationStack: View {
                 .navigationDestination(for: MyPageDestination.self) { destination in
                     destinationView(for: destination)
                 }
+                .navigationDestination(for: MyPageDestination.self) { destination in
+                    destinationView(for: destination)
+                }
         }
     }
 
@@ -33,6 +36,8 @@ struct MyPageNavigationStack: View {
         // MyPage 내부 네비게이션이 필요하면 여기에 추가
         switch destination {
         // 케이스별 화면 추가
+        case .settings:
+            container.makeSettingsView(coordinator: coordinator)
         default:
             EmptyView()
         }

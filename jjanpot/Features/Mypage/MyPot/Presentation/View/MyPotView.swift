@@ -8,8 +8,6 @@
 import SwiftUI
 import Kingfisher
 
-
-
 struct MyPotView: View {
     
     @StateObject var viewModel: MyPotViewModel
