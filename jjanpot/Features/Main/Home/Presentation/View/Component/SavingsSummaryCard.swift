@@ -102,7 +102,6 @@ struct SavingsSummaryCard: View {
             }
         }
         .padding(.vertical, 15)
-        .padding(.horizontal, 13.5)
         .frame(maxWidth: .infinity, alignment: .center)
         .background(Color.white)
         .roundedBorder(color: .orange300, radius: 12)

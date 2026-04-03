@@ -84,9 +84,7 @@ final class MockMyPageDIContainer: MyPageDIContainerProtocol {
     }
 
     struct MockMyPotUseCase: MyPotUseCaseProtocol {
-        func logout() async throws {
-            throw NetworkError.dataNil
-        }
+        
     }
     
     func makeSettingsView(coordinator: MyPageCoordinator) -> SettingsView {
@@ -95,6 +93,8 @@ final class MockMyPageDIContainer: MyPageDIContainerProtocol {
         return SettingsView(viewModel: vm, coordinator: coordinator)
     }
     struct MockSettingsUseCase: SettingsUseCaseProtocol {
-        
+        func logout() async throws {
+            throw NetworkError.dataNil
+        }
     }
 }

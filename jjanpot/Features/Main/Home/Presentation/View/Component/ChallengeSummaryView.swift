@@ -20,11 +20,9 @@ struct ChallengeSummaryView: View {
                     .foregroundStyle(.black900)
                 
                 // 인증평균, 참여율, 연속활동
-                HStack(spacing: 5) {
+                HStack(spacing: 10) {
                     SavingsSummaryCard(type: .averageProof, value: viewData.team.certificationCount)
-                    Spacer()
                     SavingsSummaryCard(type: .participationRate, value: viewData.team.participationRate)
-                    Spacer()
                     SavingsSummaryCard(type: .consecutiveActivity, value: viewData.team.consecutiveDays)
                 }
             }
@@ -36,11 +34,9 @@ struct ChallengeSummaryView: View {
                     .foregroundStyle(.black900)
                 
                 // 인증횟수, 참여율, 연속활동
-                HStack(spacing: 5) {
+                HStack(spacing: 10) {
                     SavingsSummaryCard(type: .proofCount, value: viewData.personal.consecutiveDays)
-                    Spacer()
                     SavingsSummaryCard(type: .participationRate, value: viewData.personal.participationRate)
-                    Spacer()
                     SavingsSummaryCard(type: .consecutiveActivity, value: viewData.personal.consecutiveDays)
                 }
             }
