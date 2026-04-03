@@ -12,6 +12,7 @@ import Alamofire
 protocol MyPageDIContainerProtocol {
     func makeMyPageCoordinator() -> MyPageCoordinator
     func makeMyPotView(coordinator: MyPageCoordinator) -> MyPotView
+    func makeSettingsView(coordinator: MyPageCoordinator) -> SettingsView
 }
 
 final class MyPageDIContainer: MyPageDIContainerProtocol {
@@ -48,6 +49,25 @@ final class MyPageDIContainer: MyPageDIContainerProtocol {
         let vm = makeMyPotViewModel()
         return MyPotView(viewModel: vm, coordinator: coordinator)
     }
+    
+    // MARK: - 설정화면
+    
+    private func makeSettingsRepository() -> SettingsRepositoryProtocol {
+        return SettingsRepository(authApiClient: authApiClient)
+    }
+    private func makeSettingsUseCase() -> SettingsUseCaseProtocol {
+        let repo = makeSettingsRepository()
+        return SettingsUseCase(repository: repo)
+    }
+    private func makeSettingsViewModel() -> SettingsViewModel {
+        let usecase = makeSettingsUseCase()
+        return SettingsViewModel(useCase: usecase)
+    }
+    
+    func makeSettingsView(coordinator: MyPageCoordinator) -> SettingsView {
+        let vm = makeSettingsViewModel()
+        return SettingsView(viewModel: vm, coordinator: coordinator)
+    }
 }
 
 // MARK: - Mock
@@ -67,7 +87,14 @@ final class MockMyPageDIContainer: MyPageDIContainerProtocol {
         func logout() async throws {
             throw NetworkError.dataNil
         }
+    }
+    
+    func makeSettingsView(coordinator: MyPageCoordinator) -> SettingsView {
+        let usecase = MockSettingsUseCase()
+        let vm = SettingsViewModel(useCase: usecase)
+        return SettingsView(viewModel: vm, coordinator: coordinator)
+    }
+    struct MockSettingsUseCase: SettingsUseCaseProtocol {
         
-
     }
 }

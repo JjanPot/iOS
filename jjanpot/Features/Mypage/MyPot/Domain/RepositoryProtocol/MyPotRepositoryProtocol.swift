@@ -7,5 +7,5 @@
 
 
 protocol MyPotRepositoryProtocol {
-    func logout(userId: Int) async throws
+    
 }

@@ -14,13 +14,4 @@ struct MyPotRepository: MyPotRepositoryProtocol {
     }
 
     
-    func logout(userId: Int) async throws {
-        let result = await authApiClient.logout(userId: userId)
-        switch result {
-        case .success:
-            return
-        case .failure(let error):
-            throw error
-        }
-    }
 }

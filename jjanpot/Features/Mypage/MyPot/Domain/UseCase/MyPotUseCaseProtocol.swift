@@ -7,7 +7,7 @@
 
 
 protocol MyPotUseCaseProtocol {
-    func logout() async throws
+    
 }
 struct MyPotUseCase: MyPotUseCaseProtocol {
     private let repository: MyPotRepositoryProtocol
@@ -16,18 +16,7 @@ struct MyPotUseCase: MyPotUseCaseProtocol {
     }
     
     
-    func logout() async throws {
-        guard let userId = getUserId() else {
-            Logger.error("user id 못가져옴")
-            throw NetworkError.requestFailed("userId is nil")
-        }
-        try await repository.logout(userId: userId)
-        AuthManager.shared.logout()
-    }
     
-    private func getUserId() -> Int? {
-        AuthManager.shared.currentUser?.userId
-    }
 }
 
 

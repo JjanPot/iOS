@@ -11,6 +11,7 @@ import SwiftUI
 /// App 레벨에서 분기되어 메인 관련 화면들을 관리합니다.
 struct MainNavigationStack: View {
     @StateObject private var coordinator: MainCoordinator
+    @StateObject private var mypageCoordinator: MyPageCoordinator
     @StateObject private var popupManager = PopupManager.shared
 
     private let container: MainDIContainerProtocol
@@ -20,6 +21,7 @@ struct MainNavigationStack: View {
         self.container = container
         self.myPageContainer = myPageContainer
         self._coordinator = StateObject(wrappedValue: container.makeMainCoordinator())
+        self._mypageCoordinator = StateObject(wrappedValue: myPageContainer.makeMyPageCoordinator())
     }
 
     var body: some View {
@@ -32,6 +34,9 @@ struct MainNavigationStack: View {
                 myPotView: AnyView(MyPageNavigationStack(container: myPageContainer))
             )
             .navigationDestination(for: MainDestination.self) { destination in
+                destinationView(for: destination)
+            }
+            .navigationDestination(for: MyPageDestination.self) { destination in
                 destinationView(for: destination)
             }
             .popup(isPresented: $popupManager.showInviteCodePopup, onDismiss: {
@@ -56,6 +61,14 @@ struct MainNavigationStack: View {
             
         case let .challengePost(id):
             container.makeChallengePostView(challengeId: id, coordinator: coordinator)
+        }
+    }
+    @ViewBuilder
+    private func destinationView(for destination: MyPageDestination) -> some View {
+        switch destination {
+       
+        case .settings:
+            myPageContainer.makeSettingsView(coordinator: mypageCoordinator)
         }
     }
 }

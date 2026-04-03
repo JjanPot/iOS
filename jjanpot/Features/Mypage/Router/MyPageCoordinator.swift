@@ -10,22 +10,27 @@ import Combine
 
 enum MyPageDestination: Route {
     // MyPage 내부 네비게이션이 필요하면 여기에 추가
+    
+    case settings
 
     var id: String {
         switch self {
         // 케이스별 id 추가
+        case .settings: return "settings"
         }
     }
 
     var analyticsName: String {
         switch self {
         // 케이스별 analyticsName 추가
+        case .settings: return "settings"
         }
     }
 
     var hidesTabBar: Bool {
         switch self {
         // 케이스별 hidesTabBar 추가
+        case .settings: return false
         }
     }
 }
