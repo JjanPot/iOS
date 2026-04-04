@@ -8,22 +8,45 @@
 import Foundation
 
 struct ChallengeReportRepository: ChallengeReportRepositoryProtocol {
-    private let challengeApiClient: ChallengeApiClientProtocol
+    private let apiClient: ChallengeApiClientProtocol
 
     init(challengeApiClient: ChallengeApiClientProtocol) {
-        self.challengeApiClient = challengeApiClient
+        self.apiClient = challengeApiClient
     }
-
-    /*
-    func agree<#name#>(marketingConsentAgreed: Bool ) async throws {
-        let result = await challengeApiClient.agreement(marketingConsentAgreed: marketingConsentAgreed)
+    
+    /// 챌린지 결과지 가져오기
+    func report(challengeId: Int) async throws -> ChallengeReportEntity {
+        let result = await apiClient.getChallengeReport(challengeId: challengeId)
         switch result {
-        case .success:
-            return
+        case let .success(dto):
+            return ChallengeReportEntity(from: dto)
+        case let .failure(error): throw error
+        }
+    }
+    
+    /// 챌린지 상세보기 가져오기
+    func fetchDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
+        let result = await apiClient.fetchDetail(challengeId: challengeId)
+
+        switch result {
+        case .success(let dto):
+            return ChallengeDetailEntity(from: dto)
         case .failure(let error):
             throw error
         }
-    }*/
+    }
+    
+    /// 챌린지 진행중일때, 챌린지 요약정보 가져오기
+    func fetchChallengeSummary(challengeId: Int) async throws -> ChallengeSummaryEntity {
+        let result = await apiClient.fetchChallengeSummary(challengeId: challengeId)
+        switch result {
+        case .success(let dto):
+            return ChallengeSummaryEntityMapper().map(from: dto)
+            
+        case .failure(let error):
+            throw error
+        }
+    }
 }
 
 

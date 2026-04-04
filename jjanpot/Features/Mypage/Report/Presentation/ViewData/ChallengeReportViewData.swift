@@ -34,12 +34,4 @@ struct ChallengeReportViewData {
     
     // 개인절약금액
     let personalSavingAmount: Int
-    
-    // 절약현황
-    let summaryViewData: ChallengeSummaryViewData
-    
-    // 챌린지 기본 정보
-    let basicInfo: ChallengeBasicInfoViewData
-    
-    
 }

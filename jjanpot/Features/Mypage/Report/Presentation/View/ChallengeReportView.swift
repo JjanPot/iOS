@@ -9,14 +9,13 @@ import SwiftUI
 
 struct ChallengeReportView: View {
     
-    
     @StateObject var viewModel: ChallengeReportViewModel
     private let renderService = ImageRenderService()
-    private let coordinator: MainCoordinator
+    private let coordinator: MyPageCoordinator
     @State var showPermissionAlert = false
     @State var showShareSheet = false
     
-    init(viewModel: ChallengeReportViewModel, coordinator: MainCoordinator) {
+    init(viewModel: ChallengeReportViewModel, coordinator: MyPageCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -59,7 +58,7 @@ struct ChallengeReportView: View {
                     report
                     
                     // 절약 현황
-                    if let summaryViewData = viewModel.viewData?.summaryViewData {
+                    if let summaryViewData = viewModel.summaryViewData {
                         ChallengeSummaryView(viewData: summaryViewData)
                             .padding(.horizontal, 20)
                             .padding(.bottom, 29)
@@ -67,7 +66,7 @@ struct ChallengeReportView: View {
                     
                     
                     // 팀 정보
-                    if let basicInfo = viewModel.viewData?.basicInfo {
+                    if let basicInfo = viewModel.detailViewData {
                         ChallengeBasicInfoView(viewData: basicInfo)
                             .padding(.horizontal, 20)
                             .padding(.bottom, 16)
@@ -83,11 +82,14 @@ struct ChallengeReportView: View {
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)
                     
-                    
                     Spacer()
                 }
             }
         } // ~Zstack
+        .task {
+            viewModel.loadReport()
+            viewModel.loadSummary()
+        }
         .loading(viewModel.isLoading)
         .toast(message: $viewModel.toastMessage)
         .alert("사진 접근 권한 필요", isPresented: $showPermissionAlert) {
@@ -114,13 +116,14 @@ struct ChallengeReportView: View {
     
     private var report: some View {
         VStack(spacing: .zero){
-            if let viewData = viewModel.viewData {
+            if let viewData = viewModel.reportViewData {
                 
                 reportHeader
                     .padding(.bottom, 32)
                 
                 // 팀 결과
-                TeamSavingResultView(viewData: viewData.teamSavingResult)
+                TeamSavingResultView(
+                    viewData: viewData.teamSavingResult)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 24)
                 
@@ -134,7 +137,7 @@ struct ChallengeReportView: View {
     
     private var reportHeader: some View {
         Group{
-            if let viewData = viewModel.viewData {
+            if let viewData = viewModel.reportViewData {
                 VStack (alignment: .center, spacing: .zero){
                     Image(viewData.result.image)
                         .resizable()
@@ -158,7 +161,7 @@ struct ChallengeReportView: View {
     // 개인 절약 금액
     private var personalSaving: some View {
         Group {
-            if let viewData = viewModel.viewData {
+            if let viewData = viewModel.reportViewData {
                 HStack(spacing: 8) {
                     Image("flag")
                         .resizable()
@@ -219,7 +222,7 @@ struct ImageRenderService {
 
 
 #Preview {
-    let di = MockMainDIContainer()
-    di.makeChallengeReportView(coordinator: di.makeMainCoordinator())
+    let di = MockMyPageDIContainer()
+    di.makeChallengeReportView(challengeId: 6,coordinator: di.makeMyPageCoordinator())
 }
 

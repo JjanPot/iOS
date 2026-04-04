@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-
+// 결과 리포트 > 팀 결과
 struct TeamSavingResultView: View {
     let viewData: TeamSavingResultViewData
     var body: some View {

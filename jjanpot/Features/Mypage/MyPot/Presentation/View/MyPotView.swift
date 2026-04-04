@@ -28,6 +28,7 @@ struct MyPotView: View {
                 Group {
                     profill
                     
+                    // 챌린지 참여 현황
                     if let viewData = viewModel.myStatsViewData {
                         HStack {
                             MyChallengeStatsItemView(.totalChallenge, content: viewData.totalCount)
@@ -42,6 +43,12 @@ struct MyPotView: View {
                         .padding(.vertical, 16)
                         .padding(.horizontal, 20)
                         .roundedBorder(color: .orange400, radius: 12)
+                    }
+                    
+                    
+                    // 챌린지 리포트 보기
+                    Button("챌린지 리포트 보기"){
+                        coordinator.push(.challengeReport(challengeId: 6))
                     }
                     
                 }

@@ -42,6 +42,8 @@ enum ChallengeRouter {
     
     /// mypage 챌린지 통계 조회
     case getChallengeStats
+    
+    case getChallengeReport(challengeId: Int)
 }
 
 extension ChallengeRouter: Router {
@@ -57,7 +59,8 @@ extension ChallengeRouter: Router {
                 .getDetail,
                 .fetchFeed,
                 .fetchChallengeOverview,
-                .getChallengeStats
+                .getChallengeStats,
+                .getChallengeReport
             : .get
 
         case .createChallenge,
@@ -101,6 +104,9 @@ extension ChallengeRouter: Router {
             
         case .getChallengeStats:
             return "/api/users/v1/challenge-stats"
+            
+        case let .getChallengeReport(id):
+            return "/api/challenges/v1/{id}/result"
         }
     }
 
@@ -126,7 +132,8 @@ extension ChallengeRouter: Router {
                 .postChallenge,
                 .fetchChallengeOverview,
                 .deleteChallenge,
-                .getChallengeStats
+                .getChallengeStats,
+                .getChallengeReport
             : return nil
         
 
@@ -195,6 +202,9 @@ protocol ChallengeApiClientProtocol {
     
     /// mypage 챌린지 통계 조회
     func getChallengeStats() async -> Result<ChallengeStatsDto, NetworkError>
+    
+    /// 챌린지 결과 조회
+    func getChallengeReport(challengeId: Int) async -> Result<ChallengeReportDto, NetworkError>
 
 }
 
@@ -248,7 +258,12 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     }
     
     /// mypage 챌린지 통계 조회
-    public func getChallengeStats() async -> Result<ChallengeStatsDto, NetworkError> {
+    func getChallengeStats() async -> Result<ChallengeStatsDto, NetworkError> {
         await request(.getChallengeStats)
+    }
+    
+    /// 챌린지 결과 조회
+    func getChallengeReport(challengeId: Int) async -> Result<ChallengeReportDto, NetworkError> {
+        await request(.getChallengeReport(challengeId: challengeId))
     }
 }

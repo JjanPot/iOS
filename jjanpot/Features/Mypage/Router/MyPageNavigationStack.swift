@@ -32,12 +32,18 @@ struct MyPageNavigationStack: View {
     private func destinationView(for destination: MyPageDestination) -> some View {
         // MyPage 내부 네비게이션이 필요하면 여기에 추가
         switch destination {
-        // 케이스별 화면 추가
+        
+            // 설정화면
         case .settings:
             container.makeSettingsView(coordinator: coordinator)
             
+            // 알람 설정
         case .alarmSettings:
             container.makeAlarmSettingsView()
+            
+            // 챌린지 결과 화면
+        case let .challengeReport(id):
+            container.makeChallengeReportView(challengeId: id, coordinator: coordinator)
             
 //        default:
 //            EmptyView()

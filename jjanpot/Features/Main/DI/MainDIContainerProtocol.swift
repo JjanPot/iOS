@@ -50,7 +50,7 @@ protocol MainDIContainerProtocol {
     func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView
     
     /// 챌린지 결과
-    func makeChallengeReportView(coordinator: MainCoordinator) -> ChallengeReportView
+    //func makeChallengeReportView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeReportView
 
 }
 
@@ -187,7 +187,7 @@ final class MainDIContainer: MainDIContainerProtocol {
     
     
     // MARK: - 챌린지 결과화면
-    
+    /*
     private func makeChallengeReportRepository() -> ChallengeReportRepositoryProtocol {
         return ChallengeReportRepository(challengeApiClient: challengeApiClient)
     }
@@ -195,15 +195,16 @@ final class MainDIContainer: MainDIContainerProtocol {
         let repo = makeChallengeReportRepository()
         return ChallengeReportUseCase(repository: repo)
     }
-    private func makeChallengeReportViewModel() -> ChallengeReportViewModel {
+    private func makeChallengeReportViewModel(challengeId: Int) -> ChallengeReportViewModel {
         let usecase = makeChallengeReportUseCase()
-        return ChallengeReportViewModel(useCase: usecase)
+        return ChallengeReportViewModel(challengeId: challengeId, useCase: usecase)
     }
     
-    func makeChallengeReportView(coordinator: MainCoordinator) -> ChallengeReportView {
-        let vm = makeChallengeReportViewModel()
+    func makeChallengeReportView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeReportView {
+        let vm = makeChallengeReportViewModel(challengeId: challengeId)
         return ChallengeReportView(viewModel: vm, coordinator: coordinator)
     }
+     */
 }
 
 // MARK: - Mock
@@ -250,11 +251,13 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return ChallengePostView(viewModel: viewModel, coordinator: coordinator)
     }
     
-    func makeChallengeReportView(coordinator: MainCoordinator) -> ChallengeReportView {
+    /*
+    func makeChallengeReportView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeReportView {
         let usecase = MockChallengeReportUseCase()
-        let viewModel = ChallengeReportViewModel(useCase: usecase)
+        let viewModel = ChallengeReportViewModel(challengeId: challengeId, useCase: usecase)
         return ChallengeReportView(viewModel: viewModel, coordinator: coordinator)
     }
+    */
     
 
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
@@ -298,13 +301,58 @@ final class MockMainDIContainer: MainDIContainerProtocol {
             throw NetworkError.dataNil
         }
     }
-    struct MockChallengeReportUseCase: ChallengeReportUseCaseProtocol {
-        
-    }
 }
+
 struct MockInviteCodePopupUseCase: InviteCodePopupUseCaseProtocol {
     func submitInviteCode(code: String) async throws {
         throw NetworkError.dataNil
     }
 }
 
+
+struct MockChallengeReportUseCase: ChallengeReportUseCaseProtocol {
+    func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
+        ChallengeDetailEntity(
+            challengeId: 6,
+            title: "배달아껴팀",
+            description: "함께 절약해보야요",
+            status: "진행중",
+            goalAmount: 300_000,
+            minPersonalGoalAmount: 25_000,
+            startDate: Date(),
+            endDate: Date(),
+            categories: [.init(categoryId: 1, name: "외식/배달", iconURL: nil, amount: 10000)],
+            team: .init(teamId: 1,
+                        inviteCode: "code",
+                        currentMemberCount: 6, maxMemberCount: 6, teamType: ""),
+            isLeader: true)
+    }
+    
+    func fetchChallengeSummary(challengeId: Int) async throws -> ChallengeSummaryEntity {
+        ChallengeSummaryEntity(team: ChallengeSummaryEntity.Team(
+            avgCertificationCount: 5.0, participationRate: 133, consecutiveDays: 10
+        ), personal: ChallengeSummaryEntity.Personal(
+            certificationCount: 1, participationRate: 40, consecutiveDays: 2))
+    }
+    
+    func report(challengeId: Int) async throws -> ChallengeReportEntity {
+        return ChallengeReportEntity(
+            isTeamSuccess: true,
+            goalAmount: 300_000,
+            totalSavedAmount: 312_500,
+            achievementRate: 104,
+            categoryNames: ["외식/배달"],
+            personalSavedAmount: 25000
+        )
+        
+        // 실패의 경우
+//            ChallengeReportEntity(
+//                isTeamSuccess: false,
+//                goalAmount: 300_000,
+//                totalSavedAmount: 297_000,
+//                achievementRate: 99,
+//                categoryNames: ["외식/배달"],
+//                personalSavedAmount: 25000
+//            )
+    }
+}

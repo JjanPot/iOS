@@ -42,18 +42,6 @@ struct HomeViewDataMapper {
     
     // 챌린지 절약현황
     func summaryViewData(from entity: ChallengeSummaryEntity?) -> ChallengeSummaryViewData? {
-        guard let entity else { return nil }
-        let teamAvgCount = String(format: "%.1f", entity.team.avgCertificationCount)
-        
-        return ChallengeSummaryViewData(
-            team: ChallengeSummaryViewData.SavingsSummaryViewData(
-                certificationCount: teamAvgCount, // 인증평균
-                participationRate: "\(entity.team.participationRate)", // 참여율
-                consecutiveDays: "\(entity.team.consecutiveDays)"), // 연속활동
-            personal: ChallengeSummaryViewData.SavingsSummaryViewData(
-                certificationCount: "\(entity.personal.certificationCount)", // 인증횟수
-                participationRate: "\(entity.personal.participationRate)", // 참여율
-                consecutiveDays: "\(entity.personal.consecutiveDays)" // 연속활동
-            ))
+        ChallengeSummaryViewDataMapper().map(from: entity)
     }
 }

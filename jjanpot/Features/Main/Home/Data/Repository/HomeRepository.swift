@@ -42,43 +42,5 @@ struct HomeRepository: HomeRepositoryProtocol {
     }
 }
 
-struct ChallengeSummaryEntity {
-    let team: Team
-    let personal: Personal
-    
 
-    struct Team {
-        
-        let avgCertificationCount: Double
-        // 참여율
-        let participationRate: Int
-        // 연속활동
-        let consecutiveDays: Int
-    }
-    
-    struct Personal {
-        // 인증횟수
-        let certificationCount: Int
-        // 참여율
-        let participationRate: Int
-        // 연속활동
-        let consecutiveDays: Int
-    }
-}
 
-struct ChallengeSummaryEntityMapper {
-    func map(from dto: ChallengeSummaryDto) -> ChallengeSummaryEntity {
-        ChallengeSummaryEntity(
-            team: ChallengeSummaryEntity.Team(
-                avgCertificationCount: dto.team.avgCertificationCount,
-                participationRate: dto.team.participationRate,
-                consecutiveDays: dto.team.consecutiveDays
-            ),
-            personal: ChallengeSummaryEntity.Personal(
-                certificationCount: dto.personal.certificationCount,
-                participationRate: dto.personal.participationRate,
-                consecutiveDays: dto.personal.consecutiveDays
-            )
-        )
-    }
-}

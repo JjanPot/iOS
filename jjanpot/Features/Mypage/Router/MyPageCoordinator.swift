@@ -13,12 +13,15 @@ enum MyPageDestination: Route {
     
     case settings
     case alarmSettings
+    case challengeReport(challengeId: Int)
+    
 
     var id: String {
         switch self {
         // 케이스별 id 추가
         case .settings: return "settings"
         case .alarmSettings: return "alarmSettings"
+        case .challengeReport: return "challengeReport"
         }
     }
 
@@ -27,6 +30,7 @@ enum MyPageDestination: Route {
         // 케이스별 analyticsName 추가
         case .settings: return "settings"
         case .alarmSettings: return "alarmSettings"
+        case .challengeReport: return "challengeReport"
         }
     }
 
@@ -35,6 +39,7 @@ enum MyPageDestination: Route {
         // 케이스별 hidesTabBar 추가
         case .settings: return true
         case .alarmSettings: return true
+        case .challengeReport: return true
         }
     }
 }
