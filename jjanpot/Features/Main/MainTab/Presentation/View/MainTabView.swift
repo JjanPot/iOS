@@ -54,11 +54,10 @@ struct MainTabView: View {
 #Preview {
     let container = MockMainDIContainer()
     let coordinator = container.makeMainCoordinator()
-    let mypageContainer = MockMyPageDIContainer()
     
     MainTabView(
         homeView: AnyView(container.makeHomeView(coordinator: coordinator)),
         challengeView: AnyView(container.makeChallengeDashboardView(coordinator: coordinator)),
-        myPotView: AnyView(mypageContainer.makeMyPotView(coordinator: mypageContainer.makeMyPageCoordinator()))
+        myPotView: AnyView(container.makeMyPotView(coordinator: coordinator))
     )
 }

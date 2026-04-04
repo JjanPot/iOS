@@ -48,17 +48,28 @@ protocol MainDIContainerProtocol {
 
     /// 지출,무지출 인증
     func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView
-    
-    /// 챌린지 결과
-    //func makeChallengeReportView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeReportView
+
+    // MyPage - 마이팟
+    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView
+
+    // 설정화면
+    func makeSettingsView(coordinator: MainCoordinator) -> SettingsView
+
+    // 알람 설정
+    func makeAlarmSettingsView() -> AlarmSettingsView
+
+    // 챌린지 결과
+    func makeChallengeReportView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeReportView
 
 }
 
 final class MainDIContainer: MainDIContainerProtocol {
 
+    private let authApiClient: AuthApiClientProtocol
     private let challengeApiClient: ChallengeApiClientProtocol
 
-    init(challengeApiClient: ChallengeApiClientProtocol) {
+    init(authApiClient: AuthApiClientProtocol, challengeApiClient: ChallengeApiClientProtocol) {
+        self.authApiClient = authApiClient
         self.challengeApiClient = challengeApiClient
     }
     
@@ -187,7 +198,7 @@ final class MainDIContainer: MainDIContainerProtocol {
     
     
     // MARK: - 챌린지 결과화면
-    /*
+    
     private func makeChallengeReportRepository() -> ChallengeReportRepositoryProtocol {
         return ChallengeReportRepository(challengeApiClient: challengeApiClient)
     }
@@ -204,7 +215,52 @@ final class MainDIContainer: MainDIContainerProtocol {
         let vm = makeChallengeReportViewModel(challengeId: challengeId)
         return ChallengeReportView(viewModel: vm, coordinator: coordinator)
     }
-     */
+    
+    // MARK: - MyPage (MyPot)
+
+    private func makeMyPotRepository() -> MyPotRepositoryProtocol {
+        return MyPotRepository(authApiClient: authApiClient, challengeApiClient: challengeApiClient)
+    }
+
+    private func makeMyPotUseCase() -> MyPotUseCaseProtocol {
+        let repo = makeMyPotRepository()
+        return MyPotUseCase(repository: repo)
+    }
+
+    private func makeMyPotViewModel() -> MyPotViewModel {
+        let usecase = makeMyPotUseCase()
+        return MyPotViewModel(useCase: usecase)
+    }
+
+    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView {
+        let vm = makeMyPotViewModel()
+        return MyPotView(viewModel: vm, coordinator: coordinator)
+    }
+    
+    // MARK: - 설정화면
+    
+    private func makeSettingsRepository() -> SettingsRepositoryProtocol {
+        return SettingsRepository(authApiClient: authApiClient)
+    }
+    private func makeSettingsUseCase() -> SettingsUseCaseProtocol {
+        let repo = makeSettingsRepository()
+        return SettingsUseCase(repository: repo)
+    }
+    private func makeSettingsViewModel() -> SettingsViewModel {
+        let usecase = makeSettingsUseCase()
+        return SettingsViewModel(useCase: usecase)
+    }
+    
+    func makeSettingsView(coordinator: MainCoordinator) -> SettingsView {
+        let vm = makeSettingsViewModel()
+        return SettingsView(viewModel: vm, coordinator: coordinator)
+    }
+    
+    // MARK: - 설정화면 > 알람 설정화면
+    func makeAlarmSettingsView() -> AlarmSettingsView {
+        let vm = makeSettingsViewModel()
+        return AlarmSettingsView(viewModel: vm)
+    }
 }
 
 // MARK: - Mock
@@ -251,15 +307,32 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return ChallengePostView(viewModel: viewModel, coordinator: coordinator)
     }
     
-    /*
     func makeChallengeReportView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeReportView {
         let usecase = MockChallengeReportUseCase()
         let viewModel = ChallengeReportViewModel(challengeId: challengeId, useCase: usecase)
         return ChallengeReportView(viewModel: viewModel, coordinator: coordinator)
     }
-    */
     
-
+    func makeSettingsView(coordinator: MainCoordinator) -> SettingsView {
+        let usecase = MockSettingsUseCase()
+        let vm = SettingsViewModel(useCase: usecase)
+        return SettingsView(viewModel: vm, coordinator: coordinator)
+    }
+    
+    
+    func makeAlarmSettingsView() -> AlarmSettingsView {
+        let usecase = MockSettingsUseCase()
+        let vm = SettingsViewModel(useCase: usecase)
+        return AlarmSettingsView(viewModel: vm)
+    }
+    
+    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView {
+        let vm = MyPotViewModel(useCase: MockMyPotUseCase())
+        return MyPotView(viewModel: vm, coordinator: coordinator)
+    }
+    
+    
+// MARK: - Mock UseCase
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
         func cancel(challengeId: Int) async throws {
             throw NetworkError.dataNil
@@ -355,4 +428,25 @@ struct MockChallengeReportUseCase: ChallengeReportUseCaseProtocol {
 //                personalSavedAmount: 25000
 //            )
     }
+}
+struct MockSettingsUseCase: SettingsUseCaseProtocol {
+    func setNotificationSettings(setting entity: NotificationEntity) async throws {}
+    
+    func getNotificationSettings() async throws -> NotificationEntity {
+        return NotificationEntity (dailyEnabled: true, weeklyEnabled: true, marketingConsent: true)
+    }
+    
+    func logout() async throws {
+        throw NetworkError.dataNil
+    }
+}
+struct MockMyPotUseCase: MyPotUseCaseProtocol {
+    func getUserInfo() async throws -> UserEntity {
+        UserEntity(userId: 3, nickname: "주희희", imageUrl: "https://picsum.photos/100/100")
+    }
+    
+    func getMyChallengeStats() async throws -> ChallengeStatsEntity {
+        ChallengeStatsEntity(totalCount: 10, successCount: 3, failCount: 7, successRate: 10)
+    }
+    
 }

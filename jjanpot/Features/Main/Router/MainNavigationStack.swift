@@ -13,11 +13,9 @@ struct MainNavigationStack: View {
     @StateObject private var coordinator: MainCoordinator
 
     private let container: MainDIContainerProtocol
-    private let myPageContainer: MyPageDIContainerProtocol
 
-    init(container: MainDIContainerProtocol, myPageContainer: MyPageDIContainerProtocol) {
+    init(container: MainDIContainerProtocol) {
         self.container = container
-        self.myPageContainer = myPageContainer
         self._coordinator = StateObject(wrappedValue: container.makeMainCoordinator())
     }
 
@@ -28,7 +26,7 @@ struct MainNavigationStack: View {
             MainTabView(
                 homeView: AnyView(container.makeHomeView(coordinator: coordinator)),
                 challengeView: AnyView(container.makeChallengeDashboardView(coordinator: coordinator)),
-                myPotView: AnyView(MyPageNavigationStack(container: myPageContainer))
+                myPotView: AnyView(container.makeMyPotView(coordinator: coordinator))
             )
             .navigationDestination(for: MainDestination.self) { destination in
                 destinationView(for: destination)
@@ -45,14 +43,29 @@ struct MainNavigationStack: View {
     @ViewBuilder
     private func destinationView(for destination: MainDestination) -> some View {
         switch destination {
+            // 챌린지 생성
         case .createChallenge:
             container.makeCreateChallengeView(coordinator: coordinator)
 
+            // 상세보기
         case let .challengeDetail(id):
             container.makeChallengeDetailView(challengeId: id, coordinator: coordinator)
             
+            // 인증하기
         case let .challengePost(id):
             container.makeChallengePostView(challengeId: id, coordinator: coordinator)
+            
+            // 설정화면
+        case .settings:
+            container.makeSettingsView(coordinator: coordinator)
+            
+            // 알람 설정
+        case .alarmSettings:
+            container.makeAlarmSettingsView()
+            
+            // 챌린지 결과 화면
+        case let .challengeReport(id):
+            container.makeChallengeReportView(challengeId: id, coordinator: coordinator)
         }
     }
     
@@ -76,5 +89,5 @@ struct MainNavigationStack: View {
 }
 
 #Preview {
-    MainNavigationStack(container: MockMainDIContainer(), myPageContainer: MockMyPageDIContainer())
+    MainNavigationStack(container: MockMainDIContainer())
 }

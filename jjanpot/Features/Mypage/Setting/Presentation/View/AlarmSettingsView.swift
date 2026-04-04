@@ -56,5 +56,5 @@ struct AlarmSettingsView: View {
 }
 
 #Preview {
-    MockMyPageDIContainer().makeAlarmSettingsView()
+    MockMainDIContainer().makeAlarmSettingsView()
 }

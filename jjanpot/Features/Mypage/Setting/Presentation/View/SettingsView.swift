@@ -16,13 +16,13 @@ struct SettingsView: View {
     }
     
     @StateObject var viewModel: SettingsViewModel
-    private let coordinator: MyPageCoordinator
+    private let coordinator: MainCoordinator
     
     @State var webDestination: WebDestination?
     @State var isShowLogoutPopup: Bool = false
     @State var isShowSignoutPopup: Bool = false
     
-    init(viewModel: SettingsViewModel, coordinator: MyPageCoordinator) {
+    init(viewModel: SettingsViewModel, coordinator: MainCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -121,6 +121,6 @@ struct SettingsView: View {
 }
 
 #Preview {
-    let di = MockMyPageDIContainer()
-    di.makeSettingsView(coordinator: di.makeMyPageCoordinator())
+    let di = MockMainDIContainer()
+    di.makeSettingsView(coordinator: di.makeMainCoordinator())
 }

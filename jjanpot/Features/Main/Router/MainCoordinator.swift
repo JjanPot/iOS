@@ -12,6 +12,10 @@ enum MainDestination: Route {
     case createChallenge
     case challengeDetail(id: Int)
     case challengePost(id: Int)
+    // MyPage destinations
+    case settings
+    case alarmSettings
+    case challengeReport(id: Int)
 
     var id: String {
         switch self {
@@ -19,9 +23,14 @@ enum MainDestination: Route {
             return "createChallenge"
         case .challengeDetail:
             return "challengeDetail"
-            
         case .challengePost:
             return "challengePost"
+        case .settings:
+            return "settings"
+        case .alarmSettings:
+            return "alarmSettings"
+        case .challengeReport:
+            return "challengeReport"
         }
     }
 
@@ -33,6 +42,12 @@ enum MainDestination: Route {
             return "challenge_detail"
         case .challengePost:
             return "challengePost"
+        case .settings:
+            return "settings"
+        case .alarmSettings:
+            return "alarm_settings"
+        case .challengeReport:
+            return "challenge_report"
         }
     }
 
@@ -40,10 +55,8 @@ enum MainDestination: Route {
         switch self {
         case .createChallenge:
             return true
-        case .challengeDetail:
-            return false
-        case .challengePost:
-            return false
+        case .challengeDetail, .challengePost, .settings, .alarmSettings, .challengeReport:
+            return true
         }
     }
 }

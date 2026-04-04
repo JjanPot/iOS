@@ -11,9 +11,9 @@ import Kingfisher
 struct MyPotView: View {
     
     @StateObject var viewModel: MyPotViewModel
-    private let coordinator: MyPageCoordinator
+    private let coordinator: MainCoordinator
     
-    init(viewModel: MyPotViewModel, coordinator: MyPageCoordinator) {
+    init(viewModel: MyPotViewModel, coordinator: MainCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -48,7 +48,7 @@ struct MyPotView: View {
                     
                     // 챌린지 리포트 보기
                     Button("챌린지 리포트 보기"){
-                        coordinator.push(.challengeReport(challengeId: 6))
+                        coordinator.push(.challengeReport(id: 6))
                     }
                     
                 }
@@ -106,8 +106,8 @@ struct MyPotView: View {
 }
 
 #Preview {
-    let di = MockMyPageDIContainer()
-    di.makeMyPotView(coordinator: di.makeMyPageCoordinator())
+    let di = MockMainDIContainer()
+    di.makeMyPotView(coordinator: di.makeMainCoordinator())
 }
 
 

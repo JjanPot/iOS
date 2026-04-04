@@ -11,11 +11,11 @@ struct ChallengeReportView: View {
     
     @StateObject var viewModel: ChallengeReportViewModel
     private let renderService = ImageRenderService()
-    private let coordinator: MyPageCoordinator
+    private let coordinator: MainCoordinator
     @State var showPermissionAlert = false
     @State var showShareSheet = false
     
-    init(viewModel: ChallengeReportViewModel, coordinator: MyPageCoordinator) {
+    init(viewModel: ChallengeReportViewModel, coordinator: MainCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -222,7 +222,7 @@ struct ImageRenderService {
 
 
 #Preview {
-    let di = MockMyPageDIContainer()
-    di.makeChallengeReportView(challengeId: 6,coordinator: di.makeMyPageCoordinator())
+    let di = MockMainDIContainer()
+    di.makeChallengeReportView(challengeId: 6,coordinator: di.makeMainCoordinator())
 }
 
