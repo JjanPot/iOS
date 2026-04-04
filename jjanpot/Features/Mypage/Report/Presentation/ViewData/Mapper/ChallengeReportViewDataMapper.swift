@@ -18,11 +18,13 @@ struct ChallengeReportViewDataMapper {
             personalSavedAmount: reportEntity.personalSavedAmount
         )
         
+        let summaryMessage = reportEntity.isTeamSuccess ? "목표 \(reportEntity.goalAmount)원 달성🎉 총\(reportEntity.achievementRate)%" : "목표 \(reportEntity.goalAmount)원 실패⚠️  총\(reportEntity.achievementRate)%"
+        
         // 팀 절약 결과
         let teamSavingResult = TeamSavingResultViewData(
             teamName: detailEntity.title,
             amount: reportEntity.totalSavedAmount,
-            summaryMessage: "목표 \(reportEntity.goalAmount)원 달성🎉 총\(reportEntity.achievementRate)%",
+            summaryMessage: summaryMessage,
             rewardMessage: "🎧 에어팟 + 치킨 1마리 🍗"
         )
         

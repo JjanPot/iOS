@@ -146,12 +146,14 @@ struct ChallengeReportView: View {
                     
                     Text(viewData.result.title)
                         .font(.pretendard(.semiBold, size: 30))
-                        .foregroundStyle(Color.blue500)
+                        .foregroundStyle(viewData.result == .success ? Color.blue500 : Color.red500)
                         .padding(.bottom, 8)
                     
                     Text(viewData.message)
                         .font(.pretendard(.semiBold, size: 16))
                         .foregroundStyle(Color.black700)
+                        .multilineTextAlignment(.center)
+                    
                 }
             }
         }
