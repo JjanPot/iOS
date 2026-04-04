@@ -8,7 +8,8 @@
 
 public struct SetProfileDto: Codable {
     let profileImageURL: String
-    let nickname, birthDate: String
+    let nickname: String
+    let birthDate: String?
 
     enum CodingKeys: String, CodingKey {
         case profileImageURL = "profileImageUrl"
