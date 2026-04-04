@@ -13,6 +13,7 @@ protocol MyPageDIContainerProtocol {
     func makeMyPageCoordinator() -> MyPageCoordinator
     func makeMyPotView(coordinator: MyPageCoordinator) -> MyPotView
     func makeSettingsView(coordinator: MyPageCoordinator) -> SettingsView
+    func makeAlarmSettingsView() -> AlarmSettingsView
 }
 
 final class MyPageDIContainer: MyPageDIContainerProtocol {
@@ -70,6 +71,11 @@ final class MyPageDIContainer: MyPageDIContainerProtocol {
         let vm = makeSettingsViewModel()
         return SettingsView(viewModel: vm, coordinator: coordinator)
     }
+    
+    func makeAlarmSettingsView() -> AlarmSettingsView {
+        let vm = makeSettingsViewModel()
+        return AlarmSettingsView(viewModel: vm)
+    }
 }
 
 // MARK: - Mock
@@ -102,8 +108,20 @@ final class MockMyPageDIContainer: MyPageDIContainerProtocol {
         return SettingsView(viewModel: vm, coordinator: coordinator)
     }
     struct MockSettingsUseCase: SettingsUseCaseProtocol {
+        func setNotificationSettings(setting entity: NotificationEntity) async throws {}
+        
+        func getNotificationSettings() async throws -> NotificationEntity {
+            return NotificationEntity (dailyEnabled: true, weeklyEnabled: true, marketingConsent: true)
+        }
+        
         func logout() async throws {
             throw NetworkError.dataNil
         }
+    }
+    
+    func makeAlarmSettingsView() -> AlarmSettingsView {
+        let usecase = MockSettingsUseCase()
+        let vm = SettingsViewModel(useCase: usecase)
+        return AlarmSettingsView(viewModel: vm)
     }
 }

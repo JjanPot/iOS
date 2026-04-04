@@ -38,8 +38,12 @@ struct MyPageNavigationStack: View {
         // 케이스별 화면 추가
         case .settings:
             container.makeSettingsView(coordinator: coordinator)
-        default:
-            EmptyView()
+            
+        case .alarmSettings:
+            container.makeAlarmSettingsView()
+            
+//        default:
+//            EmptyView()
         }
     }
 }

@@ -1,0 +1,103 @@
+//
+//  SettingsViewModel.swift
+//  jjanpot
+//
+//  Created by 임주희 on 4/4/26.
+//
+
+
+import SwiftUI
+import Combine
+final class SettingsViewModel: ObservableObject {
+    
+    private let useCase: SettingsUseCaseProtocol
+    init(useCase: SettingsUseCaseProtocol) {
+        self.useCase = useCase
+    }
+    
+    
+    var isNotificationSettingLoaded: Bool = false
+    @Published var dailyEnabled: Bool = false
+    @Published var weeklyEnabled: Bool = false
+    @Published var marketingConsent: Bool = false
+    
+    
+    @Published var isLogouted: Bool = false
+    @Published var isLoading = false
+    @Published var toastMessage: String?
+    
+    
+    
+    @MainActor
+    func logout(){
+        isLoading = true
+        isLogouted = false
+        Task {
+            do {
+                try await useCase.logout()
+                Logger.success("로그아웃 성공")
+                ToastManager.shared.show("로그아웃 되었습니다.")
+                isLogouted = true
+                
+                // [임시] 로그아웃 (로그인 NavigationStack으로 전환)
+                NotificationCenter.default.post(name: NSNotification.Name("userDidLogout"), object: nil)
+            } catch {
+                Logger.error("로그아웃 실패 \(error.localizedDescription)")
+            }
+            isLoading = false
+        }
+    }
+    
+    func signout(){
+        
+    }
+    
+    // 알림 설정
+    func setNotificationSettings() {
+        guard isNotificationSettingLoaded else { return }
+        isLoading = true
+        Task {
+            do {
+                let entity = NotificationEntity(
+                    dailyEnabled: dailyEnabled,
+                    weeklyEnabled: weeklyEnabled,
+                    marketingConsent: marketingConsent
+                )
+                try await useCase.setNotificationSettings(setting: entity)
+            } catch {
+                if let networkError = error as? NetworkError {
+                    Logger.error("알림 설정 실패: \(networkError.description)")
+                    toastMessage = networkError.description
+                } else {
+                    Logger.error("알림 설정 실패: \(error.localizedDescription)")
+                    toastMessage = "설정 실패"
+                }
+            }
+            isLoading = false
+        }
+    }
+    
+    // 알림 설정 가져오기
+    func getNotificationSettings() {
+        isLoading = true
+        isNotificationSettingLoaded = false
+        Task {
+            do {
+                let entity = try await useCase.getNotificationSettings()
+                dailyEnabled = entity.dailyEnabled
+                weeklyEnabled = entity.weeklyEnabled
+                marketingConsent = entity.marketingConsent
+                isNotificationSettingLoaded = true
+            } catch {
+                if let networkError = error as? NetworkError {
+                    Logger.error("알림 설정 불러오기 실패: \(networkError.description)")
+                    toastMessage = networkError.description
+                } else {
+                    Logger.error("알림 설정 불러오기 실패: \(error.localizedDescription)")
+                    toastMessage = "불러오기 실패"
+                }
+            }
+            isLoading = false
+        }
+    }
+}

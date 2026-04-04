@@ -28,6 +28,8 @@ public enum AuthRouter {
     case getProfile
     
     // MARK : mypage
+    case getNotificationSettings
+    case setNotificationSettings(setting: NotificationDto)
     
     /// 로그아웃
     case logout(userId: Int)
@@ -63,11 +65,32 @@ extension AuthRouter: Router {
             
         case .logout:
             return "/api/auth/v1/logout"
+            
+        case .getNotificationSettings:
+            return "/api/users/v1/notifications"
+        case .setNotificationSettings:
+            return "/api/users/v1/notifications"
         }
     }
     
     public var method: HTTPMethod {
-        return .post
+        switch self {
+        case .kakaoLogin,
+                .appleLogin,
+                .googleLogin,
+                .refresh,
+                .agreement,
+                .setProfile,
+                .logout:
+            return .post
+            
+        case .getProfile,
+                .getNotificationSettings:
+                return .get
+            
+        case .setNotificationSettings:
+            return .patch
+        }
     }
     
     public var parameters: Parameters? {
@@ -131,6 +154,14 @@ extension AuthRouter: Router {
             ]
             return params
             
+        case .getNotificationSettings: return nil
+        case let .setNotificationSettings(dto):
+            let params: Parameters = [
+                "dailyEnabled" : dto.dailyEnabled,
+                "weeklyEnabled" : dto.weeklyEnabled,
+                "marketingConsent" : dto.marketingConsent,
+            ]
+            return params
         }
     }
     
@@ -174,6 +205,11 @@ public protocol AuthApiClientProtocol {
     /// 로그아웃
     func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError>
     
+    /// 알림 설정 받기
+    func getNotificationSettings() async -> Result<NotificationDto, NetworkError>
+    
+    /// 알림 설정
+    func setNotificationSettings(setting: NotificationDto) async -> Result<EmptyResponseDto, NetworkError>
 }
 
 
@@ -215,4 +251,17 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
     public func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError> {
         await request(.logout(userId: userId))
     }
+    
+    
+    /// 알림 설정 받기
+    public func getNotificationSettings() async -> Result<NotificationDto, NetworkError> {
+        await request(.getNotificationSettings)
+    }
+    /// 알림 설정
+    public func setNotificationSettings(setting: NotificationDto) async -> Result<EmptyResponseDto, NetworkError> {
+        await request(.setNotificationSettings(setting: setting))
+    }
 }
+
+
+

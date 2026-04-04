@@ -32,7 +32,9 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 40) {
                 
                 MenuSection("앱 설정") {
-                    MenuButton("알림 설정") {}
+                    MenuButton("알림 설정") {
+                        coordinator.push(.alarmSettings)
+                    }
                 }
                 
                 MenuSection("법적 정보 및 앱 정보") {
@@ -50,11 +52,14 @@ struct SettingsView: View {
                         isShowLogoutPopup = true
                     }
                     /*
-                    MenuButton("탈퇴하기") {
-                        isShowSignoutPopup = true
-                    }
+                     MenuButton("탈퇴하기") {
+                     isShowSignoutPopup = true
+                     }
                      */
                 }
+                
+                Spacer()
+                
             } // ~VStack
             .padding(20)
         } // ~ScrollView
@@ -119,98 +124,3 @@ struct SettingsView: View {
     let di = MockMyPageDIContainer()
     di.makeSettingsView(coordinator: di.makeMyPageCoordinator())
 }
-
-protocol SettingsRepositoryProtocol {
-    func logout(userId: Int) async throws
-}
-
-struct SettingsRepository: SettingsRepositoryProtocol {
-    private let authApiClient: AuthApiClientProtocol
-
-    init(authApiClient: AuthApiClientProtocol) {
-        self.authApiClient = authApiClient
-    }
-    
-    func logout(userId: Int) async throws {
-        let result = await authApiClient.logout(userId: userId)
-        switch result {
-        case .success:
-            return
-        case .failure(let error):
-            throw error
-        }
-    }
-}
-
-
-
-protocol SettingsUseCaseProtocol {
-    func logout() async throws
-}
-struct SettingsUseCase: SettingsUseCaseProtocol {
-    private let repository: SettingsRepositoryProtocol
-    init(repository: SettingsRepositoryProtocol) {
-        self.repository = repository
-    }
-    
-    func logout() async throws {
-        guard let userId = getUserId() else {
-            Logger.error("user id 못가져옴")
-            throw NetworkError.requestFailed("userId is nil")
-        }
-        try await repository.logout(userId: userId)
-        AuthManager.shared.logout()
-    }
-    
-    private func getUserId() -> Int? {
-        AuthManager.shared.currentUser?.userId
-    }
-}
-
-
-
-import SwiftUI
-import Combine
-final class SettingsViewModel: ObservableObject {
-    
-    private let useCase: SettingsUseCaseProtocol
-    init(useCase: SettingsUseCaseProtocol) {
-        self.useCase = useCase
-    }
-    
-    @Published var isLogouted: Bool = false
-    @Published var isLoading = false
-    @Published var toastMessage: String?
-    
-    
-    
-    @MainActor
-    func logout(){
-        isLoading = true
-        isLogouted = false
-        Task {
-            do {
-                try await useCase.logout()
-                Logger.success("로그아웃 성공")
-                ToastManager.shared.show("로그아웃 되었습니다.")
-                isLogouted = true
-
-                // [임시] 로그아웃 (로그인 NavigationStack으로 전환) 
-                NotificationCenter.default.post(name: NSNotification.Name("userDidLogout"), object: nil)
-            } catch {
-                Logger.error("로그아웃 실패 \(error.localizedDescription)")
-            }
-            isLoading = false
-
-        }
-
-
-    }
-    func signout(){
-        
-    }
-}
-
-
-
-
