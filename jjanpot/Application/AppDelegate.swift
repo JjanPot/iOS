@@ -21,6 +21,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         //메세지 대리자 설정
         Messaging.messaging().delegate = self
+
         
         // 원격 알림 등록 - 애플리케이션이 시작될 때 또는 적절한 시점에 원격 알림에 앱을 등록합니다.
         /*
@@ -38,14 +39,17 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         
         // Firebase에 device token 등록
-        Messaging.messaging().apnsToken = deviceToken
+#if DEBUG
+        Messaging.messaging().setAPNSToken(deviceToken, type: .sandbox)
+        #else
+        Messaging.messaging().setAPNSToken(deviceToken, type: .prod)
+#endif
     }
 }
 
 // MARK: - UNUserNotificationCenterDelegate
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
-    
     
     // 앱이 활성화 되어있을 때 푸시를 받은 경우 호출되는 메서드
     func userNotificationCenter(
@@ -87,7 +91,6 @@ extension AppDelegate: MessagingDelegate {
             userInfo: dataDict
         )
     }
-    
 }
 
 
