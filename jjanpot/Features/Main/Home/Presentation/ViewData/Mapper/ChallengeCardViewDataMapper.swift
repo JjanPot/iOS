@@ -29,8 +29,8 @@ struct ChallengeCardViewDataMapper {
                 challengeId: entity.challengeId,
                 teamName: entity.title,
                 dday: dDayString(to: entity.endDate),
-                teamSavingsAmount: formatPrice(entity.teamWeekSavedAmount),
-                personalSavingsAmount: formatPrice(entity.personalWeekSavedAmount)
+                teamSavingsAmount: entity.teamWeekSavedAmount,
+                personalSavingsAmount: entity.personalWeekSavedAmount
             )
             return ChallengeCardStatus.inProgress(viewData: viewData)
         }

@@ -38,7 +38,7 @@ struct ChallengeOverview: View {
                 .foregroundStyle(.black)
                 .padding(.bottom, 20)
             
-            Text("7월 15일부터 현재까지 절약금액")
+            Text(viewData.description)
                 .font(.pretendard(.medium, size: 14))
                 .foregroundStyle(.black700)
                 .padding(.bottom, 15)

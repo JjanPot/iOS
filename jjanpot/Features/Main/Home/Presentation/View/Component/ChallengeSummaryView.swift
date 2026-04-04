@@ -35,7 +35,7 @@ struct ChallengeSummaryView: View {
                 
                 // 인증횟수, 참여율, 연속활동
                 HStack(spacing: 10) {
-                    SavingsSummaryCard(type: .proofCount, value: viewData.personal.consecutiveDays)
+                    SavingsSummaryCard(type: .proofCount, value: viewData.personal.certificationCount)
                     SavingsSummaryCard(type: .participationRate, value: viewData.personal.participationRate)
                     SavingsSummaryCard(type: .consecutiveActivity, value: viewData.personal.consecutiveDays)
                 }

@@ -28,7 +28,7 @@ extension FeedEntity {
         self.savedAmount = dto.savedAmount
         self.imageURL = dto.imageURL
         /// "2027-08-15T09:35:00"
-        self.createdAt = dto.createdAt.toDate(.iso8601) ?? Date()
+        self.createdAt = dto.createdAt.toDate(.iso8601WithMicroseconds) ?? Date()
         self.likeCount = dto.likeCount
     }
 }
