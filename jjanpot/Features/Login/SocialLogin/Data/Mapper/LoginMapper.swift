@@ -13,7 +13,8 @@ struct LoginMapper {
         return LoginEntity(
             user: UserEntity(
                 userId: dto.user.userId,
-                nickname: dto.user.nickname
+                nickname: dto.user.nickname,
+                imageUrl: nil
             ),
             isNewUser: dto.newUser,
             accessToken: dto.accessToken,

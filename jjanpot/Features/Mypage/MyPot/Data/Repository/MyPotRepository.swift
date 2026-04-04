@@ -26,4 +26,16 @@ struct MyPotRepository: MyPotRepositoryProtocol {
             throw error
         }
     }
+    
+    // 유저 정보 가져오기
+    func getUserInfo() async throws -> UserEntity {
+        let result = await authApiClient.getProfile()
+        switch result {
+        case let .success(dto):
+            return UserEntity(from: dto)
+            
+        case let .failure(error):
+            throw error
+        }
+    }
 }

@@ -52,14 +52,35 @@ struct MyPotView: View {
         .loading(viewModel.isLoading)
         .toast(message: $viewModel.toastMessage)
         .task {
+            viewModel.loadUserInfo()
             viewModel.getMyChallengeStats()
         }
     }
     
     private var profill: some View {
         HStack(alignment: .center, spacing: 14) {
-            placeholder
-            Text("nickname")
+            Group {
+                if let imageUrl = viewModel.profileViewData?.imageUrl {
+                    KFImage(URL(string: imageUrl))
+                        .placeholder {
+                            placeholder
+                        }
+                        .retry(maxCount: 3, interval: .seconds(2))
+                        .onFailure { error in
+                            Logger.error("Image load failed: \(error.localizedDescription)")
+                        }
+                        .fade(duration: 0.25)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    placeholder
+                }
+            }
+            .frame(width: 44, height: 44)
+            .clipShape(Circle())
+            
+            
+            Text(viewModel.profileViewData?.nickname ?? "")
                 .font(.pretendard(.semiBold, size: 16))
                 .foregroundStyle(Color.black900)
             
@@ -72,18 +93,15 @@ struct MyPotView: View {
                     .resizable()
                     .frame(width: 35, height: 35)
             }
-            .frame(width: 44, height: 44)
-            .clipShape(Circle())
+//            .frame(width: 44, height: 44)
+//            .clipShape(Circle())
     }
 }
-
 
 #Preview {
     let di = MockMyPageDIContainer()
     di.makeMyPotView(coordinator: di.makeMyPageCoordinator())
 }
-
-
 
 
 

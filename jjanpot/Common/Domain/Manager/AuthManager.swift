@@ -94,7 +94,8 @@ final class AuthManager: ObservableObject {
         guard let user = currentUser else { return }
         let updatedUser = UserEntity(
             userId: user.userId,
-            nickname: nickname
+            nickname: nickname,
+            imageUrl: user.imageUrl
         )
         updateUser(updatedUser)
     }

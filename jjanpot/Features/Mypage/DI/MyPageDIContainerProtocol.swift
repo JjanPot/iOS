@@ -86,6 +86,10 @@ final class MockMyPageDIContainer: MyPageDIContainerProtocol {
     }
 
     struct MockMyPotUseCase: MyPotUseCaseProtocol {
+        func getUserInfo() async throws -> UserEntity {
+            UserEntity(userId: 3, nickname: "주희희", imageUrl: "https://picsum.photos/100/100")
+        }
+        
         func getMyChallengeStats() async throws -> ChallengeStatsEntity {
             ChallengeStatsEntity(totalCount: 10, successCount: 3, failCount: 7, successRate: 10)
         }

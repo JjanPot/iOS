@@ -24,6 +24,9 @@ public enum AuthRouter {
     // 프로필 설정  birthDate "2000-01-15"
     case setProfile(nickname: String, birthDate: String?, imageUrl: String?)
     
+    // 프로필 가져오기
+    case getProfile
+    
     // MARK : mypage
     
     /// 로그아웃
@@ -51,8 +54,12 @@ extension AuthRouter: Router {
         case .agreement:
             return "/api/users/v1/onboarding/agreement"
             
+            // 프로필 설정
         case .setProfile:
             return "/api/users/v1/onboarding/profile"
+            // 프로필 가져오기
+        case .getProfile:
+            return "/api/users/v1/profile"
             
         case .logout:
             return "/api/auth/v1/logout"
@@ -116,6 +123,8 @@ extension AuthRouter: Router {
             }
             return params
             
+        case .getProfile: return nil
+            
         case let .logout(userId):
             let params: Parameters = [
                 "userId" : userId,
@@ -159,6 +168,9 @@ public protocol AuthApiClientProtocol {
     /// 프로필 설정
     func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async -> Result<SetProfileDto, NetworkError>
     
+    /// 프로필 가져오기
+    func getProfile() async -> Result<ProfileDto, NetworkError>
+    
     /// 로그아웃
     func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError>
     
@@ -192,6 +204,11 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
     /// 프로필 설정
     public func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async -> Result<SetProfileDto, NetworkError> {
         await request(.setProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl))
+    }
+    
+    /// 프로필 가져오기
+    public func getProfile() async -> Result<ProfileDto, NetworkError> {
+        await request(.getProfile)
     }
     
     /// 로그아웃
