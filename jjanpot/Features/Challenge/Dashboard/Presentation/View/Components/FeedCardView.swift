@@ -81,6 +81,8 @@ struct FeedCardView: View {
             // 좋아요, 날짜
             HStack(alignment: .center, spacing: .zero) {
                 
+                // 좋아요 버튼
+                /*
                 Button {
                     
                 } label: {
@@ -92,6 +94,7 @@ struct FeedCardView: View {
                     }
                     .frame(minWidth: 50, alignment: .leading)
                 }
+                */
                 Spacer()
 
                 Text(viewData.date)
