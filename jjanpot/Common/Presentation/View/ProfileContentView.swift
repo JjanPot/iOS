@@ -26,6 +26,7 @@ struct ProfileContentView: View {
                     if let profileImage {
                         profileImage
                             .resizable()
+                            .scaledToFill()
                     } else {
                         // placeHolder
                         Color.black100
@@ -38,6 +39,7 @@ struct ProfileContentView: View {
                 }
                 .frame(width: 66, height: 66)
                     .rounded(radius: 12)
+                
                     
                 
                 VStack(alignment: .leading, spacing: 7) {

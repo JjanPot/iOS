@@ -8,12 +8,13 @@
 
 import SwiftUI
 import Combine
+import UIKit
 
 final class ProfileSetupViewModel: ObservableObject {
     @Published var nickname: String = ""
     @Published var nicknameErrorMessage: String? = nil
     @Published var birthDate: Date? = nil
-    @Published var profileImage: Image? = nil
+    @Published var profileImage: UIImage? = nil
     
     @Published var isLoading = false
     @Published var toastMessage: String?
@@ -35,8 +36,7 @@ final class ProfileSetupViewModel: ObservableObject {
         
         Task {
             do {
-                // TODO: 이미지 업로드 구현하기
-                try await useCase.setProfile(nickname: nickname, birthDate: date, imageUrl: nil)
+                try await useCase.setProfile(nickname: nickname, birthDate: date, image: profileImage)
                 isSuccess = true
                 ToastManager.shared.show("등록되었습니다.")
             } catch {

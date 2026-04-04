@@ -24,6 +24,8 @@ public enum AuthRouter {
     // 프로필 설정  birthDate "2000-01-15"
     case setProfile(nickname: String, birthDate: String?, imageUrl: String?)
     
+    case presignedUrl(directory: String, contentType: String)
+    
     // 프로필 가져오기
     case getProfile
     
@@ -56,6 +58,9 @@ extension AuthRouter: Router {
         case .agreement:
             return "/api/users/v1/onboarding/agreement"
             
+            
+        case .presignedUrl:
+            return "/api/images/v1/presigned-url"
             // 프로필 설정
         case .setProfile:
             return "/api/users/v1/onboarding/profile"
@@ -85,7 +90,8 @@ extension AuthRouter: Router {
             return .post
             
         case .getProfile,
-                .getNotificationSettings:
+                .getNotificationSettings,
+                .presignedUrl:
                 return .get
             
         case .setNotificationSettings:
@@ -131,6 +137,14 @@ extension AuthRouter: Router {
                 "termsOfServiceAgreed" : true,
                 "privacyPolicyAgreed" : true,
                 "marketingConsent" : marketing,
+            ]
+            return params
+            
+            
+        case let .presignedUrl(directory, contentType):
+            let params: Parameters = [
+                "directory" : directory,
+                "contentType" : contentType,
             ]
             return params
             
@@ -202,6 +216,9 @@ public protocol AuthApiClientProtocol {
     /// 프로필 가져오기
     func getProfile() async -> Result<ProfileDto, NetworkError>
     
+    /// presignedUrl 가져오기
+    func presignedUrl(directory: String, contentType: String) async -> Result<PresignedURLDto, NetworkError>
+    
     /// 로그아웃
     func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError>
     
@@ -247,6 +264,11 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
         await request(.getProfile)
     }
     
+    /// presignedUrl 가져오기
+    public func presignedUrl(directory: String, contentType: String) async -> Result<PresignedURLDto, NetworkError> {
+        await request(.presignedUrl(directory: directory, contentType: contentType))
+    }
+    
     /// 로그아웃
     public func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError> {
         await request(.logout(userId: userId))
@@ -262,6 +284,8 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
         await request(.setNotificationSettings(setting: setting))
     }
 }
+
+
 
 
 
