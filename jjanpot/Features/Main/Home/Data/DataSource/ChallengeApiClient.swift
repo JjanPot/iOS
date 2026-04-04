@@ -106,7 +106,7 @@ extension ChallengeRouter: Router {
             return "/api/users/v1/challenge-stats"
             
         case let .getChallengeReport(id):
-            return "/api/challenges/v1/{id}/result"
+            return "/api/challenges/v1/\(id)/result"
         }
     }
 

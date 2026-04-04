@@ -15,8 +15,6 @@ final class SettingsViewModel: ObservableObject {
         self.useCase = useCase
     }
     
-    
-    var isNotificationSettingLoaded: Bool = false
     @Published var dailyEnabled: Bool = false
     @Published var weeklyEnabled: Bool = false
     @Published var marketingConsent: Bool = false
@@ -39,7 +37,7 @@ final class SettingsViewModel: ObservableObject {
                 ToastManager.shared.show("로그아웃 되었습니다.")
                 isLogouted = true
                 
-                // [임시] 로그아웃 (로그인 NavigationStack으로 전환)
+                // TODO: [임시] 로그아웃 (로그인 NavigationStack으로 전환)
                 NotificationCenter.default.post(name: NSNotification.Name("userDidLogout"), object: nil)
             } catch {
                 Logger.error("로그아웃 실패 \(error.localizedDescription)")
@@ -54,7 +52,6 @@ final class SettingsViewModel: ObservableObject {
     
     // 알림 설정
     func setNotificationSettings() {
-        guard isNotificationSettingLoaded else { return }
         isLoading = true
         Task {
             do {
@@ -80,14 +77,13 @@ final class SettingsViewModel: ObservableObject {
     // 알림 설정 가져오기
     func getNotificationSettings() {
         isLoading = true
-        isNotificationSettingLoaded = false
         Task {
             do {
                 let entity = try await useCase.getNotificationSettings()
                 dailyEnabled = entity.dailyEnabled
                 weeklyEnabled = entity.weeklyEnabled
                 marketingConsent = entity.marketingConsent
-                isNotificationSettingLoaded = true
+                
             } catch {
                 if let networkError = error as? NetworkError {
                     Logger.error("알림 설정 불러오기 실패: \(networkError.description)")
