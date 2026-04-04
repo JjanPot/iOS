@@ -46,8 +46,8 @@ final class HomeViewModel: ObservableObject {
                     
                     if let error = error {
                         // Handle the error here.
+                        Logger.error("알림 권한 \(error.localizedDescription)")
                     }
-                    
                     // Enable or disable features based on the authorization.
                 }
             }
@@ -60,7 +60,6 @@ final class HomeViewModel: ObservableObject {
     @MainActor
     private func fetchHomeData() async {
         isLoading = true
-
         do {
             let entity = try await useCase.fetchChallengeData()
             let viewData = HomeViewDataMapper().map(from: entity)
