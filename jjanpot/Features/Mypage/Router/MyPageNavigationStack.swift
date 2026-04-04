@@ -25,9 +25,6 @@ struct MyPageNavigationStack: View {
                 .navigationDestination(for: MyPageDestination.self) { destination in
                     destinationView(for: destination)
                 }
-                .navigationDestination(for: MyPageDestination.self) { destination in
-                    destinationView(for: destination)
-                }
         }
     }
 
