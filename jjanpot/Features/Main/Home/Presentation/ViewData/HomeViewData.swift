@@ -26,12 +26,11 @@ struct HomeViewDataMapper {
         )
     }
     
-    
     func teamMessage(status: CurrentChallengeEntity.ChallengeStatus) -> String {
         switch status {
         case .none: return "목표를 만들고 팀과 함께 절약해요!"
         case .waiting: return "계획은 완벽해요!\n시작 날짜를 기다리고 있어요."
-        case .inProgress: return "무슨 메세지를 보여줄라나."
+        case .inProgress: return "함께하는 절약, 잘이어가고 있어요."
         }
     }
     

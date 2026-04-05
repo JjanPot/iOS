@@ -29,7 +29,6 @@ struct ChallengeCardView: View {
         .background(Color.orange100)
         .rounded(radius: 12)
         .roundedBorder(color: .orange300, radius: 12)
-        .fixedSize(horizontal: true, vertical: false)
     }
 }
 

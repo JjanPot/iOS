@@ -345,11 +345,16 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     
     final class MockHomeUseCase: HomeUseCaseProtocol {
         func fetchChallengeData() async throws -> HomeEntity {
-            throw NetworkError.dataNil
+            HomeEntity(
+                challenge: CurrentChallengeEntity(status: .inProgress(entity: ChallengeInProgressEntity(
+                    challengeId: 1, title: "카페는 이제 그만", endDate: Date(), weekNumber: 1, weekGoalAmount: 300000, teamWeekSavedAmount: 200000, personalWeekSavedAmount: 10000, achievementRate: 10
+                ))),
+                summary: ChallengeSummaryEntity(team: ChallengeSummaryEntity.Team(avgCertificationCount: 10, participationRate: 10, consecutiveDays: 10), personal: ChallengeSummaryEntity.Personal(
+                    certificationCount: 5, participationRate: 10, consecutiveDays: 2
+                ))
+            )
         }
-        func fetchHomeData() async throws -> HomeEntity{
-            throw NetworkError.dataNil
-        }
+        
     }
     final class MockCreateChallengeUseCase: CreateChallengeUseCaseProtocol {
         func getCategories() async throws -> [SavingCategoryEntity] {
@@ -362,7 +367,20 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
     struct MockChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
         func getChallengeDashboardData() async throws -> ChallengeDashboardEntity {
-            throw NetworkError.dataNil
+            return ChallengeDashboardEntity.inProgress(
+                id: 0, overview: OverviewEntity(
+                    challengeId: 1,
+                    title: "카페는 이제 그만!",
+                    startDate: Date(),
+                    totalSavedAmount: 206100,
+                    goalAmount: 300000,
+                    members: [
+                        .init(userId: 1, nickname: "닉네임", profileImageURL: nil, savedAmount: 10000, isMe: false),
+                        .init(userId: 1, nickname: "닉네임", profileImageURL: nil, savedAmount: 10000, isMe: true)
+                    ]
+                ),
+                feeds: []
+            )
         }
     }
     struct MockChallengePostUseCase: ChallengePostUseCaseProtocol {
