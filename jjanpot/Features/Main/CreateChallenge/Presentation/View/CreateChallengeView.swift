@@ -33,7 +33,7 @@ struct CreateChallengeView: View {
 
     // 절약항목
     @State var selectedCategories: [SavingCategoryViewData] = []
-    @State var categoryAmounts: [SavingCategoryViewData: Int] = [:]
+    @State var selectedAmountByCategory: [SavingCategoryViewData: Int] = [:]
 
     // 목표 금액(팀)
     @State var teamTargetPrice: Double = 0
@@ -248,10 +248,16 @@ struct CreateChallengeView: View {
                     CategoryAmountSelector(
                         category: category,
                         selectedAmount: Binding(
-                            get: { categoryAmounts[category] },
-                            set: { categoryAmounts[category] = $0 }
+                            get: { selectedAmountByCategory[category] },
+                            set: { selectedAmountByCategory[category] = $0 }
                         )
                     )
+                }
+                .onChange(of: selectedCategories){ selected in
+                    // 선택한 카테고리에서 지우면, 선택된카테고리별기준금액 에서도 지우기
+                    selectedAmountByCategory = selectedAmountByCategory.filter { dic in
+                        selectedCategories.contains(dic.key)
+                    }
                 }
             }
         }
@@ -340,7 +346,7 @@ struct CreateChallengeView: View {
         }
         
         // 선택한 절약항목의, 기준 금액 선택 여부
-        guard selectedCategories.count == categoryAmounts.keys.count else {
+        guard selectedCategories.count == selectedAmountByCategory.keys.count else {
             viewModel.toastMessage = "절약 항목의 기준 금액을 선택해주세요."
             return false
         }
@@ -380,7 +386,7 @@ struct CreateChallengeView: View {
             memberCount: Int(memberCount),
             startDate: startDate,
             selectedCategories: selectedCategories,
-            categoryAmounts: categoryAmounts,
+            categoryAmounts: selectedAmountByCategory,
             teamTargetPrice: Int(teamTargetPrice),
             personalTargetPrice: Int(personalTargetPrice)
         )
