@@ -34,6 +34,7 @@ struct TeamSavingResultView: View {
                 .foregroundStyle(.red500)
                 .padding(.bottom, 20)
             
+            /*
             VStack(alignment: .center, spacing: 10){
                 Text("이 금액으로 살 수 있어요")
                     .font(.pretendard(.medium,size: 20))
@@ -47,8 +48,10 @@ struct TeamSavingResultView: View {
             .frame(maxWidth: .infinity, alignment: .center)
             .background(Color.white)
             .rounded(radius: 12)
+            */
         }
         .padding(20)
+        .frame(maxWidth: .infinity, alignment: .center)
         .background(
             LinearGradient(
                 colors: [.white, .orange200],

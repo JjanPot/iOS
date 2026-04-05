@@ -66,6 +66,9 @@ struct MainNavigationStack: View {
             // 챌린지 결과 화면
         case let .challengeReport(id):
             container.makeChallengeReportView(challengeId: id, coordinator: coordinator)
+            
+        case .challengeHistory:
+            container.makeChallengeHistoryView(coordinator: coordinator)
         }
     }
     

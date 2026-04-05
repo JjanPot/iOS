@@ -60,6 +60,9 @@ protocol MainDIContainerProtocol {
 
     // 챌린지 결과
     func makeChallengeReportView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeReportView
+    
+    // 완료 챌린지 목록
+    func makeChallengeHistoryView(coordinator: MainCoordinator) -> ChallengeHistoryView
 
 }
 
@@ -196,6 +199,24 @@ final class MainDIContainer: MainDIContainerProtocol {
         return ChallengePostView(viewModel: vm, coordinator: coordinator)
     }
     
+    // MARK: - 완료된 챌린지 목록
+    
+    private func makeChallengeHistoryRepository() -> ChallengeHistoryRepositoryProtocol {
+        return ChallengeHistoryRepository(challengeApiClient: challengeApiClient)
+    }
+    private func makeChallengeHistoryUseCase() -> ChallengeHistoryUseCaseProtocol {
+        let repo = makeChallengeHistoryRepository()
+        return ChallengeHistoryUseCase(repository: repo)
+    }
+    private func makeChallengeHistoryViewModel() -> ChallengeHistoryViewModel {
+        let usecase = makeChallengeHistoryUseCase()
+        return ChallengeHistoryViewModel(useCase: usecase)
+    }
+    
+    func makeChallengeHistoryView(coordinator: MainCoordinator) -> ChallengeHistoryView {
+        let vm = makeChallengeHistoryViewModel()
+        return ChallengeHistoryView(viewModel: vm, coordinator: coordinator)
+    }
     
     // MARK: - 챌린지 결과화면
     
@@ -331,6 +352,19 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return MyPotView(viewModel: vm, coordinator: coordinator)
     }
     
+    func makeChallengeHistoryView(coordinator: MainCoordinator) -> ChallengeHistoryView {
+        let usecase = MockChallengeHistoryUseCase()
+        let viewModel = ChallengeHistoryViewModel(useCase: usecase)
+        return ChallengeHistoryView(viewModel: viewModel, coordinator: coordinator)
+    }
+    
+    struct MockChallengeHistoryUseCase: ChallengeHistoryUseCaseProtocol {
+        func loadHistories() async throws -> [HistoryEntity] {
+            [
+                HistoryEntity(challengeId: 6, title: "카페는 이제 그만!", status: "COMPLETED", statusDisplayName: "목표 달성 성공 챌린지", goalAmount: 300000, startDate: Date(), endDate: Date())
+            ]
+        }
+    }
     
 // MARK: - Mock UseCase
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {

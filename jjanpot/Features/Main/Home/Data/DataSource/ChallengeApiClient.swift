@@ -44,6 +44,9 @@ enum ChallengeRouter {
     case getChallengeStats
     
     case getChallengeReport(challengeId: Int)
+    
+    case getChallengeHistory
+    
 }
 
 extension ChallengeRouter: Router {
@@ -60,7 +63,8 @@ extension ChallengeRouter: Router {
                 .fetchFeed,
                 .fetchChallengeOverview,
                 .getChallengeStats,
-                .getChallengeReport
+                .getChallengeReport,
+                .getChallengeHistory
             : .get
 
         case .createChallenge,
@@ -107,6 +111,10 @@ extension ChallengeRouter: Router {
             
         case let .getChallengeReport(id):
             return "/api/challenges/v1/\(id)/result"
+            
+        case .getChallengeHistory:
+            return "/api/challenges/v1/history"
+            
         }
     }
 
@@ -133,7 +141,8 @@ extension ChallengeRouter: Router {
                 .fetchChallengeOverview,
                 .deleteChallenge,
                 .getChallengeStats,
-                .getChallengeReport
+                .getChallengeReport,
+                .getChallengeHistory
             : return nil
         
 
@@ -205,6 +214,9 @@ protocol ChallengeApiClientProtocol {
     
     /// 챌린지 결과 조회
     func getChallengeReport(challengeId: Int) async -> Result<ChallengeReportDto, NetworkError>
+    
+    /// 완료된 챌린지 보기
+    func getChallengeHistory() async -> Result<[ChallengeHistoryDto], NetworkError>
 
 }
 
@@ -265,5 +277,10 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     /// 챌린지 결과 조회
     func getChallengeReport(challengeId: Int) async -> Result<ChallengeReportDto, NetworkError> {
         await request(.getChallengeReport(challengeId: challengeId))
+    }
+    
+    /// 완료된 챌린지 보기
+    func getChallengeHistory() async -> Result<[ChallengeHistoryDto], NetworkError> {
+        await request(.getChallengeHistory)
     }
 }

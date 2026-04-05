@@ -30,19 +30,24 @@ struct MyPotView: View {
                     
                     // 챌린지 참여 현황
                     if let viewData = viewModel.myStatsViewData {
-                        HStack {
-                            MyChallengeStatsItemView(.totalChallenge, content: viewData.totalCount)
-                            Spacer()
-                            MyChallengeStatsItemView(.success, content: viewData.successCount)
-                            Spacer()
-                            MyChallengeStatsItemView(.failed, content: viewData.failCount)
-                            Spacer()
-                            MyChallengeStatsItemView(.successRate, content: viewData.successRate)
-                            
+                        Button {
+                            coordinator.push(.challengeHistory)
+                        } label: {
+                            HStack {
+                                MyChallengeStatsItemView(.totalChallenge, content: viewData.totalCount)
+                                Spacer()
+                                MyChallengeStatsItemView(.success, content: viewData.successCount)
+                                Spacer()
+                                MyChallengeStatsItemView(.failed, content: viewData.failCount)
+                                Spacer()
+                                MyChallengeStatsItemView(.successRate, content: viewData.successRate)
+                                
+                            }
+                            .padding(.vertical, 16)
+                            .padding(.horizontal, 20)
+                            .roundedBorder(color: .orange400, radius: 12)
+
                         }
-                        .padding(.vertical, 16)
-                        .padding(.horizontal, 20)
-                        .roundedBorder(color: .orange400, radius: 12)
                     }
                     
                     
@@ -111,8 +116,6 @@ struct MyPotView: View {
                     .resizable()
                     .frame(width: 35, height: 35)
             }
-//            .frame(width: 44, height: 44)
-//            .clipShape(Circle())
     }
     
     
