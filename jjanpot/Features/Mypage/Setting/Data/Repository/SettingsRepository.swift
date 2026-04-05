@@ -25,6 +25,18 @@ struct SettingsRepository: SettingsRepositoryProtocol {
         }
     }
     
+    // 회원탈퇴
+    func withdraw() async throws {
+        let result = await authApiClient.withdraw()
+        switch result {
+        case .success:
+            return
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    
     // 알림 설정
     func setNotificationSettings(setting entity: NotificationEntity) async throws {
         let dto = NotificationDto(from: entity)

@@ -35,6 +35,9 @@ public enum AuthRouter {
     
     /// 로그아웃
     case logout(userId: Int)
+    
+    /// 탈퇴하기
+    case withdraw
 }
 
 extension AuthRouter: Router {
@@ -71,6 +74,11 @@ extension AuthRouter: Router {
         case .logout:
             return "/api/auth/v1/logout"
             
+            
+        case .withdraw:
+            return "/api/users/v1/withdraw"
+            
+            
         case .getNotificationSettings:
             return "/api/users/v1/notifications"
         case .setNotificationSettings:
@@ -96,6 +104,9 @@ extension AuthRouter: Router {
             
         case .setNotificationSettings:
             return .patch
+            
+        case .withdraw:
+            return .delete
         }
     }
     
@@ -160,7 +171,7 @@ extension AuthRouter: Router {
             }
             return params
             
-        case .getProfile: return nil
+        
             
         case let .logout(userId):
             let params: Parameters = [
@@ -176,6 +187,10 @@ extension AuthRouter: Router {
                 "marketingConsent" : dto.marketingConsent,
             ]
             return params
+            
+        case .getProfile,
+                .withdraw
+            : return nil
         }
     }
     
@@ -221,6 +236,10 @@ public protocol AuthApiClientProtocol {
     
     /// 로그아웃
     func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError>
+    
+    /// 회원탈퇴
+    func withdraw() async -> Result<EmptyResponseDto, NetworkError>
+    
     
     /// 알림 설정 받기
     func getNotificationSettings() async -> Result<NotificationDto, NetworkError>
@@ -272,6 +291,11 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
     /// 로그아웃
     public func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError> {
         await request(.logout(userId: userId))
+    }
+    
+    /// 회원탈퇴
+    public func withdraw() async -> Result<EmptyResponseDto, NetworkError> {
+        await request(.withdraw)
     }
     
     

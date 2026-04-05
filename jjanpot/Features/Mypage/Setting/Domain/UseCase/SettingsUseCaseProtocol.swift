@@ -8,6 +8,7 @@
 
 protocol SettingsUseCaseProtocol {
     func logout() async throws
+    func withdraw() async throws
     func setNotificationSettings(setting entity: NotificationEntity) async throws
     func getNotificationSettings() async throws -> NotificationEntity
 }
@@ -28,6 +29,11 @@ struct SettingsUseCase: SettingsUseCaseProtocol {
     
     private func getUserId() -> Int? {
         AuthManager.shared.currentUser?.userId
+    }
+    
+    func withdraw() async throws {
+        try await repository.withdraw()
+        AuthManager.shared.logout()
     }
     
     

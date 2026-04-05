@@ -435,8 +435,10 @@ struct MockSettingsUseCase: SettingsUseCaseProtocol {
     func getNotificationSettings() async throws -> NotificationEntity {
         return NotificationEntity (dailyEnabled: true, weeklyEnabled: true, marketingConsent: true)
     }
-    
     func logout() async throws {
+        throw NetworkError.dataNil
+    }
+    func withdraw() async throws {
         throw NetworkError.dataNil
     }
 }

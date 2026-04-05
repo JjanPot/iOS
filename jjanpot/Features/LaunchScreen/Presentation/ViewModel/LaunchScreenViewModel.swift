@@ -35,11 +35,10 @@ final class LaunchScreenViewModel: ObservableObject {
 
             } catch {
                 // 토큰갱신, 유저정보 가져오기 실패 -> 로그아웃
+                Logger.error("토큰갱신, 유저정보 가져오기 실패 → 로그인 화면으로: \(error)")
                 if let networkError = error as? NetworkError {
                     Logger.error("토큰갱신, 유저정보 가져오기 실패 → 로그인 화면으로: \(networkError.description)")
-                } else {
-                    Logger.error("토큰갱신, 유저정보 가져오기 실패 → 로그인 화면으로: \(error)")
-                }
+                } 
                 
                 AuthManager.shared.logout()
 

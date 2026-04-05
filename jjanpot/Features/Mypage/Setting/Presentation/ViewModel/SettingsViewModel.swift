@@ -46,8 +46,31 @@ final class SettingsViewModel: ObservableObject {
         }
     }
     
-    func signout(){
-        
+    /// 회원탈퇴
+    @MainActor
+    func withdraw(){
+        isLoading = true
+        isLogouted = false
+        Task {
+            do {
+                try await useCase.withdraw()
+                Logger.success("회원 탈퇴 성공")
+                ToastManager.shared.show("회원 탈퇴 되었습니다.")
+                isLogouted = true
+                
+                // TODO: [임시] 로그아웃 (로그인 NavigationStack으로 전환)
+                NotificationCenter.default.post(name: NSNotification.Name("userDidLogout"), object: nil)
+            } catch {
+                Logger.error("회원 탈퇴 실패: \(error.localizedDescription)")
+                if let networkError = error as? NetworkError {
+                    Logger.error("회원 탈퇴 실패: \(networkError.description)")
+                    toastMessage = networkError.description
+                } else {
+                    toastMessage = "회원 탈퇴 실패"
+                }
+            }
+            isLoading = false
+        }
     }
     
     // 알림 설정
@@ -62,11 +85,11 @@ final class SettingsViewModel: ObservableObject {
                 )
                 try await useCase.setNotificationSettings(setting: entity)
             } catch {
+                Logger.error("알림 설정 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("알림 설정 실패: \(networkError.description)")
                     toastMessage = networkError.description
                 } else {
-                    Logger.error("알림 설정 실패: \(error.localizedDescription)")
                     toastMessage = "설정 실패"
                 }
             }
@@ -85,11 +108,11 @@ final class SettingsViewModel: ObservableObject {
                 marketingConsent = entity.marketingConsent
                 
             } catch {
+                Logger.error("알림 설정 불러오기 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("알림 설정 불러오기 실패: \(networkError.description)")
                     toastMessage = networkError.description
                 } else {
-                    Logger.error("알림 설정 불러오기 실패: \(error.localizedDescription)")
                     toastMessage = "불러오기 실패"
                 }
             }
