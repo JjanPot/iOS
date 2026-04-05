@@ -85,6 +85,14 @@ struct MainNavigationStack: View {
                 coordinator.activePopup = nil
             })
             
+        case let .reportPopup(challengeId):
+            container.makeReportPopupView(challengeId: challengeId) {
+                coordinator.activePopup = nil
+                coordinator.push(.challengeReport(id: challengeId))
+            } closeAction: {
+                coordinator.activePopup = nil
+            }
+            
         case .none:
             EmptyView()
         }

@@ -22,8 +22,11 @@ final class HomeViewModel: ObservableObject {
     // MARK: - Output Properties
 
     @Published var homeViewData: HomeViewData?
-    @Published var isLoading = false
     
+    @Published var showReportPopup = false
+    @Published var completeChallengeId: Int?
+    
+    @Published var isLoading = false
     @Published var toastMessage: String?
 
     // MARK: - Input Methods
@@ -36,7 +39,6 @@ final class HomeViewModel: ObservableObject {
         }
     }
     
-
     func requestAuthorization(){
         let center = UNUserNotificationCenter.current()
         // 권한 상태 확인 후, 아직 결정되지 않은 경우에만 요청
@@ -52,9 +54,42 @@ final class HomeViewModel: ObservableObject {
                 }
             }
         }
-
     }
 
+    
+    @MainActor
+    func loadHistories() {
+        isLoading = true
+        Task {
+            do {
+                let entities = try await useCase.loadHistories()
+                guard let lastChallenge = entities.first else { return }
+                
+                // 종료된지 7일 이내의 경우만 띄운다.
+                let daysDiff = Calendar.current.dateComponents([.day], from: lastChallenge.endDate, to: Date()).day ?? 0
+                let isWithin7Days = daysDiff >= 0 && daysDiff <= 7
+                guard isWithin7Days else { return }
+                
+                // 다시보지않기로 한 아이디가 없거나, 새로운 아이디랑 다를 경우
+                let loadLatestCompletedChallengeId = useCase.loadLatestCompletedChallengeId() ?? -1
+                if lastChallenge.challengeId != loadLatestCompletedChallengeId {
+                    showReportPopup = true
+                    completeChallengeId = lastChallenge.challengeId
+                }
+                
+            } catch {
+                Logger.error("챌린지 기록 불러오기 실패: \(error.localizedDescription)")
+                if let networkError = error as? NetworkError {
+                    Logger.error("챌린지 기록 불러오기 실패: \(networkError.description)")
+                    toastMessage = networkError.description
+                } else {
+                    toastMessage = "불러오기 실패"
+                }
+            }
+            isLoading = false
+        }
+    }
+    
     // MARK: - Private Methods
 
     @MainActor

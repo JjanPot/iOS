@@ -15,4 +15,9 @@ protocol HomeRepositoryProtocol {
     
     /// 챌린지 진행중일때, 챌린지 요약정보 가져오기
     func fetchChallengeSummary(challengeId: Int) async throws -> ChallengeSummaryEntity
+    
+    
+    func loadHistories() async throws -> [HistoryEntity]
+    
+    func loadLatestCompletedChallengeId() -> Int?
 }

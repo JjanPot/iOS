@@ -69,6 +69,7 @@ enum MainDestination: Route {
 enum MainPopupDestination {
     case inviteCode_Input
     case inviteCode_Copy(inviteCode: String)
+    case reportPopup(challengeId: Int)
 }
 
 @MainActor

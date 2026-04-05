@@ -40,6 +40,24 @@ struct HomeRepository: HomeRepositoryProtocol {
             throw error
         }
     }
+    
+    // 완료목록 가져오기
+    func loadHistories() async throws -> [HistoryEntity] {
+        let result = await apiClient.getChallengeHistory()
+        switch result {
+        case .success(let dtos):
+            let entities = dtos.map { HistoryEntity(from: $0) }
+            let sorted = entities.sorted { $0.endDate > $1.endDate }
+            return sorted
+            
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    func loadLatestCompletedChallengeId() -> Int? {
+        AppConfig.shared.latestCompletedChallengeId
+    }
 }
 
 

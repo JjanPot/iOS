@@ -63,11 +63,12 @@ protocol MainDIContainerProtocol {
     
     // 완료 챌린지 목록
     func makeChallengeHistoryView(coordinator: MainCoordinator) -> ChallengeHistoryView
+    
+    func makeReportPopupView(challengeId: Int, comfirmAction: @escaping ()-> Void, closeAction : @escaping ()-> Void ) -> ReportPopupView
 
 }
 
 final class MainDIContainer: MainDIContainerProtocol {
-
     private let authApiClient: AuthApiClientProtocol
     private let challengeApiClient: ChallengeApiClientProtocol
 
@@ -119,7 +120,10 @@ final class MainDIContainer: MainDIContainerProtocol {
         let vm = makeInviteCodeViewModel()
         return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: { onCloseAction() })
     }
-    
+    func makeReportPopupView(challengeId: Int, comfirmAction: @escaping ()-> Void, closeAction : @escaping ()-> Void ) -> ReportPopupView {
+        return ReportPopupView(challengeId: challengeId, comfirmAction: comfirmAction, closeAction: closeAction)
+    }
+   
     // MARK: - 챌린지 생성 화면
     
     private func makeCreateChallengeRepository() -> CreateChallengeRepositoryProtocol {
@@ -292,6 +296,9 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         let vm = InviteCodeViewModel(useCase: MockInviteCodePopupUseCase())
         return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: { onCloseAction() })
     }
+    func makeReportPopupView(challengeId: Int, comfirmAction: @escaping ()-> Void, closeAction : @escaping ()-> Void ) -> ReportPopupView {
+        return ReportPopupView(challengeId: challengeId, comfirmAction: comfirmAction, closeAction: closeAction)
+    }
     
     func makeMainCoordinator() -> MainCoordinator {
         return MainCoordinator(container: self)
@@ -378,6 +385,14 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
     
     final class MockHomeUseCase: HomeUseCaseProtocol {
+        func loadHistories() async throws -> [HistoryEntity] {
+            throw NetworkError.dataNil
+        }
+        
+        func loadLatestCompletedChallengeId() -> Int? {
+            -1
+        }
+        
         func fetchChallengeData() async throws -> HomeEntity {
             HomeEntity(
                 challenge: CurrentChallengeEntity(status: .inProgress(entity: ChallengeInProgressEntity(

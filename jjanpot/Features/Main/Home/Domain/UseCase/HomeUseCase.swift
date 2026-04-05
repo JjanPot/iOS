@@ -35,4 +35,13 @@ final class HomeUseCase: HomeUseCaseProtocol {
     private func fetchChallengeSummary(challengeId: Int) async throws -> ChallengeSummaryEntity {
         try await repository.fetchChallengeSummary(challengeId: challengeId)
     }
+    
+    
+    func loadHistories() async throws -> [HistoryEntity] {
+        try await repository.loadHistories()
+    }
+    
+    func loadLatestCompletedChallengeId() -> Int? {
+        repository.loadLatestCompletedChallengeId()
+    }
 }

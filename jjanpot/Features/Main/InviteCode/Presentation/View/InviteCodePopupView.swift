@@ -137,8 +137,6 @@ struct InviteCodePopupView: View {
                 onCloseAction()
             }
         }
-        
-        
     }
 }
 

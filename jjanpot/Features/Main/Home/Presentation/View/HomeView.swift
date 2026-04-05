@@ -54,16 +54,22 @@ struct HomeView: View {
                 .padding(.bottom, 50)
             }
         } // ~VStack
-        .onAppear {
+        .task {
             viewModel.requestAuthorization()
-            
             viewModel.loadHomeData()
+            viewModel.loadHistories()
+        }
+        .onChange(of: viewModel.showReportPopup) { showReportPopup in
+            if showReportPopup, let id = viewModel.completeChallengeId {
+                coordinator.activePopup = .reportPopup(challengeId: id)
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .shouldRefreshMain), perform: { _ in
             viewModel.loadHomeData()
         })
         .loading(viewModel.isLoading)
         .toast(message: $viewModel.toastMessage)
+        
     }
 
     // MARK: - Private Methods
