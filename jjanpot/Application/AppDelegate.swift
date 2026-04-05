@@ -24,14 +24,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         
         // 원격 알림 등록 - 애플리케이션이 시작될 때 또는 적절한 시점에 원격 알림에 앱을 등록합니다.
-        /*
          let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(
             options: authOptions,
             completionHandler: { _, _ in }
         )
         application.registerForRemoteNotifications()
-         */
 
         return true
     }
