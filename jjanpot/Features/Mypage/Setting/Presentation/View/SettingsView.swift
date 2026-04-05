@@ -62,6 +62,8 @@ struct SettingsView: View {
             .padding(20)
         } // ~ScrollView
         .navigationTitle("설정")
+        .loading(viewModel.isLoading)
+        .toast(message: $viewModel.toastMessage)
         .popup(isPresented: $isShowLogoutPopup) {
             Modal(title: "로그아웃 하시겠습니까?", content: "다시 로그인해야 서비스를 이용할 수 있어요.")
                 .buttons {
