@@ -34,9 +34,9 @@ struct CategoryAmountSelector: View {
                 }
             }
         }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 20)
-        .background(Color.orange50)
+//        .padding(.vertical, 16)
+//        .padding(.horizontal, 20)
+//        .background(Color.orange50)
         .rounded(radius: 8)
     }
 }
