@@ -62,7 +62,6 @@ struct MyPotView: View {
                         Button("로그 공유 (\(Logger.getLogCount())개)"){
                             shareLog()
                         }
-
                        
                         #endif
                                             
