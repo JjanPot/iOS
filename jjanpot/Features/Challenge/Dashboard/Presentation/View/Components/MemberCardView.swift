@@ -26,8 +26,8 @@ struct MemberCardView: View {
                         }
                         .fade(duration: 0.25)
                         .resizable()
-                        .frame(width: 44, height: 44)
                         .scaledToFill()
+                        .frame(width: 44, height: 44)
                 } else {
                      placeholder
                 }
