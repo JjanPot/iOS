@@ -47,6 +47,16 @@ enum ChallengeRouter {
     
     case getChallengeHistory
     
+    /// 게시물 신고하기
+    case reportFeed(feedId: Int, reason: String)
+    
+    /// 사용자 신고하기
+    case reportUser(userId: Int, challengeId: Int, reason: String)
+    
+    /// 사용자 차단하기
+    case blockUser(userId: Int, challengeId: Int)
+    
+    
 }
 
 extension ChallengeRouter: Router {
@@ -70,9 +80,11 @@ extension ChallengeRouter: Router {
         case .createChallenge,
                 .submitInviteCode,
                 .postChallenge,
-                .deleteChallenge
+                .deleteChallenge,
+                .reportFeed,
+                .reportUser,
+                .blockUser
             : .post
-            
         }
     }
     
@@ -115,6 +127,15 @@ extension ChallengeRouter: Router {
         case .getChallengeHistory:
             return "/api/challenges/v1/history"
             
+        case .reportFeed:
+            return "/api/reports/v1/certification"
+            
+        case .reportUser:
+            return "/api/reports/v1/user"
+            
+        case .blockUser:
+            return "/api/blocks/v1"
+            
         }
     }
 
@@ -150,6 +171,28 @@ extension ChallengeRouter: Router {
         case let .submitInviteCode(code):
             let params: Parameters = [
                 "inviteCode" : code,
+            ]
+            return params
+            
+        case let .reportFeed(feedId, reason):
+            let params: Parameters = [
+                "certificationId" : feedId,
+                "reason" : reason,
+            ]
+            return params
+            
+        case let .reportUser(userId, challengeId, reason):
+            let params: Parameters = [
+                "reportedUserId" : userId,
+                "challengeId" : challengeId,
+                "reason" : reason,
+            ]
+            return params
+            
+        case let .blockUser(userId, challengeId):
+            let params: Parameters = [
+                "reportedUserId" : userId,
+                "challengeId" : challengeId,
             ]
             return params
         }
@@ -217,6 +260,15 @@ protocol ChallengeApiClientProtocol {
     
     /// 완료된 챌린지 보기
     func getChallengeHistory() async -> Result<[ChallengeHistoryDto], NetworkError>
+    
+    /// 게시물 신고하기
+    func reportFeed(feedId: Int, reason: String) async -> Result<EmptyResponseDto, NetworkError>
+    
+    /// 사용자 신고하기
+    func reportUser(userId: Int, challengeId: Int, reason: String) async -> Result<EmptyResponseDto, NetworkError>
+    
+    /// 사용자 차단하기
+    func blockUser(userId: Int, challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>
 
 }
 
@@ -282,5 +334,20 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     /// 완료된 챌린지 보기
     func getChallengeHistory() async -> Result<[ChallengeHistoryDto], NetworkError> {
         await request(.getChallengeHistory)
+    }
+    
+    /// 게시물 신고하기
+    func reportFeed(feedId: Int, reason: String) async -> Result<EmptyResponseDto, NetworkError> {
+        await request(.reportFeed(feedId: feedId, reason: reason))
+    }
+    
+    /// 사용자 신고하기
+    func reportUser(userId: Int, challengeId: Int, reason: String) async -> Result<EmptyResponseDto, NetworkError>{
+        await request(.reportUser(userId: userId, challengeId: challengeId, reason: reason))
+    }
+    
+    /// 사용자 차단하기
+    func blockUser(userId: Int, challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>{
+        await request(.blockUser(userId: userId, challengeId: challengeId))
     }
 }
