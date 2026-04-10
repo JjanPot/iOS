@@ -10,6 +10,9 @@ import Kingfisher
 
 struct FeedCardView: View {
     let viewData: FeedCardViewData
+    @Binding var isMenuOpen: Bool
+    
+    
     var body: some View {
         VStack (alignment: .leading, spacing: .zero){
             
@@ -23,14 +26,16 @@ struct FeedCardView: View {
                 
                 
                 // 메뉴 버튼
-//                Button {
-//                    
-//                } label: {
-//                    Image("icon_three_dot")
-//                        .resizable()
-//                        .frame(width: 17, height: 3)
-//                        .padding(.vertical, 8.5)
-//                }
+                if !viewData.isMine {
+                    Button {
+                        isMenuOpen = true
+                    } label: {
+                        Image("icon_three_dot")
+                            .resizable()
+                            .frame(width: 17, height: 3)
+                            .padding(.vertical, 8.5)
+                    }
+                }
             }
             .padding(.bottom, 4)
             
@@ -102,6 +107,15 @@ struct FeedCardView: View {
                     .foregroundStyle(.black600)
             }
         }
+        .overlay(alignment: .topTrailing, content: {
+            if isMenuOpen {
+                PopoverMenu(items: [
+                    .init(title: "게시물 신고", icon: "icon_alert_triangle") { print(">>>>> 게시물 신고") },
+                    .init(title: "사용자 신고", icon: "icon_alert_triangle") { print(">>>>> 사용자 신고") },
+                    .init(title: "사용자 차단", icon: "icon_frown") { print(">>>>> 사용자 차단") }
+                ], isPresented: $isMenuOpen)
+            }
+        })
         .padding(.vertical, 16)
         .padding(.horizontal, 17)
         .roundedBorder(color: .black100, radius: 12)
@@ -109,14 +123,27 @@ struct FeedCardView: View {
 }
 
 #Preview {
-    FeedCardView(viewData: FeedCardViewData(
-        category: "카페/디저트",
-        title: "오므라이스 최고",
-        content: "텀블러에 담아서 먹었는데 그럭저럭 먹을만하더라구요. 다들 맛있게 절약하세요.",
-        price: "+3,500원",
-        likeCount: 3,
-        date: "2027.09.18 18:30",
-        imageUrl: "https://picsum.photos/50/50"
+    
+    struct PreviewWrapper: View {
         
-    ))
+        @State private var isMenuOpen = false
+        
+        var body: some View {
+            FeedCardView(viewData: FeedCardViewData(
+                feedId: 10,
+                authorId: 10,
+                category: "카페/디저트",
+                title: "오므라이스 최고",
+                content: "텀블러에 담아서 먹었는데 그럭저럭 먹을만하더라구요. 다들 맛있게 절약하세요.",
+                price: "+3,500원",
+                likeCount: 3,
+                date: "2027.09.18 18:30",
+                imageUrl: "https://picsum.photos/50/50",
+                isMine: true
+                
+            ), isMenuOpen: $isMenuOpen)
+            
+        }
+    }
+    return PreviewWrapper()
 }

@@ -25,13 +25,16 @@ struct ChallengeFeedViewDataMapper {
 
             // 피드 아이템 추가
             let feedCard = FeedCardViewData(
+                feedId: entity.certificationId,
+                authorId: entity.certificationId,
                 category: entity.categoryName,
                 title: entity.userNickname,
                 content: entity.memo ?? "",
                 price: "\(entity.savedAmount > 0 ? "+" : "")\(entity.savedAmount)원",
                 likeCount: entity.likeCount,
                 date: entity.createdAt.toString(.dateTime2, locale: .kr),
-                imageUrl: entity.imageURL
+                imageUrl: entity.imageURL,
+                isMine: entity.isMe
             )
             result.append(.item(id: UUID(), feed: feedCard))
         }
