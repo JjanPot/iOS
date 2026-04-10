@@ -79,12 +79,12 @@ struct MainNavigationStack: View {
             container.makeInviteCodePopupView(inviteCode: nil, onCloseAction: {
                 coordinator.activePopup = nil
             })
-            
+
         case let .inviteCode_Copy(inviteCode):
             container.makeInviteCodePopupView(inviteCode: inviteCode, onCloseAction: {
                 coordinator.activePopup = nil
             })
-            
+
         case let .reportPopup(challengeId):
             container.makeReportPopupView(challengeId: challengeId) {
                 coordinator.activePopup = nil
@@ -92,7 +92,10 @@ struct MainNavigationStack: View {
             } closeAction: {
                 coordinator.activePopup = nil
             }
-            
+
+        case let .modal(modal):
+            modal
+
         case .none:
             EmptyView()
         }

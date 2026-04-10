@@ -13,9 +13,9 @@ struct FeedCardViewData {
     
     // feed 작성자 유저 id
     let authorId: Int
+    let authorNickname: String
     
     let category: String
-    let title: String
     let content: String
     let price: String
     let likeCount: Int

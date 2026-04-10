@@ -415,6 +415,18 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         }
     }
     struct MockChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
+        func reportFeed(feedId: Int, reason: String) async throws {
+            return
+        }
+        
+        func reportUser(userId: Int, challengeId: Int, reason: String) async throws {
+            return
+        }
+        
+        func blockUser(userId: Int, challengeId: Int) async throws {
+            return
+        }
+        
         func getChallengeDashboardData() async throws -> ChallengeDashboardEntity {
             return ChallengeDashboardEntity.inProgress(
                 id: 0, overview: OverviewEntity(

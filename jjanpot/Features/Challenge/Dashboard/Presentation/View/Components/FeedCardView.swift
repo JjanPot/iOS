@@ -11,7 +11,9 @@ import Kingfisher
 struct FeedCardView: View {
     let viewData: FeedCardViewData
     @Binding var isMenuOpen: Bool
-    
+    let onReport: () -> Void
+    let onReportUser: () -> Void
+    let onBlock: () -> Void
     
     var body: some View {
         VStack (alignment: .leading, spacing: .zero){
@@ -43,7 +45,7 @@ struct FeedCardView: View {
             // 내용
             HStack (alignment: .top, spacing: 8){
                 VStack (alignment: .leading, spacing: .zero){
-                    Text(viewData.title)
+                    Text(viewData.authorNickname)
                         .font(.pretendard(.semiBold, size: 14))
                         .foregroundStyle(.black600)
                         .padding(.bottom,4)
@@ -110,9 +112,15 @@ struct FeedCardView: View {
         .overlay(alignment: .topTrailing, content: {
             if isMenuOpen {
                 PopoverMenu(items: [
-                    .init(title: "게시물 신고", icon: "icon_alert_triangle") { print(">>>>> 게시물 신고") },
-                    .init(title: "사용자 신고", icon: "icon_alert_triangle") { print(">>>>> 사용자 신고") },
-                    .init(title: "사용자 차단", icon: "icon_frown") { print(">>>>> 사용자 차단") }
+                    .init(title: "게시물 신고", icon: "icon_alert_triangle") {
+                        onReport()
+                    },
+                    .init(title: "사용자 신고", icon: "icon_alert_triangle") {
+                        onReportUser()
+                    },
+                    .init(title: "사용자 차단", icon: "icon_frown") {
+                        onBlock()
+                    }
                 ], isPresented: $isMenuOpen)
             }
         })
@@ -132,8 +140,8 @@ struct FeedCardView: View {
             FeedCardView(viewData: FeedCardViewData(
                 feedId: 10,
                 authorId: 10,
+                authorNickname: "오므라이스 최고",
                 category: "카페/디저트",
-                title: "오므라이스 최고",
                 content: "텀블러에 담아서 먹었는데 그럭저럭 먹을만하더라구요. 다들 맛있게 절약하세요.",
                 price: "+3,500원",
                 likeCount: 3,
@@ -141,7 +149,11 @@ struct FeedCardView: View {
                 imageUrl: "https://picsum.photos/50/50",
                 isMine: true
                 
-            ), isMenuOpen: $isMenuOpen)
+            ), isMenuOpen: $isMenuOpen,
+                         onReport: {},
+                         onReportUser: {},
+                         onBlock: {}
+            )
             
         }
     }

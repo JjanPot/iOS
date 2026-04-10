@@ -69,7 +69,17 @@ enum MainDestination: Route {
 enum MainPopupDestination {
     case inviteCode_Input
     case inviteCode_Copy(inviteCode: String)
+
+    /// 챌린지 결과있음 팝업
     case reportPopup(challengeId: Int)
+
+    /// 게시물 신고
+//    case reportFeed
+
+    /// 사용자 신고
+//    case reportUser
+
+    case modal(modal: AnyView)
 }
 
 @MainActor
@@ -105,5 +115,22 @@ final class MainCoordinator: ObservableObject {
     /// 네비게이션 스택 초기화 (루트로 이동)
     func popToRoot() {
         path = NavigationPath()
+    }
+
+    // MARK: - Popup Methods
+
+    /// 모달 팝업 표시
+    func showReportModal(title: String, content: String, confirmButtonTitle: String = "확인", onConfirm: @escaping () -> Void) {
+        activePopup = .modal(modal: AnyView(
+            Modal(title: title, content: content).buttons {
+                ModalButton(title: "닫기", colorType: .secondary) {
+                    self.activePopup = nil
+                }
+                ModalButton(title: confirmButtonTitle, size: .large) {
+                    onConfirm()
+                    self.activePopup = nil
+                }
+            }
+        ))
     }
 }

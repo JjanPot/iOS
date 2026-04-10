@@ -14,6 +14,8 @@ struct ChallengeDashboardView: View {
     
     @State var selectedFeedIdForMenu: Int?
     
+    @State var isShowReportPopup: Bool = false
+    
     init(viewModel: ChallengeDashboardViewModel, coordinator: MainCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
@@ -76,8 +78,37 @@ struct ChallengeDashboardView: View {
                                                             } else {
                                                                 closeMenu()
                                                             }
-                                                        })
-                                        )
+                                                        }),
+                                                     onReport: {
+                                            // 신고하기 모달 띄우기
+                                            coordinator.showReportModal(
+                                                title: "게시글을 신고할까요?",
+                                                content: "허위로 신고한 사용자에게는 불이익이 있을 수 있어요.",
+                                                confirmButtonTitle: "신고하기",
+                                                onConfirm: {
+                                                    print(">>>>> onReport \(feed.authorId), 이유222")
+                                                })
+                                        }, onReportUser: {
+                                            // 신고하기 모달 띄우기
+                                            coordinator.showReportModal(
+                                                title: "\(feed.authorNickname)님을 신고할까요?",
+                                                content: "허위로 신고한 사용자에게는 불이익이 있을 수 있어요.",
+                                                confirmButtonTitle: "신고하기",
+                                                onConfirm: {
+                                                    print(">>>>> onReportUser \(feed.authorId), 챌린지 아이디, 이유")
+                                                })
+                                            
+                                        }, onBlock: {
+                                            
+                                            // 신고하기 모달 띄우기
+                                            coordinator.showReportModal(
+                                                title: "\(feed.authorNickname)님을 차단할까요?",
+                                                content: "\(feed.authorNickname)님을 차단하면 챌린지 소식을 볼 수 없어요.",
+                                                confirmButtonTitle: "차단하기",
+                                                onConfirm: {
+                                                    print(">>>>> onBlock \(feed.authorId), 챌린지 아이디")
+                                                })
+                                        })
 
                                     case .bottom:
                                         Spacer()
@@ -113,6 +144,17 @@ struct ChallengeDashboardView: View {
         .task {
             viewModel.loadChallengeDashboard()
         }
+//        .popup(isPresented: $isShowReportPopup) {
+//            Modal(title: "신고하기", content: "신고식고")
+//                .buttons {
+//                    ModalButton(title: "취소", colorType: .secondary) {
+//                        isShowReportPopup = false
+//                    }
+//                    ModalButton(title: "신고하기") {
+//                        isShowReportPopup = false
+//                    }
+//                }
+//        }
     }
     
     /// 메뉴 열기/닫기

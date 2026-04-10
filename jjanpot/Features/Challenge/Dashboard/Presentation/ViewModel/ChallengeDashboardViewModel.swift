@@ -10,7 +10,6 @@ import SwiftUI
 import Combine
 final class ChallengeDashboardViewModel: ObservableObject {
     
-    
     @Published var viewData: ChallengeDashboardViewData? = nil
     @Published var isLoading = false
     @Published var toastMessage: String?
@@ -49,6 +48,63 @@ final class ChallengeDashboardViewModel: ObservableObject {
                     ToastManager.shared.show(networkError.description)
                 } else {
                     toastMessage = "불러오기 실패"
+                }
+            }
+            isLoading = false
+        }
+    }
+    
+    /// 게시글 신고
+    func reportFeed(feedId: Int, reason: String) {
+        isLoading = true
+        Task {
+            do {
+                try await useCase.reportFeed(feedId: feedId, reason: reason)
+            } catch {
+                Logger.error("게시글 신고 실패: \(error.localizedDescription)")
+                if let networkError = error as? NetworkError {
+                    Logger.error("게시글 신고 실패: \(networkError.description)")
+                    toastMessage = networkError.description
+                } else {
+                    toastMessage = "게시글 신고 실패"
+                }
+            }
+            isLoading = false
+        }
+    }
+    
+    /// 사용자 신고
+    func reportUser(userId: Int, challengeId: Int, reason: String) {
+        isLoading = true
+        Task {
+            do {
+                try await useCase.reportUser(userId: userId, challengeId: challengeId, reason: reason)
+            } catch {
+                Logger.error("사용자 신고 실패: \(error.localizedDescription)")
+                if let networkError = error as? NetworkError {
+                    Logger.error("사용자 신고 실패: \(networkError.description)")
+                    toastMessage = networkError.description
+                } else {
+                    toastMessage = "사용자 신고 실패"
+                }
+            }
+            isLoading = false
+        }
+    }
+    
+    /// 사용자 차단
+    func blockUser(userId: Int, challengeId: Int) {
+        isLoading = true
+        Task {
+            do {
+                try await useCase.blockUser(userId: userId, challengeId: challengeId)
+            } catch {
+                Logger.error("사용자 차단 실패: \(error.localizedDescription)")
+                if let networkError = error as? NetworkError {
+                    Logger.error("사용자 차단 실패: \(networkError.description)")
+                    toastMessage = networkError.description
+                } else {
+                    toastMessage = "사용자 차단 실패"
                 }
             }
             isLoading = false

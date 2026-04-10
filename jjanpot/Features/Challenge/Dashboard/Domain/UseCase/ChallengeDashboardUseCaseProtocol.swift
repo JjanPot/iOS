@@ -8,6 +8,15 @@
 
 protocol ChallengeDashboardUseCaseProtocol {
     func getChallengeDashboardData() async throws -> ChallengeDashboardEntity
+    
+    /// 게시글 신고
+    func reportFeed(feedId: Int, reason: String) async throws
+    
+    /// 사용자 신고
+    func reportUser(userId: Int, challengeId: Int, reason: String) async throws
+    
+    /// 사용자 차단
+    func blockUser(userId: Int, challengeId: Int) async throws
 }
 struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
     private let repository: ChallengeDashboardRepositoryProtocol
@@ -50,4 +59,21 @@ struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
     private func getFeeds(challengeId: Int) async throws -> [FeedEntity] {
         try await repository.fetchFeeds(challengeId: challengeId)
     }
+    
+    
+    /// 게시글 신고
+    func reportFeed(feedId: Int, reason: String) async throws {
+        try await repository.reportFeed(feedId: feedId, reason: reason)
+    }
+    
+    /// 사용자 신고
+    func reportUser(userId: Int, challengeId: Int, reason: String) async throws {
+        try await repository.reportUser(userId: userId, challengeId: challengeId, reason: reason)
+    }
+    
+    /// 사용자 차단
+    func blockUser(userId: Int, challengeId: Int) async throws {
+        try await repository.blockUser(userId: userId, challengeId: challengeId)
+    }
+    
 }

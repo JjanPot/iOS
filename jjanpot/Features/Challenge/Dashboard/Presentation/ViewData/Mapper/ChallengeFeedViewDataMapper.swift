@@ -27,8 +27,8 @@ struct ChallengeFeedViewDataMapper {
             let feedCard = FeedCardViewData(
                 feedId: entity.certificationId,
                 authorId: entity.certificationId,
+                authorNickname: entity.userNickname,
                 category: entity.categoryName,
-                title: entity.userNickname,
                 content: entity.memo ?? "",
                 price: "\(entity.savedAmount > 0 ? "+" : "")\(entity.savedAmount)원",
                 likeCount: entity.likeCount,
