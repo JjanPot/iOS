@@ -16,4 +16,13 @@ protocol ChallengeDashboardRepositoryProtocol {
     
     /// 챌린지 피드 가져오기
     func fetchFeeds(challengeId: Int) async throws -> [FeedEntity]
+    
+    /// 게시글 신고
+    func reportFeed(feedId: Int, reason: String) async throws
+    
+    /// 사용자 신고
+    func reportUser(userId: Int, challengeId: Int, reason: String) async throws
+    
+    /// 사용자 차단
+    func blockUser(userId: Int, challengeId: Int) async throws
 }

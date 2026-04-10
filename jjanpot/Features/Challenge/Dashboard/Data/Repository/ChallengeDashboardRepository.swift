@@ -49,4 +49,40 @@ struct ChallengeDashboardRepository: ChallengeDashboardRepositoryProtocol {
             throw error
         }
     }
+    
+    // 게시글 신고
+    func reportFeed(feedId: Int, reason: String) async throws {
+        let result = await apiClient.reportFeed(feedId: feedId, reason: reason)
+        switch result {
+        case .success(let dto):
+            return
+            
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    // 사용자 신고
+    func reportUser(userId: Int, challengeId: Int, reason: String) async throws {
+        let result = await apiClient.reportUser(userId: userId, challengeId: challengeId, reason: reason)
+        switch result {
+        case .success(let dto):
+            return
+            
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    // 사용자 차단
+    func blockUser(userId: Int, challengeId: Int) async throws {
+        let result = await apiClient.blockUser(userId: userId, challengeId: challengeId)
+        switch result {
+        case .success(let dto):
+            return
+            
+        case .failure(let error):
+            throw error
+        }
+    }
 }
