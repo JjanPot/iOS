@@ -9,6 +9,7 @@ import Foundation
 
 struct FeedResponseDto: Codable {
     let certificationId: Int
+    let userId: Int
     let spendType, categoryName, userNickname: String
     let memo: String?
     let savedAmount: Int
@@ -19,7 +20,7 @@ struct FeedResponseDto: Codable {
     let isMe: Bool
 
     enum CodingKeys: String, CodingKey {
-        case certificationId
+        case certificationId, userId
         case spendType, categoryName, userNickname, memo, savedAmount
         case imageURL = "imageUrl"
         case createdAt, likeCount, isMe

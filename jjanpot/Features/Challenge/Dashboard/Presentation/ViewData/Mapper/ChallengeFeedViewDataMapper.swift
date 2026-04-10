@@ -26,7 +26,7 @@ struct ChallengeFeedViewDataMapper {
             // 피드 아이템 추가
             let feedCard = FeedCardViewData(
                 feedId: entity.certificationId,
-                authorId: entity.certificationId,
+                authorId: entity.userId,
                 authorNickname: entity.userNickname,
                 category: entity.categoryName,
                 content: entity.memo ?? "",

@@ -11,6 +11,7 @@ struct FeedEntity {
     let certificationId: Int
     let spendType: String
     let categoryName: String
+    let userId: Int
     let userNickname: String
     let memo: String?
     let savedAmount: Int
@@ -24,6 +25,7 @@ extension FeedEntity {
         self.certificationId = dto.certificationId
         self.spendType = dto.spendType
         self.categoryName = dto.categoryName
+        self.userId = dto.userId
         self.userNickname = dto.userNickname
         self.memo = dto.memo
         self.savedAmount = dto.savedAmount
