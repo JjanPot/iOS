@@ -24,3 +24,11 @@ extension NotificationDto {
         self.marketingConsent = entity.marketingConsent
     }
 }
+
+extension NotificationEntity: Equatable {
+    static func == (lhs: NotificationEntity, rhs: NotificationEntity) -> Bool {
+        lhs.dailyEnabled == rhs.dailyEnabled &&
+        lhs.weeklyEnabled == rhs.weeklyEnabled &&
+        lhs.marketingConsent == rhs.marketingConsent
+    }
+}

@@ -10,10 +10,6 @@ import SwiftUI
 struct AlarmSettingsView: View {
     @StateObject var viewModel: SettingsViewModel
     
-    @State var isFirstOfdailyEnabled = true
-    @State var isFirstOfWeeklyEnabled = true
-    @State var isFirstOfMarketingConsent = true
-    
     init(viewModel: SettingsViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -25,10 +21,6 @@ struct AlarmSettingsView: View {
                                        subTitle: "매일 저녁 6시에 알림을 받을 수 있어요.",
                                        toggleValue: $viewModel.dailyEnabled)
                 .onChange(of: viewModel.dailyEnabled) { _ in
-                    if isFirstOfdailyEnabled {
-                        isFirstOfdailyEnabled = false
-                        return
-                    }
                     viewModel.setNotificationSettings()
                 }
                 
@@ -36,10 +28,6 @@ struct AlarmSettingsView: View {
                                        subTitle: "주 3회 저녁8시에 알림을 받을 수 있어요.",
                                        toggleValue: $viewModel.weeklyEnabled)
                 .onChange(of: viewModel.weeklyEnabled) { _ in
-                    if isFirstOfWeeklyEnabled {
-                        isFirstOfWeeklyEnabled = false
-                        return
-                    }
                     viewModel.setNotificationSettings()
                 }
             }
@@ -49,10 +37,6 @@ struct AlarmSettingsView: View {
                                        subTitle: "[짠팟] 마케팅 정보 수신 동의",
                                        toggleValue: $viewModel.marketingConsent)
                 .onChange(of: viewModel.marketingConsent) { _ in
-                    if isFirstOfMarketingConsent {
-                        isFirstOfMarketingConsent = false
-                        return
-                    }
                     viewModel.setNotificationSettings()
                 }
             }

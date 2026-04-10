@@ -14,6 +14,7 @@ final class SettingsViewModel: ObservableObject {
     init(useCase: SettingsUseCaseProtocol) {
         self.useCase = useCase
     }
+    private var originSettinValue: NotificationEntity?
     
     @Published var dailyEnabled: Bool = false
     @Published var weeklyEnabled: Bool = false
@@ -83,6 +84,13 @@ final class SettingsViewModel: ObservableObject {
                     weeklyEnabled: weeklyEnabled,
                     marketingConsent: marketingConsent
                 )
+                
+                // 기존 값과 다를 때만 업데이트
+                guard entity != originSettinValue else {
+                    isLoading = false
+                    return
+                }
+                
                 try await useCase.setNotificationSettings(setting: entity)
             } catch {
                 Logger.error("알림 설정 실패: \(error.localizedDescription)")
@@ -103,9 +111,15 @@ final class SettingsViewModel: ObservableObject {
         Task {
             do {
                 let entity = try await useCase.getNotificationSettings()
+                
+                // 원본값 저장
+                originSettinValue = entity
+                
+                // 뷰에 값 넣어주기
                 dailyEnabled = entity.dailyEnabled
                 weeklyEnabled = entity.weeklyEnabled
                 marketingConsent = entity.marketingConsent
+                
                 
             } catch {
                 Logger.error("알림 설정 불러오기 실패: \(error.localizedDescription)")
