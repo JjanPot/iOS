@@ -14,7 +14,7 @@ struct MemberPagerView: View {
     @State private var currentIndex: Int = 0
     
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(alignment: .top, spacing: 8) {
             
             // 왼쪽 버튼
             Button(action: {
@@ -28,7 +28,7 @@ struct MemberPagerView: View {
             .frame(maxHeight: .infinity)
             
             // 이미지 영역
-            HStack(spacing: 8) {
+            HStack(alignment: .top, spacing: 8) {
                 ForEach(visibleMembers.indices, id: \.self) { index in
                     MemberCardView(viewData: visibleMembers[index])
                         .frame(maxWidth: .infinity)
@@ -91,7 +91,7 @@ private extension MemberPagerView {
 #Preview {
     MemberPagerView(members: [
         .init(userId: 0, nickname: "닉네임0", imageUrl: "", color: .red, amount: 10000),
-        .init(userId: 0, nickname: "닉네임2", imageUrl: "", color: .black, amount: 12000),
+        .init(userId: 0, nickname: "닉네임2닉네임", imageUrl: "", color: .black, amount: 12000),
         .init(userId: 0, nickname: "닉네임3", imageUrl: "", color: .blue, amount: 13000),
         .init(userId: 0, nickname: "닉네임4", imageUrl: "", color: .green, amount: 14000),
              ])
