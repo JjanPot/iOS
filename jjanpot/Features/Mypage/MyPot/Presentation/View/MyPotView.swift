@@ -56,7 +56,7 @@ struct MyPotView: View {
                     
                     // 문의하기
                     Button {
-                        coordinator.fullScreenWebView(url: AppConstants.URLs.useGuide)
+                        coordinator.fullScreenWebView(url: AppConstants.URLs.contactUs)
                     } label: {
                         contactView
                     }

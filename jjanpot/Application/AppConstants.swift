@@ -26,6 +26,9 @@ enum AppConstants {
         /// 이용가이드
         static let useGuide = "https://patch-carpenter-1ef.notion.site/JJANPOT-FAQ-32fcf10cd2e780cab8efe04e712cc180?source=copy_link"
         
+        /// 의견남기기
+        static let contactUs = "https://tally.so/r/LZYNlG"
+        
     }
 
     // MARK: - App Info
