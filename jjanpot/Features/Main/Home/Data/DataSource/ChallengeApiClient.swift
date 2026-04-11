@@ -191,7 +191,7 @@ extension ChallengeRouter: Router {
             
         case let .blockUser(userId, challengeId):
             let params: Parameters = [
-                "reportedUserId" : userId,
+                "blockedUserId" : userId,
                 "challengeId" : challengeId,
             ]
             return params

@@ -64,8 +64,16 @@ protocol MainDIContainerProtocol {
     // 완료 챌린지 목록
     func makeChallengeHistoryView(coordinator: MainCoordinator) -> ChallengeHistoryView
     
+    // 완료챌린지 결과화면 안내 팝업
     func makeReportPopupView(challengeId: Int, comfirmAction: @escaping ()-> Void, closeAction : @escaping ()-> Void ) -> ReportPopupView
-
+    
+    // 신고 이유 선택지 화면
+    func makeReportReasonSelectorPopupView<Reason: ReportReasonProtocol & Hashable & CaseIterable>(
+        reason: Reason,
+        reportType: ReportType,
+        confirmAction: @escaping () -> Void,
+        closeAction: @escaping () -> Void
+    ) -> ReportReasonSelectorPopup<Reason>
 }
 
 final class MainDIContainer: MainDIContainerProtocol {
@@ -286,6 +294,32 @@ final class MainDIContainer: MainDIContainerProtocol {
         let vm = makeSettingsViewModel()
         return AlarmSettingsView(viewModel: vm)
     }
+    
+    // MARK: - 신고 이유 선택지 팝업
+
+    private func makeReportFeedRepository() -> ReportFeedRepositoryProtocol {
+        return ReportFeedRepository(apiClient: challengeApiClient)
+    }
+
+    private func makeReportFeedUseCase() -> ReportFeedUseCaseProtocol {
+        let repo = makeReportFeedRepository()
+        return ReportFeedUseCase(repository: repo)
+    }
+
+    private func makeReportReasonSelectorPopupViewModel(reportType: ReportType) -> ReportReasonSelectorPopupViewModel {
+        let useCase = makeReportFeedUseCase()
+        return ReportReasonSelectorPopupViewModel(useCase: useCase, reportType: reportType)
+    }
+
+    func makeReportReasonSelectorPopupView<Reason: ReportReasonProtocol & Hashable & CaseIterable>(
+        reason: Reason,
+        reportType: ReportType,
+        confirmAction: @escaping () -> Void,
+        closeAction: @escaping () -> Void
+    ) -> ReportReasonSelectorPopup<Reason> {
+        let viewModel = makeReportReasonSelectorPopupViewModel(reportType: reportType)
+        return ReportReasonSelectorPopup(viewModel: viewModel, reason: reason, onConfirm: confirmAction, onClose: closeAction)
+    }
 }
 
 // MARK: - Mock
@@ -364,7 +398,24 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         let viewModel = ChallengeHistoryViewModel(useCase: usecase)
         return ChallengeHistoryView(viewModel: viewModel, coordinator: coordinator)
     }
-    
+
+
+
+    private func makeReportReasonSelectorPopupViewModel(reportType: ReportType) -> ReportReasonSelectorPopupViewModel {
+        let useCase = MockReportFeedUseCase()
+        return ReportReasonSelectorPopupViewModel(useCase: useCase, reportType: reportType)
+    }
+
+    func makeReportReasonSelectorPopupView<Reason: ReportReasonProtocol & Hashable & CaseIterable>(
+        reason: Reason,
+        reportType: ReportType,
+        confirmAction: @escaping () -> Void,
+        closeAction: @escaping () -> Void
+    ) -> ReportReasonSelectorPopup<Reason> {
+        let viewModel = makeReportReasonSelectorPopupViewModel(reportType: reportType)
+        return ReportReasonSelectorPopup(viewModel: viewModel, reason: reason, onConfirm: confirmAction, onClose: closeAction)
+    }
+
     struct MockChallengeHistoryUseCase: ChallengeHistoryUseCaseProtocol {
         func loadHistories() async throws -> [HistoryEntity] {
             [
@@ -452,6 +503,13 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
             throw NetworkError.dataNil
         }
+    }
+    
+    struct MockReportFeedUseCase: ReportFeedUseCaseProtocol{
+        func reportFeed(feedId: Int, reason: String) async throws {}
+        
+        func reportUser(userId: Int, challengeId: Int, reason: String) async throws {}
+        
     }
 }
 

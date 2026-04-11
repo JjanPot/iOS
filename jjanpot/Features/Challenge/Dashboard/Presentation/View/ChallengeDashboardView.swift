@@ -61,7 +61,7 @@ struct ChallengeDashboardView: View {
 
                         // 게시물 목록 //
                         switch viewModel.viewData {
-                        case let .inProgress(_, _, feeds):
+                        case let .inProgress(challengeId, _, feeds):
                             Group {
                                 ForEach(feeds) { feed in
                                     switch feed {
@@ -80,33 +80,38 @@ struct ChallengeDashboardView: View {
                                                             }
                                                         }),
                                                      onReport: {
-                                            // 신고하기 모달 띄우기
+                                            // 게시글 신고하기 모달 띄우기
                                             coordinator.showReportModal(
                                                 title: "게시글을 신고할까요?",
                                                 content: "허위로 신고한 사용자에게는 불이익이 있을 수 있어요.",
                                                 confirmButtonTitle: "신고하기",
                                                 onConfirm: {
-                                                    print(">>>>> onReport \(feed.authorId), 이유222")
+                                                    coordinator.activePopup = .reportFeedReason(feedId: feed.feedId, confirmAction: {
+                                                        viewModel.removeFeed(feedId: feed.feedId)
+                                                    })
                                                 })
                                         }, onReportUser: {
-                                            // 신고하기 모달 띄우기
+                                            // 사용자 신고하기 모달 띄우기
                                             coordinator.showReportModal(
                                                 title: "\(feed.authorNickname)님을 신고할까요?",
                                                 content: "허위로 신고한 사용자에게는 불이익이 있을 수 있어요.",
                                                 confirmButtonTitle: "신고하기",
                                                 onConfirm: {
-                                                    print(">>>>> onReportUser \(feed.authorId), 챌린지 아이디, 이유")
+                                                    coordinator.activePopup = .reportUserReason(userId: feed.authorId, challengeId: challengeId, confirmAction: {
+                                                        viewModel.removeFeed(feedId: feed.feedId)
+                                                    })
                                                 })
                                             
                                         }, onBlock: {
                                             
-                                            // 신고하기 모달 띄우기
+                                            // 차단하기 모달 띄우기
                                             coordinator.showReportModal(
                                                 title: "\(feed.authorNickname)님을 차단할까요?",
                                                 content: "\(feed.authorNickname)님을 차단하면 챌린지 소식을 볼 수 없어요.",
                                                 confirmButtonTitle: "차단하기",
                                                 onConfirm: {
-                                                    print(">>>>> onBlock \(feed.authorId), 챌린지 아이디")
+                                                    coordinator.activePopup = nil
+                                                    viewModel.blockUser(userId: feed.authorId, challengeId: challengeId)
                                                 })
                                         })
 

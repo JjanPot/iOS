@@ -24,6 +24,7 @@ struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
         self.repository = repository
     }
     
+    
     /// 챌린지 정보 가져오기
     func getChallengeDashboardData() async throws -> ChallengeDashboardEntity {
         // 1. 유저의 챌린지 가져오기

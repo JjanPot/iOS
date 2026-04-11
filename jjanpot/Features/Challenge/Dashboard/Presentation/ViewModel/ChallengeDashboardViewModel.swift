@@ -54,43 +54,7 @@ final class ChallengeDashboardViewModel: ObservableObject {
         }
     }
     
-    /// 게시글 신고
-    func reportFeed(feedId: Int, reason: String) {
-        isLoading = true
-        Task {
-            do {
-                try await useCase.reportFeed(feedId: feedId, reason: reason)
-            } catch {
-                Logger.error("게시글 신고 실패: \(error.localizedDescription)")
-                if let networkError = error as? NetworkError {
-                    Logger.error("게시글 신고 실패: \(networkError.description)")
-                    toastMessage = networkError.description
-                } else {
-                    toastMessage = "게시글 신고 실패"
-                }
-            }
-            isLoading = false
-        }
-    }
-    
-    /// 사용자 신고
-    func reportUser(userId: Int, challengeId: Int, reason: String) {
-        isLoading = true
-        Task {
-            do {
-                try await useCase.reportUser(userId: userId, challengeId: challengeId, reason: reason)
-            } catch {
-                Logger.error("사용자 신고 실패: \(error.localizedDescription)")
-                if let networkError = error as? NetworkError {
-                    Logger.error("사용자 신고 실패: \(networkError.description)")
-                    toastMessage = networkError.description
-                } else {
-                    toastMessage = "사용자 신고 실패"
-                }
-            }
-            isLoading = false
-        }
-    }
+  
     
     /// 사용자 차단
     func blockUser(userId: Int, challengeId: Int) {
@@ -98,6 +62,8 @@ final class ChallengeDashboardViewModel: ObservableObject {
         Task {
             do {
                 try await useCase.blockUser(userId: userId, challengeId: challengeId)
+                removeFeed(userId: userId)
+                toastMessage = "사용자가 차단되었습니다."
             } catch {
                 Logger.error("사용자 차단 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
@@ -110,6 +76,42 @@ final class ChallengeDashboardViewModel: ObservableObject {
             isLoading = false
         }
     }
+    
+    
+    /// 신고한 피드를 목록에서 제거
+    func removeFeed(feedId targetId: Int){
+        if case let .inProgress(challengeId, overviewViewData, feeds) = self.viewData {
+            var filteredFeeds = feeds
+            filteredFeeds.removeAll { feed in
+                if case let .item(_, feedViewData) = feed {
+                    return feedViewData.feedId == targetId
+                }
+                return false
+            }
+            
+            self.viewData = .inProgress(challengeId: challengeId,
+                                        overviewViewData: overviewViewData,
+                                        feedViewData: filteredFeeds)
+        }
+    }
+    
+    /// 신고한 피드를 목록에서 제거
+    func removeFeed(userId targetId: Int){
+        if case let .inProgress(challengeId, overviewViewData, feeds) = self.viewData {
+            var filteredFeeds = feeds
+            filteredFeeds.removeAll { feed in
+                if case let .item(_, feedViewData) = feed {
+                    return feedViewData.authorId == targetId
+                }
+                return false
+            }
+            
+            self.viewData = .inProgress(challengeId: challengeId,
+                                        overviewViewData: overviewViewData,
+                                        feedViewData: filteredFeeds)
+        }
+    }
+    
 }
   
 

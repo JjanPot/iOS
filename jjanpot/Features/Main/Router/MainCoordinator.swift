@@ -74,10 +74,10 @@ enum MainPopupDestination {
     case reportPopup(challengeId: Int)
 
     /// 게시물 신고
-//    case reportFeed
-
-    /// 사용자 신고
-//    case reportUser
+    case reportFeedReason(feedId: Int, confirmAction: (()->Void)?)
+    
+    /// 유저 신고
+    case reportUserReason(userId: Int, challengeId: Int, confirmAction: (()->Void)?)
 
     case modal(modal: AnyView)
 }
@@ -128,9 +128,10 @@ final class MainCoordinator: ObservableObject {
                 }
                 ModalButton(title: confirmButtonTitle, size: .large) {
                     onConfirm()
-                    self.activePopup = nil
                 }
             }
         ))
     }
+    
+    
 }

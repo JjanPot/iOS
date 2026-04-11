@@ -96,6 +96,31 @@ struct MainNavigationStack: View {
         case let .modal(modal):
             modal
 
+        case let .reportFeedReason(feedId, confirmAction):
+            container.makeReportReasonSelectorPopupView(
+                reason: ReportFeedReason.inappropriateBehavior,
+                reportType: .feed(feedId: feedId),
+                
+                confirmAction: {
+                    confirmAction?()
+                    coordinator.activePopup = nil
+                },
+                closeAction: {
+                    coordinator.activePopup = nil
+                })
+            
+        case let .reportUserReason(userId, challengeId, confirmAction):
+            container.makeReportReasonSelectorPopupView(
+                reason: ReportUserReason.inappropriateBehavior,
+                reportType: .user(userId: userId, challengeId: challengeId),
+                confirmAction: {
+                    confirmAction?()
+                    coordinator.activePopup = nil
+                },
+                closeAction: {
+                    coordinator.activePopup = nil
+                })
+
         case .none:
             EmptyView()
         }
