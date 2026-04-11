@@ -112,7 +112,7 @@ struct FeedCardView: View {
         .overlay(alignment: .topTrailing, content: {
             if isMenuOpen {
                 PopoverMenu(items: [
-                    .init(title: "게시물 신고", icon: "icon_alert_triangle") {
+                    .init(title: "게시글 신고", icon: "icon_alert_triangle") {
                         onReport()
                     },
                     .init(title: "사용자 신고", icon: "icon_alert_triangle") {

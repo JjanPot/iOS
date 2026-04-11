@@ -30,11 +30,15 @@ struct ChallengeDetailView: View {
                 // 챌린지 가이드 라인
                 ChallengeGuideLine()
                 
-                MainButton(title: "취소하기",
-                           isDisabled: !(viewModel.viewData?.hasCancelButton ?? false)) {
-                    viewModel.isShowCancelAlert = true
+                // 챌린지 취소 버튼 - 대기중일때만 노출
+                if (viewModel.viewData?.hasCancelButton ?? false) {
+                    Button {
+                        viewModel.isShowCancelAlert = true
+                    } label: {
+                        MainButton(title: "취소하기",
+                                   isDisabled: true) {}
+                    }
                 }
-
             }
             .padding(.horizontal, 20)
         }
