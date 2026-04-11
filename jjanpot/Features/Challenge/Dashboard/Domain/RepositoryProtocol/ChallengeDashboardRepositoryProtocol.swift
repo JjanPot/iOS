@@ -8,6 +8,10 @@
 import Foundation
 
 protocol ChallengeDashboardRepositoryProtocol {
+    /// 로그인 여부 확인
+    func isLoggedIn () -> Bool
+    
+    
     /// 챌린지 정보 가져오기 (홈화면용)
     func fetchCurrentChallenge() async throws -> CurrentChallengeEntity
     

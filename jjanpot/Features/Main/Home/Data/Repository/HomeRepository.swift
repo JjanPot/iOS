@@ -16,6 +16,10 @@ struct HomeRepository: HomeRepositoryProtocol {
         self.apiClient = apiClient
     }
     
+    func isLoggedIn () -> Bool {
+        AuthManager.shared.isLoggedIn
+    }
+    
     /// 홈화면에서 챌린지 정보 가져오기
     func fetchCurrentChallenge() async throws -> CurrentChallengeEntity {
          let result = await apiClient.fetchChallenges()

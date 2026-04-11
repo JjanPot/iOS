@@ -18,6 +18,9 @@ protocol ChallengeDashboardUseCaseProtocol {
     /// 사용자 차단
     func blockUser(userId: Int, challengeId: Int) async throws
 }
+
+// MARK: - ChallengeDashboardUseCase
+
 struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
     private let repository: ChallengeDashboardRepositoryProtocol
     init(repository: ChallengeDashboardRepositoryProtocol) {
@@ -27,7 +30,7 @@ struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
     
     /// 챌린지 정보 가져오기
     func getChallengeDashboardData() async throws -> ChallengeDashboardEntity {
-        guard AuthManager.shared.isLoggedIn else {
+        guard isLoggedIn() else {
             return .none
         }
         
@@ -80,5 +83,10 @@ struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
     func blockUser(userId: Int, challengeId: Int) async throws {
         try await repository.blockUser(userId: userId, challengeId: challengeId)
     }
+    
+    private func isLoggedIn() -> Bool {
+        repository.isLoggedIn()
+    }
+    
     
 }

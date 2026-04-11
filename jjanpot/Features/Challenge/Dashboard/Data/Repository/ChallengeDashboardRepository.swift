@@ -14,6 +14,10 @@ struct ChallengeDashboardRepository: ChallengeDashboardRepositoryProtocol {
         self.apiClient = challengeApiClient
     }
     
+    func isLoggedIn () -> Bool {
+        AuthManager.shared.isLoggedIn
+    }
+    
     /// 챌린지 정보 가져오기 (홈화면용)
     func fetchCurrentChallenge() async throws -> CurrentChallengeEntity {
          let result = await apiClient.fetchChallenges()

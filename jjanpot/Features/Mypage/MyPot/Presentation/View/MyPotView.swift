@@ -29,7 +29,7 @@ struct MyPotView: View {
                     if viewModel.profileViewData != nil {
                         profill
                     } else {
-                        NoLoginProfile
+                        guestProfile
                     }
                     
                     // 챌린지 참여 현황
@@ -39,13 +39,13 @@ struct MyPotView: View {
                         coordinator.push(.challengeHistory)
                     } label: {
                         HStack {
-                            MyChallengeStatsItemView(.totalChallenge, content: viewModel.myStatsViewData.totalCount)
+                            MyChallengeStatsItemView(.totalChallenge, content: viewModel.myStatsViewData?.totalCount ?? "0")
                             Spacer()
-                            MyChallengeStatsItemView(.success, content: viewModel.myStatsViewData.successCount)
+                            MyChallengeStatsItemView(.success, content: viewModel.myStatsViewData?.successCount ?? "0")
                             Spacer()
-                            MyChallengeStatsItemView(.failed, content: viewModel.myStatsViewData.failCount)
+                            MyChallengeStatsItemView(.failed, content: viewModel.myStatsViewData?.failCount ?? "0")
                             Spacer()
-                            MyChallengeStatsItemView(.successRate, content: viewModel.myStatsViewData.successRate)
+                            MyChallengeStatsItemView(.successRate, content: viewModel.myStatsViewData?.successRate ?? "0")
                             
                         }
                         .padding(.vertical, 16)
@@ -84,7 +84,7 @@ struct MyPotView: View {
         }
     }
     
-    private var NoLoginProfile: some View {
+    private var guestProfile: some View {
         Button {
             // TODO: [임시] 로그아웃 (로그인 NavigationStack으로 전환)
             NotificationCenter.default.post(name: NSNotification.Name("userDidLogout"), object: nil)

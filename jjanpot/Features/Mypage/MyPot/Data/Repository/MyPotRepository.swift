@@ -17,6 +17,10 @@ struct MyPotRepository: MyPotRepositoryProtocol {
         self.challengeApiClient = challengeApiClient
     }
     
+    func isLoggedIn () -> Bool {
+        AuthManager.shared.isLoggedIn
+    }
+    
     func getMyChallengeStats() async throws -> ChallengeStatsEntity {
         let result = await challengeApiClient.getChallengeStats()
         switch result {

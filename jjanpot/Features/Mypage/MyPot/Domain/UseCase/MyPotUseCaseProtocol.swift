@@ -16,14 +16,27 @@ struct MyPotUseCase: MyPotUseCaseProtocol {
         self.repository = repository
     }
     
-    
-    
-    func getMyChallengeStats() async throws  -> ChallengeStatsEntity{
-        try await repository.getMyChallengeStats()
+    func getMyChallengeStats() async throws  -> ChallengeStatsEntity {
+        guard isLoggedIn() else {
+            return ChallengeStatsEntity(totalCount: 0,
+                                        successCount: 0,
+                                        failCount: 0,
+                                        successRate: 0
+            )
+        }
+        
+        return try await repository.getMyChallengeStats()
     }
     
     func getUserInfo() async throws -> UserEntity {
-        try await repository.getUserInfo()
+        guard isLoggedIn() else {
+            throw NetworkError.cancelled
+        }
+        return try await repository.getUserInfo()
+    }
+    
+    private func isLoggedIn() -> Bool {
+        repository.isLoggedIn()
     }
 }
 

@@ -25,10 +25,9 @@ struct HomeView: View {
             // 내용물
             ScrollView {
                 VStack(spacing: 20) {
-                    
                     HStack {
                         // 메세지박스
-                        Text(viewModel.homeViewData.teamMessage)
+                        Text(viewModel.homeViewData?.teamMessage ?? "")
                             .font(.pretendard(.medium, size: 20))
                             .foregroundStyle(.black900)
                         
@@ -40,13 +39,20 @@ struct HomeView: View {
                     }
                     
                     // 챌린지 카드
-                    ChallengeCardView(
-                        status: mapToChallengeCardStatus(viewModel.homeViewData.challengeCard),
-                        onAction: handleChallengeCardAction
-                    )
+                    if let viewData = viewModel.homeViewData?.challengeCard {
+                        ChallengeCardView(
+                            status: mapToChallengeCardStatus(viewData),
+                            onAction: handleChallengeCardAction
+                        )
+                    } else {
+                        ChallengeCardView(
+                            status: .none,
+                            onAction: handleChallengeCardAction
+                        )
+                    }
                     
                     // 챌린지 절약 현황
-                    if let summary = viewModel.homeViewData.summary {
+                    if let summary = viewModel.homeViewData?.summary {
                         ChallengeSummaryView(viewData: summary)
                     }
                     

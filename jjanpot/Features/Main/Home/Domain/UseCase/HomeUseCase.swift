@@ -16,6 +16,10 @@ final class HomeUseCase: HomeUseCaseProtocol {
     }
 
     func fetchChallengeData() async throws -> HomeEntity {
+        guard isLoggedIn() else {
+            return HomeEntity(challenge: .init(status: .none), summary: nil)
+        }
+        
         let challengeEntity = try await repository.fetchCurrentChallenge()
 
         // 진행중 상태면, summary정보 가져오기
@@ -38,10 +42,17 @@ final class HomeUseCase: HomeUseCaseProtocol {
     
     
     func loadHistories() async throws -> [HistoryEntity] {
-        try await repository.loadHistories()
+        guard isLoggedIn() else {
+            return []
+        }
+        return try await repository.loadHistories()
     }
     
     func loadLatestCompletedChallengeId() -> Int? {
         repository.loadLatestCompletedChallengeId()
+    }
+    
+    private func isLoggedIn() -> Bool {
+        repository.isLoggedIn()
     }
 }

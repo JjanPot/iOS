@@ -7,6 +7,7 @@
 
 
 protocol MyPotRepositoryProtocol {
+    func isLoggedIn () -> Bool
     func getMyChallengeStats() async throws -> ChallengeStatsEntity
     func getUserInfo() async throws -> UserEntity
 }
