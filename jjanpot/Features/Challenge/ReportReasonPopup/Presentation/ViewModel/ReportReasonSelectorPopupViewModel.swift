@@ -40,9 +40,9 @@ final class ReportReasonSelectorPopupViewModel: ObservableObject {
             } catch {
                 Logger.error("신고 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
-                    toastMessage = networkError.description
+                    ToastManager.shared.show(networkError.description)
                 } else {
-                    toastMessage = "신고 실패"
+                    ToastManager.shared.show("신고 실패")
                 }
             }
             isLoading = false

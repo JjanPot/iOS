@@ -9,9 +9,11 @@ import SwiftUI
 
 struct MemberPagerView: View {
     let members: [MemberCardViewData]
+    let onSelect: (MemberCardViewData) -> Void
     
     private let visibleCount = 4
     @State private var currentIndex: Int = 0
+    
     
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
@@ -30,9 +32,12 @@ struct MemberPagerView: View {
             // 이미지 영역
             HStack(alignment: .top, spacing: 8) {
                 ForEach(visibleMembers.indices, id: \.self) { index in
-                    MemberCardView(viewData: visibleMembers[index])
-                        .frame(maxWidth: .infinity)
-                    
+                    Button {
+                        onSelect(visibleMembers[index])
+                    } label: {
+                        MemberCardView(viewData: visibleMembers[index])
+                            .frame(maxWidth: .infinity)
+                    }
                 }
             }
             
@@ -90,10 +95,10 @@ private extension MemberPagerView {
 
 #Preview {
     MemberPagerView(members: [
-        .init(userId: 0, nickname: "닉네임0", imageUrl: "", color: .red, amount: 10000, isLeader: true, isBlocked: false),
-        .init(userId: 0, nickname: "닉네임2닉네임", imageUrl: "", color: .black, amount: 12000, isLeader: true, isBlocked: false),
-        .init(userId: 0, nickname: "닉네임3", imageUrl: "", color: .blue, amount: 13000, isLeader: true, isBlocked: false),
-        .init(userId: 0, nickname: "닉네임4", imageUrl: "", color: .green, amount: 14000, isLeader: true, isBlocked: false),
-             ])
+        .init(userId: 0, nickname: "닉네임0", imageUrl: "", color: .red, amount: 10000, isMe:  true ,isLeader: true, isBlocked: false),
+        .init(userId: 0, nickname: "닉네임2닉네임", imageUrl: "", color: .black, amount: 12000, isMe:  false, isLeader: true, isBlocked: false),
+        .init(userId: 0, nickname: "닉네임3", imageUrl: "", color: .blue, amount: 13000, isMe:  false, isLeader: true, isBlocked: false),
+        .init(userId: 0, nickname: "닉네임4", imageUrl: "", color: .green, amount: 14000, isMe:  false, isLeader: true, isBlocked: false),
+    ], onSelect: { _ in })
     .padding(20)
 }

@@ -18,6 +18,14 @@ enum ChallengeDashboardViewData {
                     overviewViewData: ChallengeOverviewViewData,
                     feedViewData: [ChallengeFeedViewData]
     )
+    
+    var challengeId: Int? {
+        switch self {
+        case .noneChallenge: return nil
+        case .waiting: return nil
+        case let .inProgress(challengeId, _, _): return challengeId
+        }
+    }
 }
 
 struct ChallengeOverviewViewData {

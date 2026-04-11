@@ -37,6 +37,17 @@ struct MainNavigationStack: View {
             )) {
                 popupContentView
             }
+            .sheet(isPresented: Binding(get: {
+                coordinator.activeSheet != nil
+            }, set: {
+                if !$0 { coordinator.activeSheet = nil}
+            }), onDismiss: {
+                
+            }, content: {
+                sheetContentView
+                    .presentationDetents(coordinator.activeSheet?.presentationDetents ?? [.medium])
+                    .presentationDragIndicator(coordinator.activeSheet?.presentationDragIndicator ?? .automatic)
+            })
             .fullScreenCover(isPresented: Binding(get: { coordinator.webViewUrl != nil},
                                                   set: { if !$0 { coordinator.webViewUrl = nil }
                 
@@ -151,6 +162,23 @@ struct MainNavigationStack: View {
             EmptyView()
         }
     }
+    
+    @ViewBuilder
+    private var sheetContentView: some View {
+        
+        switch coordinator.activeSheet {
+        case let .reportUser(reportUser, blockUser):
+            container.makeReportUserSheet(onReportUser: reportUser, onBlockUser: blockUser, onCloseAction: {
+                coordinator.activeSheet = nil
+            })
+                .background(Color.white)
+                
+        case .none:
+            EmptyView()
+        }
+    }
+    
+    
 }
 
 #Preview {

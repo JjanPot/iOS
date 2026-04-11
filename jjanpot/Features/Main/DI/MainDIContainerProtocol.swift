@@ -76,7 +76,11 @@ protocol MainDIContainerProtocol {
     ) -> ReportReasonSelectorPopup<Reason>
     
     func makeWebView(url: String, onDismiss: @escaping ()-> Void) -> WebView
+    
+    func makeReportUserSheet(onReportUser: (()-> Void)?, onBlockUser: (()-> Void)?, onCloseAction: (()-> Void)?) -> ReportUserSheetView
 }
+
+// MARK: - MainDIContainer
 
 final class MainDIContainer: MainDIContainerProtocol {
     private let authApiClient: AuthApiClientProtocol
@@ -326,6 +330,10 @@ final class MainDIContainer: MainDIContainerProtocol {
     func makeWebView(url: String, onDismiss: @escaping ()-> Void) -> WebView {
         WebView(url: url, onDismiss: onDismiss)
     }
+    
+    func makeReportUserSheet(onReportUser: (()-> Void)?, onBlockUser: (()-> Void)?, onCloseAction: (()-> Void)?) -> ReportUserSheetView {
+        ReportUserSheetView(onReportUser: onReportUser, onBlockUser: onBlockUser, onCloseAction: onCloseAction)
+    }
 }
 
 // MARK: - Mock
@@ -423,6 +431,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         let viewModel = makeReportReasonSelectorPopupViewModel(reportType: reportType)
         return ReportReasonSelectorPopup(viewModel: viewModel, reason: reason, onConfirm: confirmAction, onClose: closeAction)
     }
+    
+    func makeReportUserSheet(onReportUser: (()-> Void)?, onBlockUser: (()-> Void)?, onCloseAction: (()-> Void)?) -> ReportUserSheetView {
+        ReportUserSheetView(onReportUser: onReportUser, onBlockUser: onBlockUser, onCloseAction: onCloseAction)
+    }
 
     struct MockChallengeHistoryUseCase: ChallengeHistoryUseCaseProtocol {
         func loadHistories() async throws -> [HistoryEntity] {
@@ -473,37 +485,7 @@ final class MockMainDIContainer: MainDIContainerProtocol {
             throw NetworkError.dataNil
         }
     }
-    struct MockChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
-        func reportFeed(feedId: Int, reason: String) async throws {
-            return
-        }
-        
-        func reportUser(userId: Int, challengeId: Int, reason: String) async throws {
-            return
-        }
-        
-        func blockUser(userId: Int, challengeId: Int) async throws {
-            return
-        }
-        
-        func getChallengeDashboardData() async throws -> ChallengeDashboardEntity {
-            return ChallengeDashboardEntity.inProgress(
-                id: 0, overview: OverviewEntity(
-                    challengeId: 1,
-                    title: "카페는 이제 그만!",
-                    startDate: Date(),
-                    totalSavedAmount: 206100,
-                    goalAmount: 300000,
-                    members: [
-                        .init(userId: 1, nickname: "닉네임1", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: false),
-                        .init(userId: 2, nickname: "닉네임2", profileImageURL: nil, savedAmount: 10000, isMe: true, isLeader: true, isBlocked: false),
-                        .init(userId: 3, nickname: "닉네임3", profileImageURL: nil, savedAmount: 10000, isMe: true, isLeader: true, isBlocked: true),
-                    ]
-                ),
-                feeds: []
-            )
-        }
-    }
+    
     struct MockChallengePostUseCase: ChallengePostUseCaseProtocol {
         func postChallenge(entity: ChallengePostRequestEntity, imageData: Data?) async throws {
             throw NetworkError.dataNil
@@ -518,7 +500,6 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         func reportFeed(feedId: Int, reason: String) async throws {}
         
         func reportUser(userId: Int, challengeId: Int, reason: String) async throws {}
-        
     }
 }
 
@@ -597,4 +578,36 @@ struct MockMyPotUseCase: MyPotUseCaseProtocol {
         ChallengeStatsEntity(totalCount: 10, successCount: 3, failCount: 7, successRate: 10)
     }
     
+}
+
+struct MockChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
+    func reportFeed(feedId: Int, reason: String) async throws {
+        return
+    }
+    
+    func reportUser(userId: Int, challengeId: Int, reason: String) async throws {
+        return
+    }
+    
+    func blockUser(userId: Int, challengeId: Int) async throws {
+        return
+    }
+    
+    func getChallengeDashboardData() async throws -> ChallengeDashboardEntity {
+        return ChallengeDashboardEntity.inProgress(
+            id: 0, overview: OverviewEntity(
+                challengeId: 1,
+                title: "카페는 이제 그만!",
+                startDate: Date(),
+                totalSavedAmount: 206100,
+                goalAmount: 300000,
+                members: [
+                    .init(userId: 1, nickname: "닉네임1", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: false),
+                    .init(userId: 2, nickname: "닉네임2", profileImageURL: nil, savedAmount: 10000, isMe: true, isLeader: true, isBlocked: false),
+                    .init(userId: 3, nickname: "닉네임3", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: true),
+                ]
+            ),
+            feeds: []
+        )
+    }
 }

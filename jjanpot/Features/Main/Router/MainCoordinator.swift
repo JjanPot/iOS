@@ -82,12 +82,31 @@ enum MainPopupDestination {
 
     case modal(modal: AnyView)
 }
+enum MainSheetDestination {
+    case reportUser(onReportUser: (()->Void)?, onBlockUser: (()->Void)?)
+    
+    
+    // sheet 크기 조절
+    var presentationDetents: Set<PresentationDetent> {
+        switch self {
+        case .reportUser: [.height(200)]
+        }
+    }
+    
+    // 손잡이 여부
+    var presentationDragIndicator: Visibility {
+        switch self {
+        case .reportUser: .hidden
+        }
+    }
+}
 
 @MainActor
 final class MainCoordinator: ObservableObject {
     private let container: MainDIContainerProtocol
     @Published var path = NavigationPath()
     @Published var activePopup: MainPopupDestination?
+    @Published var activeSheet: MainSheetDestination?
     @Published var webViewUrl: String?
 
     init(container: MainDIContainerProtocol) {

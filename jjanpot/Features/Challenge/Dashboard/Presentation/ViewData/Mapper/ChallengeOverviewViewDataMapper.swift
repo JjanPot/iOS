@@ -56,6 +56,7 @@ struct ChallengeOverviewViewDataMapper {
                 imageUrl: member.profileImageURL,
                 color: member.isBlocked ? Color.black100 : ColorPalette.chartColors[index],
                 amount: member.savedAmount,
+                isMe: member.isMe,
                 isLeader: member.isLeader,
                 isBlocked: member.isBlocked
             )

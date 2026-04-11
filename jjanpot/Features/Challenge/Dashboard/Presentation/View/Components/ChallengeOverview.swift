@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ChallengeOverview: View {
     let viewData: ChallengeDashboardViewData?
+    let onSelectedMember: (MemberCardViewData) -> Void
     
     var body: some View {
         switch viewData {
@@ -58,7 +59,10 @@ struct ChallengeOverview: View {
             
             
             // 유저 목록
-            MemberPagerView(members: viewData.members)
+            MemberPagerView(members: viewData.members, onSelect: {
+                selectedMember in
+                onSelectedMember(selectedMember)
+            })
             
         }
         .padding([.horizontal, .bottom],20)
@@ -100,12 +104,12 @@ struct ChallengeOverview: View {
                                 .init(ratio: 0.1, color: .black)
                             ],
                             members: [
-                                .init(userId: 0, nickname: "닉네임0", imageUrl: "", color: .red, amount: 10000, isLeader: true, isBlocked: false),
-                                .init(userId: 0, nickname: "닉네임2닉에임", imageUrl: "", color: .black, amount: 12000, isLeader: false, isBlocked: false),
-                                .init(userId: 0, nickname: "닉네임3", imageUrl: "", color: .blue, amount: 13000, isLeader: false, isBlocked: false),
-                                .init(userId: 0, nickname: "닉네임4", imageUrl: "", color: .green, amount: 14000, isLeader: false, isBlocked: false),
+                                .init(userId: 0, nickname: "닉네임0", imageUrl: "", color: .red, amount: 10000, isMe:  true, isLeader: true, isBlocked: false),
+                                .init(userId: 0, nickname: "닉네임2닉에임", imageUrl: "", color: .black, amount: 12000, isMe:  false, isLeader: false, isBlocked: false),
+                                .init(userId: 0, nickname: "닉네임3", imageUrl: "", color: .blue, amount: 13000, isMe:  false, isLeader: false, isBlocked: false),
+                                .init(userId: 0, nickname: "닉네임4", imageUrl: "", color: .green, amount: 14000, isMe:  false, isLeader: false, isBlocked: false),
                                      ]
                         ),
                         feedViewData: []
-                       ))
+                       ), onSelectedMember: {_ in })
 }

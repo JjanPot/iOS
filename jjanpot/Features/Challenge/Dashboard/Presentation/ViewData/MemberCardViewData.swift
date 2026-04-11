@@ -16,6 +16,7 @@ struct MemberCardViewData {
     let color: Color
     let amount: Int
     
+    let isMe: Bool
     let isLeader: Bool
     let isBlocked: Bool
 }

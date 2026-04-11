@@ -53,7 +53,6 @@ final class ChallengeDashboardViewModel: ObservableObject {
         }
     }
     
-  
     
     /// 사용자 차단
     func blockUser(userId: Int, challengeId: Int) {

@@ -73,6 +73,7 @@ struct MemberCardView: View {
             imageUrl: "https://picsum.photos/50/50",
             color: .blue,
             amount: 10000,
+            isMe: false,
             isLeader: true,
             isBlocked: false
             
