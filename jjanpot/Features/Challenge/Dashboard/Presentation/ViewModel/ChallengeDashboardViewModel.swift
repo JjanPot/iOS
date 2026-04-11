@@ -10,18 +10,16 @@ import SwiftUI
 import Combine
 final class ChallengeDashboardViewModel: ObservableObject {
     
-    @Published var viewData: ChallengeDashboardViewData
+    @Published var viewData: ChallengeDashboardViewData?
     @Published var isLoading = false
     @Published var toastMessage: String?
     
     private let useCase: ChallengeDashboardUseCaseProtocol
     init(useCase: ChallengeDashboardUseCaseProtocol) {
         self.useCase = useCase
-        self.viewData = .noneChallenge
     }
     
     func loadChallengeDashboard() {
-        guard AuthManager.shared.isLoggedIn else { return }
         isLoading = true
         Task {
             do {
@@ -43,7 +41,6 @@ final class ChallengeDashboardViewModel: ObservableObject {
                         feedViewData: feed
                     )
                 }
-                 
             } catch {
                 Logger.error("loadChallengeOverview 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {

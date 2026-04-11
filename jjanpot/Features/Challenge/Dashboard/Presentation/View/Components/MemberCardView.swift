@@ -37,6 +37,9 @@ struct MemberCardView: View {
                 Circle()
                     .stroke(viewData.color, lineWidth: 2)
             )
+//            .overlay(alignment: .bottomTrailing) {
+//                Image("leaderMark")
+//            }
             
             
             VStack (alignment: .center, spacing: 2){
@@ -69,6 +72,10 @@ struct MemberCardView: View {
             nickname: "닉네임",
             imageUrl: "https://picsum.photos/50/50",
             color: .blue,
-            amount: 10000)
+            amount: 10000,
+            isLeader: true,
+            isBlocked: false
+            
+        )
     )
 }

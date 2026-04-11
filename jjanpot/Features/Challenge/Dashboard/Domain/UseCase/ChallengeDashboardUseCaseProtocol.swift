@@ -27,6 +27,10 @@ struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
     
     /// 챌린지 정보 가져오기
     func getChallengeDashboardData() async throws -> ChallengeDashboardEntity {
+        guard AuthManager.shared.isLoggedIn else {
+            return .none
+        }
+        
         // 1. 유저의 챌린지 가져오기
         let challengeEntity = try await getChallengeData()
         

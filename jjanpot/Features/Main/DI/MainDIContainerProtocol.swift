@@ -495,8 +495,9 @@ final class MockMainDIContainer: MainDIContainerProtocol {
                     totalSavedAmount: 206100,
                     goalAmount: 300000,
                     members: [
-                        .init(userId: 1, nickname: "닉네임", profileImageURL: nil, savedAmount: 10000, isMe: false),
-                        .init(userId: 1, nickname: "닉네임", profileImageURL: nil, savedAmount: 10000, isMe: true)
+                        .init(userId: 1, nickname: "닉네임1", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: false),
+                        .init(userId: 2, nickname: "닉네임2", profileImageURL: nil, savedAmount: 10000, isMe: true, isLeader: true, isBlocked: false),
+                        .init(userId: 3, nickname: "닉네임3", profileImageURL: nil, savedAmount: 10000, isMe: true, isLeader: true, isBlocked: true),
                     ]
                 ),
                 feeds: []

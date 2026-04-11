@@ -15,4 +15,7 @@ struct MemberCardViewData {
     let imageUrl: String?
     let color: Color
     let amount: Int
+    
+    let isLeader: Bool
+    let isBlocked: Bool
 }

@@ -41,7 +41,6 @@ struct ChallengeDashboardView: View {
                         }
                         .frame(height: 30)
 
-
                         ChallengeOverview(viewData: viewModel.viewData)
                     }
                     .background(Color.orange50)

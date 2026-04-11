@@ -32,10 +32,10 @@ struct ChallengeOverviewViewDataMapper {
     ) -> [SegmentedBarViewData] {
 
         guard totalSavedAmount > 0 else {
-            return members.enumerated().map { index, _ in
+            return members.enumerated().map { index, member in
                 SegmentedBarViewData(
                     ratio: 0,
-                    color: ColorPalette.chartColors[index]
+                    color: member.isBlocked ? Color.black400 : ColorPalette.chartColors[index]
                 )
             }
         }
@@ -43,7 +43,7 @@ struct ChallengeOverviewViewDataMapper {
         return members.enumerated().map { index, member in
             SegmentedBarViewData(
                 ratio: Double(member.savedAmount) / Double(totalSavedAmount),
-                color: ColorPalette.chartColors[index]
+                color: member.isBlocked ? Color.black400 : ColorPalette.chartColors[index]
             )
         }
     }
@@ -54,8 +54,10 @@ struct ChallengeOverviewViewDataMapper {
                 userId: member.userId,
                 nickname: member.isMe ? "나" : member.nickname,
                 imageUrl: member.profileImageURL,
-                color: ColorPalette.chartColors[index],
-                amount: member.savedAmount
+                color: member.isBlocked ? Color.black400 : ColorPalette.chartColors[index],
+                amount: member.savedAmount,
+                isLeader: member.isLeader,
+                isBlocked: member.isBlocked
             )
         }
     }
