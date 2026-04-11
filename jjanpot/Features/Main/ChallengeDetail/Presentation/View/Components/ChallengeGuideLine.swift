@@ -74,7 +74,7 @@ struct ChallengeGuideLine: View {
                                 .foregroundStyle(.black900)
                             Text(
                             """
-                            절약 금액은 -4500원이에요.
+                            절약 금액은 -4500원이에요
                             예) 카페 4,500원 / 오션뷰 카페 9,000원 → 절약 -4,500원
                             """
                             )

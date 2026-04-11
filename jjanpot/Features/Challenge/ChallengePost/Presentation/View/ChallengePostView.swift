@@ -63,7 +63,7 @@ struct ChallengePostView: View {
                 // 사진 업로드
                 images
                 
-                MainButton(title: "등록하기", isDisabled: (selectedTab == .expense) ? (price.isEmpty || viewModel.selectedCategory == nil) : (viewModel.selectedCategory == nil)) {
+                MainButton(title: "등록하기", isDisabled: (selectedTab == .expense) ? ((Int(price) ?? 0 <= 0) || viewModel.selectedCategory == nil) : (viewModel.selectedCategory == nil)) {
                     viewModel.submit(
                         expenseType: selectedTab,
                         category: viewModel.selectedCategory,
@@ -138,7 +138,7 @@ struct ChallengePostView: View {
     // 금액
     private var priceTextField: some View {
         VStack(alignment: .leading, spacing: 10) {
-            PostTitleView(title: "금액", isNeccessary: true)
+            PostTitleView(title: selectedTab == .expense ? "지출 금액" : "절약 금액", isNeccessary: true)
             HStack {
                 if selectedTab == .expense {
                     TextField("", text: $price, prompt:
@@ -176,7 +176,7 @@ struct ChallengePostView: View {
     
     private var memoTextField: some View {
         VStack(alignment: .leading, spacing: 10) {
-            PostTitleView(title: "메모", isNeccessary: true)
+            PostTitleView(title: "메모", isNeccessary: false)
 
             ZStack(alignment: .topLeading) {
                 // 1. 실제 입력창
@@ -221,7 +221,7 @@ struct ChallengePostView: View {
                 isShowingPicker = true
             } label: {
                 HStack(spacing: 10) {
-                    Text(selectedDate.toString(format: "M월 d일 hh:mm", locale: .kr))
+                    Text(selectedDate.toString(format: "M월 d일 HH:mm", locale: .kr))
                         .font(.pretendard(.semiBold, size: 14))
                         .foregroundStyle(Color.black500)
                     

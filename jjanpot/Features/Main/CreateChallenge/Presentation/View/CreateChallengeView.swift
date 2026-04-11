@@ -227,7 +227,7 @@ struct CreateChallengeView: View {
     // 절약 항목
     private var savingCategory: some View {
         VStack(alignment: .leading, spacing: 16) {
-            TitleView(title: "절약 항목",
+            TitleView(title: "절약 카테고리",
                       description: "무엇을 절약할 건가요? (3개까지 선택 가능해요.)",
                       isNeccessary: true
             )

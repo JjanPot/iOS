@@ -21,7 +21,7 @@ struct TeamSavingResultView: View {
             HStack(alignment: .bottom, spacing: 8) {
                 Text("\(viewData.amount)")
                     .font(.pretendard(.bold, size: 56))
-                    .foregroundStyle(.red500)
+                    .foregroundStyle(.orange600)
                 Text("원")
                     .padding(.bottom, 10)
                     .font(.pretendard(.semiBold, size: 16))
@@ -31,8 +31,8 @@ struct TeamSavingResultView: View {
             
             Text(viewData.summaryMessage)
                 .font(.pretendard(.semiBold, size: 16))
-                .foregroundStyle(.red500)
-                .padding(.bottom, 20)
+                .foregroundStyle(.orange600)
+//                .padding(.bottom, 20)
             
             /*
             VStack(alignment: .center, spacing: 10){
