@@ -13,15 +13,23 @@ final class MyPotViewModel: ObservableObject {
     private let useCase: MyPotUseCaseProtocol
     init(useCase: MyPotUseCaseProtocol) {
         self.useCase = useCase
+        
+        self.myStatsViewData = .init(totalCount: "0",
+                                     successCount: "0",
+                                     failCount: "0",
+                                     successRate: "0")
+        
     }
     @Published var profileViewData: UserProfileViewData?
-    @Published var myStatsViewData: MyStatsViewData?
+    @Published var myStatsViewData: MyStatsViewData
     @Published var isLoading = false
     @Published var toastMessage: String?
     
     
     @MainActor
     func getMyChallengeStats() {
+        guard AuthManager.shared.isLoggedIn else { return }
+        
         isLoading = true
         Task {
             do {
@@ -42,6 +50,8 @@ final class MyPotViewModel: ObservableObject {
     
     @MainActor
     func loadUserInfo(){
+        guard AuthManager.shared.isLoggedIn else { return }
+        
         isLoading = true
         
         // 로컬 정보 먼저 넣어두고

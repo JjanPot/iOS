@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct MyPotView: View {
-    
+    @ObservedObject private var authManager = AuthManager.shared
     @StateObject var viewModel: MyPotViewModel
     private let coordinator: MainCoordinator
     
@@ -26,28 +26,32 @@ struct MyPotView: View {
                 }
                 
                 Group {
-                    profill
+                    if viewModel.profileViewData != nil {
+                        profill
+                    } else {
+                        NoLoginProfile
+                    }
                     
                     // 챌린지 참여 현황
-                    if let viewData = viewModel.myStatsViewData {
-                        Button {
-                            coordinator.push(.challengeHistory)
-                        } label: {
-                            HStack {
-                                MyChallengeStatsItemView(.totalChallenge, content: viewData.totalCount)
-                                Spacer()
-                                MyChallengeStatsItemView(.success, content: viewData.successCount)
-                                Spacer()
-                                MyChallengeStatsItemView(.failed, content: viewData.failCount)
-                                Spacer()
-                                MyChallengeStatsItemView(.successRate, content: viewData.successRate)
-                                
-                            }
-                            .padding(.vertical, 16)
-                            .padding(.horizontal, 20)
-                            .roundedBorder(color: .orange400, radius: 12)
-
+                    
+                    Button {
+                        guard authManager.isLoggedIn else { return }
+                        coordinator.push(.challengeHistory)
+                    } label: {
+                        HStack {
+                            MyChallengeStatsItemView(.totalChallenge, content: viewModel.myStatsViewData.totalCount)
+                            Spacer()
+                            MyChallengeStatsItemView(.success, content: viewModel.myStatsViewData.successCount)
+                            Spacer()
+                            MyChallengeStatsItemView(.failed, content: viewModel.myStatsViewData.failCount)
+                            Spacer()
+                            MyChallengeStatsItemView(.successRate, content: viewModel.myStatsViewData.successRate)
+                            
                         }
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 20)
+                        .roundedBorder(color: .orange400, radius: 12)
+                        
                     }
                     
                     // 문의하기
@@ -80,6 +84,33 @@ struct MyPotView: View {
         }
     }
     
+    private var NoLoginProfile: some View {
+        Button {
+            // TODO: [임시] 로그아웃 (로그인 NavigationStack으로 전환)
+            NotificationCenter.default.post(name: NSNotification.Name("userDidLogout"), object: nil)
+        } label: {
+            HStack(alignment: .center, spacing: 14) {
+                
+                placeholder
+                    .frame(width: 44, height: 44)
+                    .clipShape(Circle())
+                
+                
+                VStack(alignment: .leading, spacing: .zero) {
+                    Text("로그인을 시작하세요!")
+                        .font(.pretendard(.semiBold, size: 16))
+                        .foregroundStyle(Color.black900)
+                    
+                    Text("로그인을 하고 짠팟 서비스를 자유롭게 이용해주세요")
+                        .font(.pretendard(.regular, size: 12))
+                        .foregroundStyle(Color.black500)
+                }
+                
+            }
+        }
+
+    }
+    
     private var profill: some View {
         HStack(alignment: .center, spacing: 14) {
             Group {
@@ -109,6 +140,7 @@ struct MyPotView: View {
             
         }
     }
+    
     private var placeholder: some View {
         Color.black100
             .overlay(alignment: .center) {

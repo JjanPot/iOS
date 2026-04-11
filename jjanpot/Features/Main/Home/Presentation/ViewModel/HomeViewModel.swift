@@ -17,11 +17,13 @@ final class HomeViewModel: ObservableObject {
 
     init(useCase: HomeUseCaseProtocol) {
         self.useCase = useCase
+        
+        self.homeViewData = HomeViewDataMapper().map(from: HomeEntity(challenge: .init(status: .none), summary: nil))
     }
 
     // MARK: - Output Properties
 
-    @Published var homeViewData: HomeViewData?
+    @Published var homeViewData: HomeViewData
     
     @Published var showReportPopup = false
     @Published var completeChallengeId: Int?
@@ -32,6 +34,8 @@ final class HomeViewModel: ObservableObject {
     // MARK: - Input Methods
 
     func loadHomeData() {
+        guard AuthManager.shared.isLoggedIn else { return }
+        
         guard !isLoading else { return }
 
         Task {
@@ -59,6 +63,7 @@ final class HomeViewModel: ObservableObject {
     
     @MainActor
     func loadHistories() {
+        guard AuthManager.shared.isLoggedIn else { return }
         isLoading = true
         Task {
             do {

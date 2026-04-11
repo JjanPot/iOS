@@ -105,6 +105,22 @@ struct MainNavigationStack: View {
 
         case let .modal(modal):
             modal
+            
+        case .login:
+            Modal(
+                title: "로그인이 필요해요",
+                content: "챌린지 생성 및 참여는 로그인 후 이용하실 수 있어요."
+            ).buttons {
+                ModalButton(title: "닫기", colorType: .secondary) {
+                    coordinator.activePopup = nil
+                }
+                ModalButton(title: "로그인하기", size: .large) {
+                    coordinator.activePopup = nil
+                    // TODO: [임시] 로그아웃 (로그인 NavigationStack으로 전환)
+                    NotificationCenter.default.post(name: NSNotification.Name("userDidLogout"), object: nil)
+                }
+            }
+            
 
         case let .reportFeedReason(feedId, confirmAction):
             container.makeReportReasonSelectorPopupView(

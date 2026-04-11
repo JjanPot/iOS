@@ -92,6 +92,7 @@ struct LoginView: View {
                     .cornerRadius(8)
                 }
 
+                // 구글 로그인 버튼
                 Button {
                     viewModel.clickGoogleLoginButton()
                 } label: {
@@ -112,10 +113,22 @@ struct LoginView: View {
                 }
                 .roundedBorder(color: .black300, radius: 8)
                 
+                // 게스트 로그인
+                Button {
+                    onNavigateToMain()
+                } label: {
+                    Text("건너뛰기")
+                        .font(.pretendard(.regular, size: 14))
+                        .foregroundStyle(Color.black500)
+                        .underline()
+                }
+                .padding(.top, 10)
+                
+                
             }
             .padding(.vertical, 16)
             .padding(.horizontal, 20)
-
+            
             Spacer()
 
 

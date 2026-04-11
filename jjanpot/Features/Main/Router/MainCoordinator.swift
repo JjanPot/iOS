@@ -67,6 +67,7 @@ enum MainDestination: Route {
     }
 }
 enum MainPopupDestination {
+    case login
     case inviteCode_Input
     case inviteCode_Copy(inviteCode: String)
 

@@ -15,6 +15,7 @@ struct SettingsView: View {
         case useGuide
     }
     
+    @ObservedObject private var authManager = AuthManager.shared
     @StateObject var viewModel: SettingsViewModel
     private let coordinator: MainCoordinator
     
@@ -31,9 +32,11 @@ struct SettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 40) {
                 
-                MenuSection("앱 설정") {
-                    MenuButton("알림 설정") {
-                        coordinator.push(.alarmSettings)
+                if authManager.isLoggedIn {
+                    MenuSection("앱 설정") {
+                        MenuButton("알림 설정") {
+                            coordinator.push(.alarmSettings)
+                        }
                     }
                 }
                 
@@ -47,12 +50,14 @@ struct SettingsView: View {
                     MenuButton("이용가이드 / FAQ") { webDestination = .useGuide }
                 }
                 
-                MenuSection("계정") {
-                    MenuButton("로그아웃") {
-                        isShowLogoutPopup = true
-                    }
-                    MenuButton("탈퇴하기") {
-                        isShowSignoutPopup = true
+                if authManager.isLoggedIn {
+                    MenuSection("계정") {
+                        MenuButton("로그아웃") {
+                            isShowLogoutPopup = true
+                        }
+                        MenuButton("탈퇴하기") {
+                            isShowSignoutPopup = true
+                        }
                     }
                 }
                 
