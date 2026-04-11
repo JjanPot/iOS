@@ -87,6 +87,7 @@ final class MainCoordinator: ObservableObject {
     private let container: MainDIContainerProtocol
     @Published var path = NavigationPath()
     @Published var activePopup: MainPopupDestination?
+    @Published var webViewUrl: String?
 
     init(container: MainDIContainerProtocol) {
         self.container = container
@@ -131,6 +132,10 @@ final class MainCoordinator: ObservableObject {
                 }
             }
         ))
+    }
+    
+    func fullScreenWebView(url: String) {
+        webViewUrl = url
     }
     
     

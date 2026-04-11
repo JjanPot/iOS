@@ -74,6 +74,8 @@ protocol MainDIContainerProtocol {
         confirmAction: @escaping () -> Void,
         closeAction: @escaping () -> Void
     ) -> ReportReasonSelectorPopup<Reason>
+    
+    func makeWebView(url: String, onDismiss: @escaping ()-> Void) -> WebView
 }
 
 final class MainDIContainer: MainDIContainerProtocol {
@@ -320,6 +322,10 @@ final class MainDIContainer: MainDIContainerProtocol {
         let viewModel = makeReportReasonSelectorPopupViewModel(reportType: reportType)
         return ReportReasonSelectorPopup(viewModel: viewModel, reason: reason, onConfirm: confirmAction, onClose: closeAction)
     }
+    
+    func makeWebView(url: String, onDismiss: @escaping ()-> Void) -> WebView {
+        WebView(url: url, onDismiss: onDismiss)
+    }
 }
 
 // MARK: - Mock
@@ -398,7 +404,9 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         let viewModel = ChallengeHistoryViewModel(useCase: usecase)
         return ChallengeHistoryView(viewModel: viewModel, coordinator: coordinator)
     }
-
+    func makeWebView(url: String, onDismiss: @escaping ()-> Void) -> WebView {
+        WebView(url: url, onDismiss: onDismiss)
+    }
 
 
     private func makeReportReasonSelectorPopupViewModel(reportType: ReportType) -> ReportReasonSelectorPopupViewModel {

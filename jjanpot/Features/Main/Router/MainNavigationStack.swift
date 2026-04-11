@@ -37,6 +37,16 @@ struct MainNavigationStack: View {
             )) {
                 popupContentView
             }
+            .fullScreenCover(isPresented: Binding(get: { coordinator.webViewUrl != nil},
+                                                  set: { if !$0 { coordinator.webViewUrl = nil }
+                
+            })) {
+                if let url = coordinator.webViewUrl {
+                    container.makeWebView(url: url, onDismiss: {
+                        coordinator.webViewUrl = nil
+                    })
+                }
+            }
         }
     }
 

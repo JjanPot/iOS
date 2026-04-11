@@ -50,12 +50,13 @@ struct MyPotView: View {
                         }
                     }
                     
+                    // 문의하기
+                    Button {
+                        coordinator.fullScreenWebView(url: AppConstants.URLs.useGuide)
+                    } label: {
+                        contactView
+                    }
                     
-//                    // 챌린지 리포트 보기
-//                    Button("챌린지 리포트 보기"){
-//                        coordinator.push(.challengeReport(id: 6))
-//                    }
-//
                     
                         #if DEBUG
                         
@@ -115,6 +116,33 @@ struct MyPotView: View {
                     .resizable()
                     .frame(width: 35, height: 35)
             }
+    }
+    
+    private var contactView: some View {
+        HStack(alignment: .center, spacing: .zero ) {
+            Image("file")
+                .resizable()
+                .frame(width: 24, height: 24)
+            VStack (alignment: .leading, spacing: .zero ){
+                Text("문의하기/의견 남기기")
+                    .font(.pretendard(.semiBold, size: 16))
+                    .foregroundStyle(Color.black900)
+                
+                Text("여러분의 작은 의견이 서비스를 더 좋게 만들어요")
+                    .font(.pretendard(.regular, size: 12))
+                    .foregroundStyle(Color.black500)
+            }
+            
+            Spacer()
+            Image(systemName: "chevron.right")
+                .renderingMode(.template)
+                .foregroundStyle(Color.black50)
+            
+        }
+        .padding(.vertical, 16)
+        .padding(.horizontal, 20)
+        .background(Color.orange50)
+        .rounded(radius: 12)
     }
     
     
