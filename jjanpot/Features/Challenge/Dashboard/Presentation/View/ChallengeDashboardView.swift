@@ -14,7 +14,7 @@ struct ChallengeDashboardView: View {
     
     @State var selectedFeedIdForMenu: Int?
     
-    @State var isShowReportPopup: Bool = false
+    @State var isShowReportedPopup: Bool = false
     
     init(viewModel: ChallengeDashboardViewModel, coordinator: MainCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -87,6 +87,8 @@ struct ChallengeDashboardView: View {
                                                 confirmButtonTitle: "신고하기",
                                                 onConfirm: {
                                                     coordinator.activePopup = .reportFeedReason(feedId: feed.feedId, confirmAction: {
+                                                        isShowReportedPopup = true
+                                                        // 게시물 비노출
                                                         viewModel.removeFeed(feedId: feed.feedId)
                                                     })
                                                 })
@@ -98,7 +100,7 @@ struct ChallengeDashboardView: View {
                                                 confirmButtonTitle: "신고하기",
                                                 onConfirm: {
                                                     coordinator.activePopup = .reportUserReason(userId: feed.authorId, challengeId: challengeId, confirmAction: {
-                                                        viewModel.removeFeed(feedId: feed.feedId)
+                                                        isShowReportedPopup = true
                                                     })
                                                 })
                                             
@@ -107,10 +109,12 @@ struct ChallengeDashboardView: View {
                                             // 차단하기 모달 띄우기
                                             coordinator.showReportModal(
                                                 title: "\(feed.authorNickname)님을 차단할까요?",
-                                                content: "\(feed.authorNickname)님을 차단하면 챌린지 소식을 볼 수 없어요.",
+                                                content: "\(feed.authorNickname)님을 차단하면 챌린지 소식을 볼 수 없고, 2인 챌린지라면 챌린지가 즉시 종료돼요.",
                                                 confirmButtonTitle: "차단하기",
                                                 onConfirm: {
                                                     coordinator.activePopup = nil
+                                                    
+                                                    // 사용자의 모든 게시물 비노출
                                                     viewModel.blockUser(userId: feed.authorId, challengeId: challengeId)
                                                 })
                                         })
@@ -149,17 +153,15 @@ struct ChallengeDashboardView: View {
         .task {
             viewModel.loadChallengeDashboard()
         }
-//        .popup(isPresented: $isShowReportPopup) {
-//            Modal(title: "신고하기", content: "신고식고")
-//                .buttons {
-//                    ModalButton(title: "취소", colorType: .secondary) {
-//                        isShowReportPopup = false
-//                    }
-//                    ModalButton(title: "신고하기") {
-//                        isShowReportPopup = false
-//                    }
-//                }
-//        }
+        .popup(isPresented: $isShowReportedPopup) {
+            Modal(title: "신고가 접수되었습니다.", content: "24시간 이내 운영자 검토 후 서비스 이용 제한 등의 조치가 이루어질 수 있어요.")
+                .buttons {
+                    
+                    ModalButton(title: "확인") {
+                        isShowReportedPopup = false
+                    }
+                }
+        }
     }
     
     /// 메뉴 열기/닫기
