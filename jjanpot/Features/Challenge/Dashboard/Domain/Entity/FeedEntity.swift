@@ -36,3 +36,8 @@ extension FeedEntity {
         self.isMe = dto.isMe
     }
 }
+extension FeedEntity: Identifiable, Equatable, Hashable {
+    var id: Int {
+        certificationId
+    }
+}

@@ -90,6 +90,10 @@ struct MainNavigationStack: View {
             
         case .challengeHistory:
             container.makeChallengeHistoryView(coordinator: coordinator)
+            
+            // 챌린지 인증 수정
+        case let .challengeEditFeed(entity):
+            container.makemakeChallengeEditView(feedEntity: entity, coordinator: coordinator)
         }
     }
     

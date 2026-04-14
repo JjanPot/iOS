@@ -14,10 +14,15 @@ final class ChallengeDashboardViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var toastMessage: String?
     
+    private var feedEntities: [FeedEntity]?
+    @Published var editingFeedEntity: FeedEntity?
+    
     private let useCase: ChallengeDashboardUseCaseProtocol
     init(useCase: ChallengeDashboardUseCaseProtocol) {
         self.useCase = useCase
     }
+    
+    
     
     func loadChallengeDashboard() {
         isLoading = true
@@ -40,6 +45,7 @@ final class ChallengeDashboardViewModel: ObservableObject {
                         overviewViewData: overview,
                         feedViewData: feed
                     )
+                    self.feedEntities = feeds
                 }
             } catch {
                 Logger.error("loadChallengeOverview 실패: \(error.localizedDescription)")
@@ -73,6 +79,14 @@ final class ChallengeDashboardViewModel: ObservableObject {
             }
             isLoading = false
         }
+    }
+    
+    // 피드 수정하기
+    func editFeed(id targetId: Int){
+        let selected = feedEntities?.first { entity in
+            entity.certificationId == targetId
+        }
+        editingFeedEntity = selected
     }
     
     // 피드 삭제하기

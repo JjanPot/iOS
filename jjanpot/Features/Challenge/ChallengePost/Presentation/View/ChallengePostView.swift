@@ -44,6 +44,8 @@ struct ChallengePostView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
+                
+                // 지출, 무지출 탭
                 SegmentedToggleView(selectedTab: $selectedTab)
                 
                 // 카테고리
@@ -63,7 +65,8 @@ struct ChallengePostView: View {
                 // 사진 업로드
                 images
                 
-                MainButton(title: "등록하기", isDisabled: (selectedTab == .expense) ? ((Int(price) ?? 0 <= 0) || viewModel.selectedCategory == nil) : (viewModel.selectedCategory == nil)) {
+                // 등록하기 버튼
+                MainButton(title: "등록하기", isDisabled: isSubmitButtonDisabled()) {
                     viewModel.submit(
                         expenseType: selectedTab,
                         category: viewModel.selectedCategory,
@@ -72,13 +75,15 @@ struct ChallengePostView: View {
                         date: selectedDate,
                         selectedImageData: selectedImage?.data)
                 }
-            }
+            } // ~VStack
             .padding(.horizontal, 20)
-        }
+        } // ~ ScrollView
+        .navigationTitle("인증하기")
+        .loading(viewModel.isLoading)
+        .toast(message: $viewModel.toastMessage)
         .task {
             viewModel.getDetail()
         }
-        .navigationTitle("인증하기")
         .scrollDismissesKeyboard(.interactively)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
@@ -91,8 +96,7 @@ struct ChallengePostView: View {
                 .foregroundStyle(.orange500)
             }
         }
-        .loading(viewModel.isLoading)
-        .toast(message: $viewModel.toastMessage)
+        // 사진 선택
         .sheet(isPresented: $isShowingPicker) {
             VStack(spacing: 10) {
                         DatePicker(
@@ -128,12 +132,16 @@ struct ChallengePostView: View {
         } message: {
             Text("앨범의 사진을 불러오려면 설정에서 사진 접근 권한을 허용해주세요.")
         }
+        // ~ 사진 선택
         .onChange(of: viewModel.isSuccess) { isSuccess in
+            // 저장완료시 화면 나가기
             if isSuccess {
                 coordinator.pop()
             }
         }
     }
+    
+    // MARK: - views..
     
     // 금액
     private var priceTextField: some View {
@@ -271,6 +279,8 @@ struct ChallengePostView: View {
         }
     }
     
+    // MARK: - Methods..
+    
     // 사진권한 받아오기
     private func requestPhotoLibraryPermission() {
         let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
@@ -292,6 +302,10 @@ struct ChallengePostView: View {
         @unknown default:
             break
         }
+    }
+    
+    private func isSubmitButtonDisabled() -> Bool {
+        return (selectedTab == .expense) ? ((Int(price) ?? 0 <= 0) || viewModel.selectedCategory == nil) : (viewModel.selectedCategory == nil)
     }
     
 }

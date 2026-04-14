@@ -48,6 +48,9 @@ protocol MainDIContainerProtocol {
 
     /// 지출,무지출 인증
     func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView
+    
+    /// 지출, 무지출 인증 수정
+    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: MainCoordinator) -> ChallengeEditView
 
     // MyPage - 마이팟
     func makeMyPotView(coordinator: MainCoordinator) -> MyPotView
@@ -217,6 +220,11 @@ final class MainDIContainer: MainDIContainerProtocol {
         return ChallengePostView(viewModel: vm, coordinator: coordinator)
     }
     
+    // MARK: - 지출, 무지출 인증 수정
+    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: MainCoordinator) -> ChallengeEditView {
+        ChallengeEditView()
+    }
+    
     // MARK: - 완료된 챌린지 목록
     
     private func makeChallengeHistoryRepository() -> ChallengeHistoryRepositoryProtocol {
@@ -381,6 +389,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         let usecase = MockChallengePostUseCase()
         let viewModel = ChallengePostViewModel(challengeId: challengeId, useCase: usecase)
         return ChallengePostView(viewModel: viewModel, coordinator: coordinator)
+    }
+    
+    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: MainCoordinator) -> ChallengeEditView {
+        ChallengeEditView()
     }
     
     func makeChallengeReportView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeReportView {

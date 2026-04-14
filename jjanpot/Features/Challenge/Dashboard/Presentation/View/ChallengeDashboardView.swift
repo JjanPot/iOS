@@ -114,8 +114,7 @@ struct ChallengeDashboardView: View {
                                                             }
                                                         }),
                                                      onEdit: { // 수정하기
-                                            print(">>>>> 수정하기")
-                                            closeMenu()
+                                            viewModel.editFeed(id: feed.feedId)
                                         },
                                                      onDelete: { // 삭제하기
                                             showDeleteModal(feedId: feed.feedId)
@@ -173,6 +172,11 @@ struct ChallengeDashboardView: View {
         .task {
             viewModel.loadChallengeDashboard()
         }
+        .onChange(of: viewModel.editingFeedEntity) { editingFeedEntity in
+            guard let editingFeedEntity else { return }
+            coordinator.push(.challengeEditFeed(entity: editingFeedEntity))
+        }
+        
         .popup(isPresented: $isShowReportedPopup) {
             Modal(title: "신고가 접수되었습니다.", content: "24시간 이내 운영자 검토 후 서비스 이용 제한 등의 조치가 이루어질 수 있어요.")
                 .buttons {
