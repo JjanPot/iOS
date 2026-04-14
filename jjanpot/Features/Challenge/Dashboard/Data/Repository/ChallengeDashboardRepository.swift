@@ -89,4 +89,16 @@ struct ChallengeDashboardRepository: ChallengeDashboardRepositoryProtocol {
             throw error
         }
     }
+    
+    // 피드 삭제하기
+    func deleteFeed(feedId: Int) async throws {
+        let result = await apiClient.deleteFeed(feedId: feedId)
+        switch result {
+        case .success(let dto):
+            return
+            
+        case .failure(let error):
+            throw error
+        }
+    }
 }

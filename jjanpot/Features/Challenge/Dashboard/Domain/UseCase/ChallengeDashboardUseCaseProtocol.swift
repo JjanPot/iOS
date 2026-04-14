@@ -17,6 +17,10 @@ protocol ChallengeDashboardUseCaseProtocol {
     
     /// 사용자 차단
     func blockUser(userId: Int, challengeId: Int) async throws
+    
+    
+    /// 피드 삭제하기
+    func deleteFeed(feedId: Int) async throws
 }
 
 // MARK: - ChallengeDashboardUseCase
@@ -84,9 +88,16 @@ struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
         try await repository.blockUser(userId: userId, challengeId: challengeId)
     }
     
-    private func isLoggedIn() -> Bool {
-        repository.isLoggedIn()
+    // 피드 삭제하기
+    func deleteFeed(feedId: Int) async throws {
+        try await repository.deleteFeed(feedId: feedId)
     }
     
     
+    
+    //MARK: private Methods..
+    
+    private func isLoggedIn() -> Bool {
+        repository.isLoggedIn()
+    }
 }

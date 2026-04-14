@@ -29,4 +29,8 @@ protocol ChallengeDashboardRepositoryProtocol {
     
     /// 사용자 차단
     func blockUser(userId: Int, challengeId: Int) async throws
+    
+    
+    /// 피드 삭제하기
+    func deleteFeed(feedId: Int) async throws
 }

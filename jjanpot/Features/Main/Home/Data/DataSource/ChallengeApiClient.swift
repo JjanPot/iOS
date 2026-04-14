@@ -31,14 +31,26 @@ enum ChallengeRouter {
     /// 카테고리 조회
     case getCategories
     
+    // MARK: 챌린지 대시보드
+    
+    /// 챌린지 오버뷰 가져오기
+    case fetchChallengeOverview(challengeId: Int)
+    
     /// 피드 조회
     case fetchFeed(challengeId: Int)
 
     /// 챌린지 인증
     case postChallenge
     
-    /// 챌린지 오버뷰 가져오기
-    case fetchChallengeOverview(challengeId: Int)
+    /// 피드 수정
+    
+    
+    /// 피드 삭제
+    case deleteFeed(feedId: Int)
+    
+    
+    
+    // MARK: 챌린지 결과 조회
     
     /// mypage 챌린지 통계 조회
     case getChallengeStats
@@ -46,6 +58,8 @@ enum ChallengeRouter {
     case getChallengeReport(challengeId: Int)
     
     case getChallengeHistory
+    
+    // MARK: 신고하기
     
     /// 게시물 신고하기
     case reportFeed(feedId: Int, reason: String)
@@ -85,6 +99,9 @@ extension ChallengeRouter: Router {
                 .reportUser,
                 .blockUser
             : .post
+            
+        case .deleteFeed:
+                .delete
         }
     }
     
@@ -136,6 +153,8 @@ extension ChallengeRouter: Router {
         case .blockUser:
             return "/api/blocks/v1"
             
+        case let .deleteFeed(feedId):
+            return "/api/certifications/v1/\(feedId)"
         }
     }
 
@@ -163,7 +182,8 @@ extension ChallengeRouter: Router {
                 .deleteChallenge,
                 .getChallengeStats,
                 .getChallengeReport,
-                .getChallengeHistory
+                .getChallengeHistory,
+                .deleteFeed
             : return nil
         
 
@@ -269,6 +289,9 @@ protocol ChallengeApiClientProtocol {
     
     /// 사용자 차단하기
     func blockUser(userId: Int, challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>
+    
+    /// 피드 삭제하기
+    func deleteFeed(feedId: Int) async -> Result<EmptyResponseDto, NetworkError>
 
 }
 
@@ -349,5 +372,10 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     /// 사용자 차단하기
     func blockUser(userId: Int, challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>{
         await request(.blockUser(userId: userId, challengeId: challengeId))
+    }
+    
+    /// 피드 삭제하기
+    func deleteFeed(feedId: Int) async -> Result<EmptyResponseDto, NetworkError>{
+        await request(.deleteFeed(feedId: feedId))
     }
 }

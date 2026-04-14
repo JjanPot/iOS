@@ -581,6 +581,10 @@ struct MockMyPotUseCase: MyPotUseCaseProtocol {
 }
 
 struct MockChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
+    func deleteFeed(feedId: Int) async throws {
+        return
+    }
+    
     func reportFeed(feedId: Int, reason: String) async throws {
         return
     }

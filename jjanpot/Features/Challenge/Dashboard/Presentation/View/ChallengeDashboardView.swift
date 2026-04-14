@@ -118,8 +118,8 @@ struct ChallengeDashboardView: View {
                                             closeMenu()
                                         },
                                                      onDelete: { // 삭제하기
-                                            print(">>>>> 삭제하기")
-                                            closeMenu()
+                                            showDeleteModal(feedId: feed.feedId)
+                                            
                                         },
                                                      onReport: {
                                             // 게시글 신고하기 모달 띄우기
@@ -247,6 +247,18 @@ struct ChallengeDashboardView: View {
                 
                 // 유저 차단하기
                 viewModel.blockUser(userId: authorId, challengeId: challengeId)
+            })
+    }
+    
+    // <삭제하겠습니까?> 모달 띄우기
+    private func showDeleteModal(feedId: Int){
+        coordinator.showReportModal(
+            title: "게시글을 삭제할까요?",
+            content: "삭제한 게시글은 다른 사람이 볼 수 없어요.",
+            confirmButtonTitle: "삭제하기",
+            onConfirm: {
+                coordinator.activePopup = nil
+                viewModel.deleteFeed(feedId: feedId)
             })
     }
 }

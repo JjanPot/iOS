@@ -75,6 +75,27 @@ final class ChallengeDashboardViewModel: ObservableObject {
         }
     }
     
+    // 피드 삭제하기
+    func deleteFeed(feedId: Int){
+        Task {
+            isLoading = true
+            do {
+                try await useCase.deleteFeed(feedId: feedId)
+                removeFeed(feedId: feedId)
+                toastMessage = "게시글이 삭제되었습니다."
+            } catch {
+                Logger.error("피드 삭제하기 실패: \(error.localizedDescription)")
+                if let networkError = error as? NetworkError {
+                    Logger.error("삭제 실패: \(networkError.description)")
+                    toastMessage = networkError.description
+                } else {
+                    toastMessage = "삭제 실패"
+                }
+            }
+            isLoading = false
+        }
+        
+    }
     
     /// 신고한 피드를 목록에서 제거
     func removeFeed(feedId targetId: Int){
@@ -86,13 +107,16 @@ final class ChallengeDashboardViewModel: ObservableObject {
                 }
                 return false
             }
-            
+
+            // 고아 헤더(orphaned header) 제거
+            filteredFeeds = removeOrphanedHeaders(from: filteredFeeds)
+
             self.viewData = .inProgress(challengeId: challengeId,
                                         overviewViewData: overviewViewData,
                                         feedViewData: filteredFeeds)
         }
     }
-    
+
     /// 신고한 피드를 목록에서 제거
     func removeFeed(userId targetId: Int){
         if case let .inProgress(challengeId, overviewViewData, feeds) = self.viewData {
@@ -103,11 +127,40 @@ final class ChallengeDashboardViewModel: ObservableObject {
                 }
                 return false
             }
-            
+
+            // 고아 헤더(orphaned header) 제거
+            filteredFeeds = removeOrphanedHeaders(from: filteredFeeds)
+
             self.viewData = .inProgress(challengeId: challengeId,
                                         overviewViewData: overviewViewData,
                                         feedViewData: filteredFeeds)
         }
+    }
+
+    /// 헤더 다음에 아이템이 없으면 헤더 제거
+    private func removeOrphanedHeaders(from feeds: [ChallengeFeedViewData]) -> [ChallengeFeedViewData] {
+        var result: [ChallengeFeedViewData] = []
+
+        for (index, feed) in feeds.enumerated() {
+            if case .header = feed {
+                // 다음 요소가 아이템인지 확인
+                let hasNextItem = (index + 1) < feeds.count && {
+                    if case .item = feeds[index + 1] {
+                        return true
+                    }
+                    return false
+                }()
+
+                // 다음이 아이템이면 헤더 추가
+                if hasNextItem {
+                    result.append(feed)
+                }
+            } else {
+                result.append(feed)
+            }
+        }
+
+        return result
     }
     
 }
