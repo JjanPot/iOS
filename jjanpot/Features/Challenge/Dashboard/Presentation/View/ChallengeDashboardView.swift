@@ -12,10 +12,12 @@ struct ChallengeDashboardView: View {
     @StateObject var viewModel: ChallengeDashboardViewModel
     private let coordinator: MainCoordinator
     
-    // 피드 메뉴 띄우기
+    // 피드 메뉴(신고) 띄우기
     @State var selectedFeedIdForMenu: Int?
+    // 내 피드 메뉴 띄우기
+    @State var selectedFeedIdForMyMenu: Int?
     
-    // 신고완료 팝업
+    // 신고 완료 팝업
     @State var isShowReportedPopup: Bool = false
     
     
@@ -93,6 +95,15 @@ struct ChallengeDashboardView: View {
 
                                     case let .item(_, feed):
                                         FeedCardView(viewData: feed,
+                                                     isMyMenuOpen: Binding(
+                                                        get: { selectedFeedIdForMyMenu == feed.feedId },
+                                                        set: { isOpen in
+                                                            if isOpen {
+                                                                selectedFeedIdForMyMenu = feed.feedId
+                                                            } else {
+                                                                closeMenu()
+                                                            }
+                                                        }),
                                                      isMenuOpen: Binding(
                                                         get: { selectedFeedIdForMenu == feed.feedId },
                                                         set: { isOpen in
@@ -102,6 +113,14 @@ struct ChallengeDashboardView: View {
                                                                 closeMenu()
                                                             }
                                                         }),
+                                                     onEdit: { // 수정하기
+                                            print(">>>>> 수정하기")
+                                            closeMenu()
+                                        },
+                                                     onDelete: { // 삭제하기
+                                            print(">>>>> 삭제하기")
+                                            closeMenu()
+                                        },
                                                      onReport: {
                                             // 게시글 신고하기 모달 띄우기
                                             showReportFeedModal(feedId: feed.feedId)
@@ -172,10 +191,16 @@ struct ChallengeDashboardView: View {
 
     /// 메뉴 닫기
     private func closeMenu() {
+        // 신고 메뉴 닫기
         if selectedFeedIdForMenu != nil {
             selectedFeedIdForMenu = nil
         }
+        // 내 메뉴 닫기
+        if selectedFeedIdForMyMenu != nil {
+            selectedFeedIdForMyMenu = nil
+        }
     }
+    
     
     // 게시글 신고하기 모달 띄우기
     private func showReportFeedModal(feedId: Int){

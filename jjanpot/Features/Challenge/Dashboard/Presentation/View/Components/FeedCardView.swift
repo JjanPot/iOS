@@ -10,7 +10,10 @@ import Kingfisher
 
 struct FeedCardView: View {
     let viewData: FeedCardViewData
+    @Binding var isMyMenuOpen: Bool
     @Binding var isMenuOpen: Bool
+    let onEdit: () -> Void
+    let onDelete: () -> Void
     let onReport: () -> Void
     let onReportUser: () -> Void
     let onBlock: () -> Void
@@ -28,15 +31,18 @@ struct FeedCardView: View {
                 
                 
                 // 메뉴 버튼
-                if !viewData.isMine {
-                    Button {
+                Button {
+                    if viewData.isMine {
+                        isMyMenuOpen = true
+                    }else {
                         isMenuOpen = true
-                    } label: {
-                        Image("icon_three_dot")
-                            .resizable()
-                            .frame(width: 17, height: 3)
-                            .padding(.vertical, 8.5)
                     }
+                    
+                } label: {
+                    Image("icon_three_dot")
+                        .resizable()
+                        .frame(width: 17, height: 3)
+                        .padding(.vertical, 8.5)
                 }
             }
             .padding(.bottom, 4)
@@ -108,7 +114,10 @@ struct FeedCardView: View {
                     .font(.pretendard(.regular, size: 12))
                     .foregroundStyle(.black600)
             }
-        }
+        } // ~VStack
+        .padding(.vertical, 16)
+        .padding(.horizontal, 17)
+        .roundedBorder(color: .black100, radius: 12)
         .overlay(alignment: .topTrailing, content: {
             if isMenuOpen {
                 PopoverMenu(items: [
@@ -124,9 +133,20 @@ struct FeedCardView: View {
                 ], isPresented: $isMenuOpen)
             }
         })
-        .padding(.vertical, 16)
-        .padding(.horizontal, 17)
-        .roundedBorder(color: .black100, radius: 12)
+        .overlay(alignment: .topTrailing, content: {
+            if isMyMenuOpen {
+                PopoverMenu(items: [
+                    .init(title: "게시글 수정", icon: "icon_edit") {
+                        onEdit()
+                    },
+                    .init(title: "삭제", icon: "icon_delete") {
+                        onDelete()
+                    },
+                   
+                ], isPresented: $isMenuOpen)
+            }
+        })
+        
     }
 }
 
@@ -134,6 +154,7 @@ struct FeedCardView: View {
     
     struct PreviewWrapper: View {
         
+        @State private var isMyMenuOpen = false
         @State private var isMenuOpen = false
         
         var body: some View {
@@ -149,7 +170,10 @@ struct FeedCardView: View {
                 imageUrl: "https://picsum.photos/50/50",
                 isMine: true
                 
-            ), isMenuOpen: $isMenuOpen,
+            ), isMyMenuOpen: $isMyMenuOpen,
+                         isMenuOpen: $isMenuOpen,
+                         onEdit: {},
+                         onDelete: {},
                          onReport: {},
                          onReportUser: {},
                          onBlock: {}
