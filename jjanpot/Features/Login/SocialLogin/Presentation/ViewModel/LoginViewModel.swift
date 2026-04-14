@@ -50,6 +50,30 @@ final class LoginViewModel: ObservableObject {
         }
     }
     
+    // 알림 권한 요청
+    func requestAuthorization() {
+        let center = UNUserNotificationCenter.current()
+        center.getNotificationSettings { settings in
+            // 1. 아직 결정되지 않았을 때만 팝업 요청
+            if settings.authorizationStatus == .notDetermined {
+                center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                    if granted {
+                        // 권한을 얻은 즉시 APNs에 등록 시도
+                        DispatchQueue.main.async {
+                            UIApplication.shared.registerForRemoteNotifications()
+                        }
+                    }
+                }
+            }
+            // 2. 이미 허용된 상태라면? 혹시 모르니 APNs 등록 한 번 더 시도 (안전함)
+            else if settings.authorizationStatus == .authorized {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+        }
+    }
+    
     // MARK: - Private Methods
     
     // 로그인 공통
