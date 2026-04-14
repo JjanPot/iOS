@@ -204,6 +204,14 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
 // -------- Mock struct ------ //
 
 struct MockLoginUseCase: LoginUseCaseProtocol {
+    func getFCMToken() async -> String? {
+        return ""
+    }
+    
+    func waitForFCMToken(timeout: TimeInterval) async -> String? {
+        return ""
+    }
+    
     func cancelLogin(entity: LoginEntity) async throws {}
     func login(entity: LoginEntity) {}
     func loginWithApple() async throws -> LoginEntity {

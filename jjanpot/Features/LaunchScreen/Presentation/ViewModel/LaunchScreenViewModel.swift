@@ -34,15 +34,15 @@ final class LaunchScreenViewModel: ObservableObject {
                 appCoordinator?.handleTokenCheckResult(isValid: true)
 
             } catch {
-                // 토큰갱신, 유저정보 가져오기 실패 -> 로그아웃
-                Logger.error("토큰갱신, 유저정보 가져오기 실패 → 로그인 화면으로: \(error)")
+                // 토큰갱신, 유저정보 가져오기 실패 → 로그인 화면으로
+                Logger.error("토큰갱신 실패 → 로그인 화면으로: \(error)")
                 if let networkError = error as? NetworkError {
-                    Logger.error("토큰갱신, 유저정보 가져오기 실패 → 로그인 화면으로: \(networkError.description)")
-                } 
-                
+                    Logger.error("네트워크 에러: \(networkError.description)")
+                }
+
                 AuthManager.shared.logout()
 
-                // 결과를 AppCoordinator에게 전달
+                // 바로 로그인 화면으로 (FCM 토큰 대기는 로그인 시점에)
                 appCoordinator?.handleTokenCheckResult(isValid: false)
             }
         }
