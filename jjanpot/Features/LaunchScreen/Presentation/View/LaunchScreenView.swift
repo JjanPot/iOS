@@ -29,8 +29,8 @@ struct LaunchScreenView: View {
     }
 }
 
-#Preview {
-    let coordinator = AppCoordinator()
-    let container = AppDIContainer.shared
-    return container.makeLaunchScreenView(appCoordinator: coordinator)
-}
+//#Preview {
+//    let coordinator = MainCoordinator()
+//    let container = AppDIContainer.shared
+//    return container.makeLaunchScreenView(appCoordinator: coordinator)
+//}

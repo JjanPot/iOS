@@ -17,6 +17,7 @@ struct jjanpotApp: App {
 
     
     // App 레벨에서 네비게이션 상태 관리
+    @StateObject private var rootCoordinator = AppDIContainer.shared.makeRootCoordinator()
     @StateObject private var appCoordinator = AppDIContainer.shared.makeAppCoordinator()
     private let container = AppDIContainer.shared
 
@@ -31,21 +32,21 @@ struct jjanpotApp: App {
             // App 레벨에서 화면 분기 (Navigation Router 패턴)
             RootViewWithGlobalToast {
                 Group {
-                    switch appCoordinator.currentFlow {
+                    switch rootCoordinator.currentFlow {
                     case .launching:
                         // 스플래시 화면 (토큰 체크)
-                        container.makeLaunchScreenView(appCoordinator: appCoordinator)
+                        container.makeLaunchScreenView(appCoordinator: rootCoordinator)
 
                     case .login:
                         // 로그인 플로우 (독립적인 NavigationStack)
                         LoginNavigationStack {
                             // 로그인 성공 → 메인 화면으로 전환
-                            appCoordinator.navigateToMain()
+                            rootCoordinator.navigateToMain()
                         }
 
                     case .main:
                         // 메인 플로우 (독립적인 NavigationStack)
-                        container.makeMainNavigationStack()
+                        container.makeMainNavigationStack(appCoordinator: appCoordinator)
                     }
                 }
                 // 인증 리디렉션 url 처리
@@ -58,7 +59,7 @@ struct jjanpotApp: App {
                 })
                 // 로그아웃 notification 수신
                 .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("userDidLogout"))) { _ in
-                    appCoordinator.navigateToLogin()
+                    rootCoordinator.navigateToLogin()
                 }
             }
         }

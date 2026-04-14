@@ -18,7 +18,7 @@ enum FocusedField {
 // 챌린지 만들기
 struct CreateChallengeView: View {
     @StateObject var viewModel: CreateChallengeViewModel
-    @ObservedObject var coordinator: MainCoordinator
+    private let coordinator: ChallengeCoordinatorProtocol
 
     @State var challengeName: String = ""
     @State var description: String = ""
@@ -43,7 +43,7 @@ struct CreateChallengeView: View {
     // 포커스 상태 관리
     @FocusState private var focusedField: FocusedField?
 
-    init(viewModel: CreateChallengeViewModel, coordinator: MainCoordinator) {
+    init(viewModel: CreateChallengeViewModel, coordinator: ChallengeCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -100,7 +100,7 @@ struct CreateChallengeView: View {
         .toast(message: $viewModel.toastMessage)
         .onChange(of: viewModel.isSuccess) { isSuccess in
             if isSuccess {
-                coordinator.popToRoot()
+                coordinator.close()
             }
         }
         .toolbar {
@@ -394,8 +394,8 @@ struct CreateChallengeView: View {
 }
 
 
-#Preview {
-    let container = MockMainDIContainer()
-    let coordinator = container.makeMainCoordinator()
-    return container.makeCreateChallengeView(coordinator: coordinator)
-}
+//#Preview {
+//    let container = MockMainDIContainer()
+//    let coordinator = container.makeAppCoordinator()
+//    return container.makeCreateChallengeView(coordinator: coordinator)
+//}

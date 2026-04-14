@@ -29,43 +29,44 @@ import Alamofire
  */
 
 protocol MainDIContainerProtocol {
-    func makeMainCoordinator() -> MainCoordinator
+    func makeAppCoordinator() -> AppCoordinator
+    func makeChallengeCoordinator(appCoordinator: AppCoordinator) -> ChallengeCoordinatorProtocol
 
     // 홈 화면
-    func makeHomeView(coordinator: MainCoordinator) -> HomeView
+    func makeHomeView(coordinator: MainNavigationCoordinatorProtocol) -> HomeView
 
     // 초대 코드 화면
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView
 
     // 챌린지 생성 화면
-    func makeCreateChallengeView(coordinator: MainCoordinator) -> CreateChallengeView
+    func makeCreateChallengeView(coordinator: ChallengeCoordinatorProtocol) -> CreateChallengeView
 
     // 챌린지 상세정보 화면
-    func makeChallengeDetailView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeDetailView
+    func makeChallengeDetailView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengeDetailView
 
     /// 챌린지 대시보드화면
-    func makeChallengeDashboardView(coordinator: MainCoordinator) -> ChallengeDashboardView
+    func makeChallengeDashboardView(coordinator: ChallengeCoordinatorProtocol) -> ChallengeDashboardView
 
     /// 지출,무지출 인증
-    func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView
-    
+    func makeChallengePostView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengePostView
+
     /// 지출, 무지출 인증 수정
-    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: MainCoordinator) -> ChallengeEditView
+    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: ChallengeCoordinatorProtocol) -> ChallengeEditView
 
     // MyPage - 마이팟
-    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView
+    func makeMyPotView(coordinator: MyPageCoordinatorProtocol) -> MyPotView
 
     // 설정화면
-    func makeSettingsView(coordinator: MainCoordinator) -> SettingsView
+    func makeSettingsView(coordinator: MyPageCoordinatorProtocol) -> SettingsView
 
     // 알람 설정
     func makeAlarmSettingsView() -> AlarmSettingsView
 
     // 챌린지 결과
-    func makeChallengeReportView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeReportView
-    
+    func makeChallengeReportView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengeReportView
+
     // 완료 챌린지 목록
-    func makeChallengeHistoryView(coordinator: MainCoordinator) -> ChallengeHistoryView
+    func makeChallengeHistoryView(coordinator: MyPageCoordinatorProtocol) -> ChallengeHistoryView
     
     // 완료챌린지 결과화면 안내 팝업
     func makeReportPopupView(challengeId: Int, comfirmAction: @escaping ()-> Void, closeAction : @escaping ()-> Void ) -> ReportPopupView
@@ -95,11 +96,15 @@ final class MainDIContainer: MainDIContainerProtocol {
     }
     
     // MARK: - Coordinator
-    
-    func makeMainCoordinator() -> MainCoordinator {
-        return MainCoordinator(container: self)
+
+    func makeAppCoordinator() -> AppCoordinator {
+        return AppCoordinator(container: self)
     }
-    
+
+    func makeChallengeCoordinator(appCoordinator: AppCoordinator) -> ChallengeCoordinatorProtocol {
+        return ChallengeCoordinator(appCoordinator: appCoordinator)
+    }
+
     // MARK: - Home
     
     private func makeHomeRepository() -> HomeRepositoryProtocol {
@@ -114,7 +119,7 @@ final class MainDIContainer: MainDIContainerProtocol {
         return HomeViewModel(useCase: makeHomeUseCase())
     }
     
-    func makeHomeView(coordinator: MainCoordinator) -> HomeView {
+    func makeHomeView(coordinator: MainNavigationCoordinatorProtocol) -> HomeView {
         let viewModel = makeHomeViewModel()
         return HomeView(viewModel: viewModel, coordinator: coordinator)
     }
@@ -155,33 +160,33 @@ final class MainDIContainer: MainDIContainerProtocol {
         return CreateChallengeViewModel(useCase: makeCreateChallengeUseCase())
     }
     
-    func makeCreateChallengeView(coordinator: MainCoordinator) -> CreateChallengeView {
+    func makeCreateChallengeView(coordinator: ChallengeCoordinatorProtocol) -> CreateChallengeView {
         let viewModel = makeCreateChallengeViewModel()
         return CreateChallengeView(viewModel: viewModel, coordinator: coordinator)
     }
-    
+
     // MARK: - 챌린지 상세정보 화면
-    
+
     private func makeChallengeDetailRepository() -> ChallengeDetailRepositoryProtocol {
         return ChallengeDetailRepository(apiClient: challengeApiClient)
     }
-    
+
     private func makeChallengeDetailUseCase() -> ChallengeDetailUseCaseProtocol {
         let repo = makeChallengeDetailRepository()
         return ChallengeDetailUseCase(repository: repo)
     }
-    
+
     private func makeChallengeDetailViewModel(challengeId: Int) -> ChallengeDetailViewModel {
         let useCase = makeChallengeDetailUseCase()
         return ChallengeDetailViewModel(challengeId: challengeId, useCase: useCase)
     }
-    func makeChallengeDetailView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeDetailView {
+    func makeChallengeDetailView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengeDetailView {
         let vm = makeChallengeDetailViewModel(challengeId: challengeId)
         return ChallengeDetailView(viewModel: vm, coordinator: coordinator)
     }
-    
+
     // MARK: - 챌린지 대시보드
-    
+
     private func makeChallengeDashboardRepository() -> ChallengeDashboardRepositoryProtocol {
         return ChallengeDashboardRepository(challengeApiClient: challengeApiClient)
     }
@@ -193,16 +198,16 @@ final class MainDIContainer: MainDIContainerProtocol {
         let usecase = makeChallengeDashboardUseCase()
         return ChallengeDashboardViewModel(useCase: usecase)
     }
-    
-    func makeChallengeDashboardView(coordinator: MainCoordinator) -> ChallengeDashboardView {
+
+    func makeChallengeDashboardView(coordinator: ChallengeCoordinatorProtocol) -> ChallengeDashboardView {
         let vm = makeChallengeDashboardViewModel()
         return ChallengeDashboardView(viewModel: vm, coordinator: coordinator)
     }
-    
-    
-    
+
+
+
     // MARK: - 지출, 무지출 인증화면
-    
+
     private func makeChallengePostRepository() -> ChallengePostRepositoryProtocol {
         return ChallengePostRepository(challengeApiClient: challengeApiClient)
     }
@@ -214,14 +219,14 @@ final class MainDIContainer: MainDIContainerProtocol {
         let usecase = makeChallengePostUseCase()
         return ChallengePostViewModel(challengeId: challengeId, useCase: usecase)
     }
-    
-    func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView {
+
+    func makeChallengePostView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengePostView {
         let vm = makeChallengePostViewModel(challengeId: challengeId)
         return ChallengePostView(viewModel: vm, coordinator: coordinator)
     }
-    
+
     // MARK: - 지출, 무지출 인증 수정
-    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: MainCoordinator) -> ChallengeEditView {
+    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: ChallengeCoordinatorProtocol) -> ChallengeEditView {
         ChallengeEditView()
     }
     
@@ -239,7 +244,7 @@ final class MainDIContainer: MainDIContainerProtocol {
         return ChallengeHistoryViewModel(useCase: usecase)
     }
     
-    func makeChallengeHistoryView(coordinator: MainCoordinator) -> ChallengeHistoryView {
+    func makeChallengeHistoryView(coordinator: MyPageCoordinatorProtocol) -> ChallengeHistoryView {
         let vm = makeChallengeHistoryViewModel()
         return ChallengeHistoryView(viewModel: vm, coordinator: coordinator)
     }
@@ -258,11 +263,11 @@ final class MainDIContainer: MainDIContainerProtocol {
         return ChallengeReportViewModel(challengeId: challengeId, useCase: usecase)
     }
     
-    func makeChallengeReportView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeReportView {
+    func makeChallengeReportView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengeReportView {
         let vm = makeChallengeReportViewModel(challengeId: challengeId)
         return ChallengeReportView(viewModel: vm, coordinator: coordinator)
     }
-    
+
     // MARK: - MyPage (MyPot)
 
     private func makeMyPotRepository() -> MyPotRepositoryProtocol {
@@ -279,13 +284,13 @@ final class MainDIContainer: MainDIContainerProtocol {
         return MyPotViewModel(useCase: usecase)
     }
 
-    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView {
+    func makeMyPotView(coordinator: MyPageCoordinatorProtocol) -> MyPotView {
         let vm = makeMyPotViewModel()
         return MyPotView(viewModel: vm, coordinator: coordinator)
     }
-    
+
     // MARK: - 설정화면
-    
+
     private func makeSettingsRepository() -> SettingsRepositoryProtocol {
         return SettingsRepository(authApiClient: authApiClient)
     }
@@ -297,8 +302,8 @@ final class MainDIContainer: MainDIContainerProtocol {
         let usecase = makeSettingsUseCase()
         return SettingsViewModel(useCase: usecase)
     }
-    
-    func makeSettingsView(coordinator: MainCoordinator) -> SettingsView {
+
+    func makeSettingsView(coordinator: MyPageCoordinatorProtocol) -> SettingsView {
         let vm = makeSettingsViewModel()
         return SettingsView(viewModel: vm, coordinator: coordinator)
     }
@@ -347,7 +352,11 @@ final class MainDIContainer: MainDIContainerProtocol {
 // MARK: - Mock
 
 final class MockMainDIContainer: MainDIContainerProtocol {
-    
+
+    func makeAppCoordinator() -> AppCoordinator {
+        return AppCoordinator(container: self)
+    }
+
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
         let vm = InviteCodeViewModel(useCase: MockInviteCodePopupUseCase())
         return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: { onCloseAction() })
@@ -356,70 +365,70 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return ReportPopupView(challengeId: challengeId, comfirmAction: comfirmAction, closeAction: closeAction)
     }
     
-    func makeMainCoordinator() -> MainCoordinator {
-        return MainCoordinator(container: self)
+    func makeChallengeCoordinator(appCoordinator: AppCoordinator) -> ChallengeCoordinatorProtocol {
+        return ChallengeCoordinator(appCoordinator: appCoordinator)
     }
-    
-    func makeHomeView(coordinator: MainCoordinator) -> HomeView {
+
+    func makeHomeView(coordinator: MainNavigationCoordinatorProtocol) -> HomeView {
         let useCase = MockHomeUseCase()
         let viewModel = HomeViewModel(useCase: useCase)
         return HomeView(viewModel: viewModel, coordinator: coordinator)
     }
     
-    func makeCreateChallengeView(coordinator: MainCoordinator) -> CreateChallengeView {
+    func makeCreateChallengeView(coordinator: ChallengeCoordinatorProtocol) -> CreateChallengeView {
         let useCase = MockCreateChallengeUseCase()
         let viewModel = CreateChallengeViewModel(useCase: useCase)
         return CreateChallengeView(viewModel: viewModel, coordinator: coordinator)
     }
-    
-    func makeChallengeDetailView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeDetailView {
+
+    func makeChallengeDetailView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengeDetailView {
         let usecase = MockChallengeDetailUseCase()
         let vm = ChallengeDetailViewModel(challengeId: challengeId, useCase: usecase)
         return ChallengeDetailView(viewModel: vm, coordinator: coordinator)
     }
-    
-    func makeChallengeDashboardView(coordinator: MainCoordinator) -> ChallengeDashboardView {
+
+    func makeChallengeDashboardView(coordinator: ChallengeCoordinatorProtocol) -> ChallengeDashboardView {
         let usecase = MockChallengeDashboardUseCase()
         let vm = ChallengeDashboardViewModel(useCase: usecase)
         return ChallengeDashboardView(viewModel: vm, coordinator: coordinator)
     }
-    
-    
-    func makeChallengePostView(challengeId: Int, coordinator: MainCoordinator) -> ChallengePostView {
+
+
+    func makeChallengePostView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengePostView {
         let usecase = MockChallengePostUseCase()
         let viewModel = ChallengePostViewModel(challengeId: challengeId, useCase: usecase)
         return ChallengePostView(viewModel: viewModel, coordinator: coordinator)
     }
-    
-    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: MainCoordinator) -> ChallengeEditView {
+
+    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: ChallengeCoordinatorProtocol) -> ChallengeEditView {
         ChallengeEditView()
     }
-    
-    func makeChallengeReportView(challengeId: Int, coordinator: MainCoordinator) -> ChallengeReportView {
+
+    func makeChallengeReportView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengeReportView {
         let usecase = MockChallengeReportUseCase()
         let viewModel = ChallengeReportViewModel(challengeId: challengeId, useCase: usecase)
         return ChallengeReportView(viewModel: viewModel, coordinator: coordinator)
     }
-    
-    func makeSettingsView(coordinator: MainCoordinator) -> SettingsView {
+
+    func makeSettingsView(coordinator: MyPageCoordinatorProtocol) -> SettingsView {
         let usecase = MockSettingsUseCase()
         let vm = SettingsViewModel(useCase: usecase)
         return SettingsView(viewModel: vm, coordinator: coordinator)
     }
-    
-    
+
+
     func makeAlarmSettingsView() -> AlarmSettingsView {
         let usecase = MockSettingsUseCase()
         let vm = SettingsViewModel(useCase: usecase)
         return AlarmSettingsView(viewModel: vm)
     }
-    
-    func makeMyPotView(coordinator: MainCoordinator) -> MyPotView {
+
+    func makeMyPotView(coordinator: MyPageCoordinatorProtocol) -> MyPotView {
         let vm = MyPotViewModel(useCase: MockMyPotUseCase())
         return MyPotView(viewModel: vm, coordinator: coordinator)
     }
-    
-    func makeChallengeHistoryView(coordinator: MainCoordinator) -> ChallengeHistoryView {
+
+    func makeChallengeHistoryView(coordinator: MyPageCoordinatorProtocol) -> ChallengeHistoryView {
         let usecase = MockChallengeHistoryUseCase()
         let viewModel = ChallengeHistoryViewModel(useCase: usecase)
         return ChallengeHistoryView(viewModel: viewModel, coordinator: coordinator)

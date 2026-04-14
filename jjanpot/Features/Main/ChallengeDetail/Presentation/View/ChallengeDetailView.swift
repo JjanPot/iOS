@@ -10,9 +10,9 @@ import SwiftUI
 // 챌린지 상세 정보
 struct ChallengeDetailView: View {
     @StateObject var viewModel: ChallengeDetailViewModel
-    private let coordinator: MainCoordinator
-    
-    init(viewModel: ChallengeDetailViewModel, coordinator: MainCoordinator) {
+    private let coordinator: ChallengeCoordinatorProtocol
+
+    init(viewModel: ChallengeDetailViewModel, coordinator: ChallengeCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -62,7 +62,7 @@ struct ChallengeDetailView: View {
         }
         .onChange(of: viewModel.isCancelled) { isCancelled in
             if isCancelled {
-                coordinator.pop()
+                coordinator.close()
             }
         }
     }
@@ -86,10 +86,10 @@ struct ChallengeDetailView: View {
 
 }
 
-#Preview {
-    let di = MockMainDIContainer()
-    di.makeChallengeDetailView(challengeId: 1, coordinator: di.makeMainCoordinator())
-}
-
-
+//#Preview {
+//    let di = MockMainDIContainer()
+//    di.makeChallengeDetailView(challengeId: 1, coordinator: di.makeAppCoordinator())
+//}
+//
+//
 

@@ -10,14 +10,14 @@ import SwiftUI
 import Combine
 
 /// 스플래시 화면의 토큰 체크 로직만 담당
-/// 결과는 AppCoordinator에게 전달하여 화면 분기는 App 레벨에서 처리
+/// 결과는 RootCoordinator에게 전달하여 화면 분기는 App 레벨에서 처리
 @MainActor
 final class LaunchScreenViewModel: ObservableObject {
 
     private let useCase: LaunchScreenUseCaseProtocol
-    private weak var appCoordinator: AppCoordinator?
+    private weak var appCoordinator: RootCoordinatorProtocol?
 
-    init(useCase: LaunchScreenUseCaseProtocol, appCoordinator: AppCoordinator? = nil) {
+    init(useCase: LaunchScreenUseCaseProtocol, appCoordinator: RootCoordinatorProtocol? = nil) {
         self.useCase = useCase
         self.appCoordinator = appCoordinator
     }

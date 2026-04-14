@@ -57,15 +57,19 @@ final class AppDIContainer {
 
 // MARK: - App Navigation
 extension AppDIContainer {
+    func makeRootCoordinator() -> RootCoordinator {
+        return RootCoordinator()
+    }
+
     func makeAppCoordinator() -> AppCoordinator {
-        return AppCoordinator()
+        return AppCoordinator(container: mainDIContainer)
     }
 }
 
 
 // MARK: - LaunchScreen Feature
 extension AppDIContainer {
-    func makeLaunchScreenView(appCoordinator: AppCoordinator) -> LaunchScreenView {
+    func makeLaunchScreenView(appCoordinator: RootCoordinatorProtocol) -> LaunchScreenView {
         return launchScreenDIContainer.makeLaunchScreenView(appCoordinator: appCoordinator)
     }
 }
@@ -73,7 +77,7 @@ extension AppDIContainer {
 
 // MARK: - Main Feature
 extension AppDIContainer {
-    func makeMainNavigationStack() -> MainNavigationStack {
-        return MainNavigationStack(container: mainDIContainer)
+    func makeMainNavigationStack(appCoordinator: AppCoordinator) -> MainNavigationStack {
+        return MainNavigationStack(container: mainDIContainer, appCoordinator: appCoordinator)
     }
 }

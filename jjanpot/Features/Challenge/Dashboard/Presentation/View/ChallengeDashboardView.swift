@@ -10,18 +10,18 @@ import SwiftUI
 // 챌린지 대시보드
 struct ChallengeDashboardView: View {
     @StateObject var viewModel: ChallengeDashboardViewModel
-    private let coordinator: MainCoordinator
-    
+    private let coordinator: ChallengeCoordinatorProtocol
+
     // 피드 메뉴(신고) 띄우기
     @State var selectedFeedIdForMenu: Int?
     // 내 피드 메뉴 띄우기
     @State var selectedFeedIdForMyMenu: Int?
-    
+
     // 신고 완료 팝업
     @State var isShowReportedPopup: Bool = false
-    
-    
-    init(viewModel: ChallengeDashboardViewModel, coordinator: MainCoordinator) {
+
+
+    init(viewModel: ChallengeDashboardViewModel, coordinator: ChallengeCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -48,9 +48,7 @@ struct ChallengeDashboardView: View {
 
                         ChallengeOverview(viewData: viewModel.viewData, onSelectedMember: { selectedMember in
                             guard !selectedMember.isMe else { return }
-                            coordinator.activeSheet = .reportUser(onReportUser: {
-                                coordinator.activeSheet = nil
-                                
+                            coordinator.showReportUserSheet(onReportUser: {
                                 guard let challengeId =  viewModel.viewData?.challengeId
                                 else { return }
                                 // 사용자 신고하기 모달띄우기
@@ -59,11 +57,10 @@ struct ChallengeDashboardView: View {
                                     challengeId: challengeId,
                                     authorNickname: selectedMember.nickname
                                 )
-                                
+
                             }, onBlockUser: {
-                                coordinator.activeSheet = nil
                                 guard let challengeId =  viewModel.viewData?.challengeId else { return }
-                                
+
                                 // 사용자 차단하기 모달 띄우기
                                 showBlockModal(authorId: selectedMember.userId, challengeId: challengeId, authorNickname: selectedMember.nickname)
                             })
@@ -174,7 +171,7 @@ struct ChallengeDashboardView: View {
         }
         .onChange(of: viewModel.editingFeedEntity) { editingFeedEntity in
             guard let editingFeedEntity else { return }
-            coordinator.push(.challengeEditFeed(entity: editingFeedEntity))
+            coordinator.showEditFeed(entity: editingFeedEntity)
         }
         
         .popup(isPresented: $isShowReportedPopup) {
@@ -208,12 +205,12 @@ struct ChallengeDashboardView: View {
     
     // 게시글 신고하기 모달 띄우기
     private func showReportFeedModal(feedId: Int){
-        coordinator.showReportModal(
+        coordinator.showModal(
             title: "게시글을 신고할까요?",
             content: "허위로 신고한 사용자에게는 불이익이 있을 수 있어요.",
             confirmButtonTitle: "신고하기",
             onConfirm: {
-                coordinator.activePopup = .reportFeedReason(feedId: feedId, confirmAction: {
+                coordinator.showReportFeedPopup(feedId: feedId, confirmAction: {
                     isShowReportedPopup = true
                     // 게시물 비노출
                     viewModel.removeFeed(feedId: feedId)
@@ -224,16 +221,13 @@ struct ChallengeDashboardView: View {
     
     // 사용자 신고하기 모달띄우기
     private func showReportUserModal(authorId: Int, challengeId: Int, authorNickname: String){
-        coordinator.showReportModal(
+        coordinator.showModal(
             title: "\(authorNickname)님을 신고할까요?",
             content: "허위로 신고한 사용자에게는 불이익이 있을 수 있어요.",
             confirmButtonTitle: "신고하기",
             onConfirm: {
                 // 차단 이유 선택지 띄우기
-                coordinator.activePopup = .reportUserReason(
-                    userId: authorId,
-                    challengeId: challengeId,
-                    confirmAction: {
+                coordinator.showReportUserPopup(userId: authorId, challengeId: challengeId, confirmAction: {
                     isShowReportedPopup = true
                 })
             })
@@ -242,13 +236,13 @@ struct ChallengeDashboardView: View {
     
     // 사용자 차단하기 모달 띄우기
     private func showBlockModal(authorId: Int, challengeId: Int, authorNickname: String){
-        coordinator.showReportModal(
+        coordinator.showModal(
             title: "\(authorNickname)님을 차단할까요?",
             content: "\(authorNickname)님을 차단하면 챌린지 소식을 볼 수 없고, 2인 챌린지라면 챌린지가 즉시 종료돼요.",
             confirmButtonTitle: "차단하기",
             onConfirm: {
-                coordinator.activePopup = nil
-                
+                coordinator.closePopup()
+
                 // 유저 차단하기
                 viewModel.blockUser(userId: authorId, challengeId: challengeId)
             })
@@ -256,18 +250,19 @@ struct ChallengeDashboardView: View {
     
     // <삭제하겠습니까?> 모달 띄우기
     private func showDeleteModal(feedId: Int){
-        coordinator.showReportModal(
+        coordinator.showModal(
             title: "게시글을 삭제할까요?",
             content: "삭제한 게시글은 다른 사람이 볼 수 없어요.",
             confirmButtonTitle: "삭제하기",
             onConfirm: {
-                coordinator.activePopup = nil
+                coordinator.closePopup()
                 viewModel.deleteFeed(feedId: feedId)
             })
     }
 }
-
-#Preview {
-    let di = MockMainDIContainer()
-    di.makeChallengeDashboardView(coordinator: di.makeMainCoordinator())
-}
+//
+//#Preview {
+//    let di = MockMainDIContainer()
+//    let appCoordinator = di.makeAppCoordinator()
+//    di.makeChallengeDashboardView(coordinator: appCoordinator)
+//}

@@ -9,7 +9,7 @@
 import Foundation
 
 protocol LaunchScreenDIContainerProtocol {
-    func makeLaunchScreenView(appCoordinator: AppCoordinator) -> LaunchScreenView
+    func makeLaunchScreenView(appCoordinator: RootCoordinatorProtocol) -> LaunchScreenView
 }
 
 final class LaunchScreenDIContainer: LaunchScreenDIContainerProtocol {
@@ -34,7 +34,7 @@ final class LaunchScreenDIContainer: LaunchScreenDIContainerProtocol {
 
     // MARK: - ViewModel
 
-    private func makeLaunchScreenViewModel(appCoordinator: AppCoordinator) -> LaunchScreenViewModel {
+    private func makeLaunchScreenViewModel(appCoordinator: RootCoordinatorProtocol) -> LaunchScreenViewModel {
         let repository = makeLaunchScreenRepository()
         let useCase = LaunchScreenUseCase(repository: repository)
         return LaunchScreenViewModel(useCase: useCase, appCoordinator: appCoordinator)
@@ -42,7 +42,7 @@ final class LaunchScreenDIContainer: LaunchScreenDIContainerProtocol {
 
     // MARK: - View
 
-    func makeLaunchScreenView(appCoordinator: AppCoordinator) -> LaunchScreenView {
+    func makeLaunchScreenView(appCoordinator: RootCoordinatorProtocol) -> LaunchScreenView {
         let viewModel = makeLaunchScreenViewModel(appCoordinator: appCoordinator)
         return LaunchScreenView(viewModel: viewModel)
     }

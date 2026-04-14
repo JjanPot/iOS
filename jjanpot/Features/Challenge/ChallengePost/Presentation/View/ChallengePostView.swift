@@ -17,9 +17,9 @@ enum ChallengePostTab {
 
 struct ChallengePostView: View {
     @StateObject var viewModel: ChallengePostViewModel
-    private let coordinator: MainCoordinator
-    
-    init(viewModel: ChallengePostViewModel, coordinator: MainCoordinator) {
+    private let coordinator: ChallengeCoordinatorProtocol
+
+    init(viewModel: ChallengePostViewModel, coordinator: ChallengeCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -136,7 +136,7 @@ struct ChallengePostView: View {
         .onChange(of: viewModel.isSuccess) { isSuccess in
             // 저장완료시 화면 나가기
             if isSuccess {
-                coordinator.pop()
+                coordinator.close()
             }
         }
     }
@@ -309,8 +309,8 @@ struct ChallengePostView: View {
     }
     
 }
-
-#Preview {
-    let di = MockMainDIContainer()
-    di.makeChallengePostView(challengeId: 1, coordinator: di.makeMainCoordinator())
-}
+//
+//#Preview {
+//    let di = MockMainDIContainer()
+//    di.makeChallengePostView(challengeId: 1, coordinator: di.makeAppCoordinator())
+//}

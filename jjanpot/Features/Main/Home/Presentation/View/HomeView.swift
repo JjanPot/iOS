@@ -10,9 +10,9 @@ import SwiftUI
 struct HomeView: View {
     @ObservedObject private var authManager = AuthManager.shared
     @StateObject var viewModel: HomeViewModel
-    @ObservedObject var coordinator: MainCoordinator
+    private let coordinator: MainNavigationCoordinatorProtocol
 
-    init(viewModel: HomeViewModel, coordinator: MainCoordinator) {
+    init(viewModel: HomeViewModel, coordinator: MainNavigationCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -68,7 +68,7 @@ struct HomeView: View {
         }
         .onChange(of: viewModel.showReportPopup) { showReportPopup in
             if showReportPopup, let id = viewModel.completeChallengeId {
-                coordinator.activePopup = .reportPopup(challengeId: id)
+                coordinator.showChallengeReportPopup(challengeId: id)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .shouldRefreshMain), perform: { _ in
@@ -100,34 +100,35 @@ struct HomeView: View {
         switch action {
         case .createChallenge:
             guard authManager.isLoggedIn else {
-                coordinator.activePopup = .login
+                coordinator.showLoginPopup()
                 return
             }
-            
-            coordinator.push(.createChallenge)
+
+            coordinator.navigateToCreateChallenge()
         case let .detail(id):
-            coordinator.push(.challengeDetail(id: id))
+            coordinator.navigateToChallengeDetail(id: id)
 
         case .inputInviteCode: // 초대코드 입력
             guard authManager.isLoggedIn else {
-                coordinator.activePopup = .login
+                coordinator.showLoginPopup()
                 return
             }
-            
-            coordinator.activePopup = .inviteCode_Input
+
+            coordinator.showInviteCodeInputPopup()
 
         case let .copyInviteCode(code):
             guard let code else { return }
-            coordinator.activePopup = .inviteCode_Copy(inviteCode: code)
+            coordinator.showInviteCodeCopyPopup(inviteCode: code)
 
         case let .submitSavingsProof(id):
-            coordinator.push(.challengePost(id: id))
+            coordinator.navigateToChallengePost(id: id)
         }
     }
 }
 
 #Preview {
     let container = MockMainDIContainer()
-    let coordinator = container.makeMainCoordinator()
-    return container.makeHomeView(coordinator: coordinator)
+    let appCoordinator = AppCoordinator(container: container)
+    let mainCoordinator = MainCoordinator(appCoordinator: appCoordinator)
+    return container.makeHomeView(coordinator: mainCoordinator)
 }

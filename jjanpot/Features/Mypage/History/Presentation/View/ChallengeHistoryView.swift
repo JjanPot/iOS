@@ -9,11 +9,11 @@ import SwiftUI
 
 
 struct ChallengeHistoryView: View {
-    
+
     @StateObject var viewModel: ChallengeHistoryViewModel
-    private let coordinator: MainCoordinator
-    
-    init(viewModel: ChallengeHistoryViewModel, coordinator: MainCoordinator) {
+    private let coordinator: MyPageCoordinatorProtocol
+
+    init(viewModel: ChallengeHistoryViewModel, coordinator: MyPageCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -50,7 +50,7 @@ struct ChallengeHistoryView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         ForEach(viewModel.viewDatas) { viewData in
                             Button {
-                                coordinator.push(.challengeReport(id: viewData.id))
+                                coordinator.showChallengeReport(id: viewData.id)
                             } label: {
                                 ChallengeHistoryCardView(
                                     viewData: viewData

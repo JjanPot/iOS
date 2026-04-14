@@ -17,13 +17,13 @@ struct SettingsView: View {
     
     @ObservedObject private var authManager = AuthManager.shared
     @StateObject var viewModel: SettingsViewModel
-    private let coordinator: MainCoordinator
-    
+    private let coordinator: MyPageCoordinatorProtocol
+
     @State var webDestination: WebDestination?
     @State var isShowLogoutPopup: Bool = false
     @State var isShowSignoutPopup: Bool = false
-    
-    init(viewModel: SettingsViewModel, coordinator: MainCoordinator) {
+
+    init(viewModel: SettingsViewModel, coordinator: MyPageCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -35,7 +35,7 @@ struct SettingsView: View {
                 if authManager.isLoggedIn {
                     MenuSection("앱 설정") {
                         MenuButton("알림 설정") {
-                            coordinator.push(.alarmSettings)
+                            coordinator.showAlarmSettings()
                         }
                     }
                 }
@@ -125,7 +125,7 @@ struct SettingsView: View {
     }
 }
 
-#Preview {
-    let di = MockMainDIContainer()
-    di.makeSettingsView(coordinator: di.makeMainCoordinator())
-}
+//#Preview {
+//    let di = MockMainDIContainer()
+//    di.makeSettingsView(coordinator: di.makeAppCoordinator())
+//}

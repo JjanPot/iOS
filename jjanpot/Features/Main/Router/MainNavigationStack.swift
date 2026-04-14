@@ -10,156 +10,173 @@ import SwiftUI
 /// 메인 플로우의 독립적인 NavigationStack
 /// App 레벨에서 분기되어 메인 관련 화면들을 관리합니다.
 struct MainNavigationStack: View {
-    @StateObject private var coordinator: MainCoordinator
+    @ObservedObject private var appCoordinator: AppCoordinator
+
+    private let mainCoordinator: MainNavigationCoordinatorProtocol
+    private let challengeCoordinator: ChallengeCoordinatorProtocol
+    private let myPageCoordinator: MyPageCoordinatorProtocol
 
     private let container: MainDIContainerProtocol
 
-    init(container: MainDIContainerProtocol) {
+    init(container: MainDIContainerProtocol, appCoordinator: AppCoordinator) {
         self.container = container
-        self._coordinator = StateObject(wrappedValue: container.makeMainCoordinator())
+        self.appCoordinator = appCoordinator
+        self.mainCoordinator = MainCoordinator(appCoordinator: appCoordinator)
+        self.challengeCoordinator = container.makeChallengeCoordinator(appCoordinator: appCoordinator)
+        self.myPageCoordinator = MyPageCoordinator(appCoordinator: appCoordinator)
     }
 
     var body: some View {
-        NavigationStack(path: $coordinator.path) {
+        NavigationStack(path: $appCoordinator.path) {
 
             // 메인 탭 화면
             MainTabView(
-                homeView: AnyView(container.makeHomeView(coordinator: coordinator)),
-                challengeView: AnyView(container.makeChallengeDashboardView(coordinator: coordinator)),
-                myPotView: AnyView(container.makeMyPotView(coordinator: coordinator))
+                homeView: AnyView(container.makeHomeView(coordinator: mainCoordinator)),
+                challengeView: AnyView(container.makeChallengeDashboardView(coordinator: challengeCoordinator)),
+                myPotView: AnyView(container.makeMyPotView(coordinator: myPageCoordinator))
             )
+            // MARK: navigationDestination
             .navigationDestination(for: MainDestination.self) { destination in
                 destinationView(for: destination)
             }
+            // MARK: popup
             .popup(isPresented: Binding(
-                get: { coordinator.activePopup != nil },
-                set: { if !$0 { coordinator.activePopup = nil } }
+                get: { appCoordinator.activePopup != nil },
+                set: { if !$0 { appCoordinator.closePopup()} }
             )) {
                 popupContentView
             }
+            // MARK: sheet
             .sheet(isPresented: Binding(get: {
-                coordinator.activeSheet != nil
+                appCoordinator.activeSheet != nil
             }, set: {
-                if !$0 { coordinator.activeSheet = nil}
+                if !$0 {
+                    appCoordinator.closeSheet()
+                }
             }), onDismiss: {
-                
+
             }, content: {
                 sheetContentView
-                    .presentationDetents(coordinator.activeSheet?.presentationDetents ?? [.medium])
-                    .presentationDragIndicator(coordinator.activeSheet?.presentationDragIndicator ?? .automatic)
+                    .presentationDetents(appCoordinator.activeSheet?.presentationDetents ?? [.medium])
+                    .presentationDragIndicator(appCoordinator.activeSheet?.presentationDragIndicator ?? .automatic)
             })
-            .fullScreenCover(isPresented: Binding(get: { coordinator.webViewUrl != nil},
-                                                  set: { if !$0 { coordinator.webViewUrl = nil }
-                
+            // MARK: fullScreenCover
+            .fullScreenCover(isPresented: Binding(get: { appCoordinator.webViewUrl != nil},
+                                                  set: { if !$0 { appCoordinator.webViewUrl = nil }
+
             })) {
-                if let url = coordinator.webViewUrl {
+                if let url = appCoordinator.webViewUrl {
                     container.makeWebView(url: url, onDismiss: {
-                        coordinator.webViewUrl = nil
+                        appCoordinator.webViewUrl = nil
                     })
                 }
             }
         }
     }
+    
+    // MARK: - destinationView
 
     @ViewBuilder
     private func destinationView(for destination: MainDestination) -> some View {
         switch destination {
             // 챌린지 생성
         case .createChallenge:
-            container.makeCreateChallengeView(coordinator: coordinator)
+            container.makeCreateChallengeView(coordinator: challengeCoordinator)
 
             // 상세보기
         case let .challengeDetail(id):
-            container.makeChallengeDetailView(challengeId: id, coordinator: coordinator)
-            
+            container.makeChallengeDetailView(challengeId: id, coordinator: challengeCoordinator)
+
             // 인증하기
         case let .challengePost(id):
-            container.makeChallengePostView(challengeId: id, coordinator: coordinator)
-            
+            container.makeChallengePostView(challengeId: id, coordinator: challengeCoordinator)
+
             // 설정화면
         case .settings:
-            container.makeSettingsView(coordinator: coordinator)
-            
+            container.makeSettingsView(coordinator: myPageCoordinator)
+
             // 알람 설정
         case .alarmSettings:
             container.makeAlarmSettingsView()
-            
+
             // 챌린지 결과 화면
         case let .challengeReport(id):
-            container.makeChallengeReportView(challengeId: id, coordinator: coordinator)
-            
+            container.makeChallengeReportView(challengeId: id, coordinator: challengeCoordinator)
+
         case .challengeHistory:
-            container.makeChallengeHistoryView(coordinator: coordinator)
-            
+            container.makeChallengeHistoryView(coordinator: myPageCoordinator)
+
             // 챌린지 인증 수정
         case let .challengeEditFeed(entity):
-            container.makemakeChallengeEditView(feedEntity: entity, coordinator: coordinator)
+            container.makemakeChallengeEditView(feedEntity: entity, coordinator: challengeCoordinator)
         }
     }
     
+    // MARK: - popupContentView
+    
     @ViewBuilder
     private var popupContentView: some View {
-        switch coordinator.activePopup {
+        switch appCoordinator.activePopup {
         case .inviteCode_Input: // 초대코드 팝업
             container.makeInviteCodePopupView(inviteCode: nil, onCloseAction: {
-                coordinator.activePopup = nil
+                appCoordinator.closePopup()
             })
 
         case let .inviteCode_Copy(inviteCode):
             container.makeInviteCodePopupView(inviteCode: inviteCode, onCloseAction: {
-                coordinator.activePopup = nil
+                appCoordinator.closePopup()
             })
 
         case let .reportPopup(challengeId):
             container.makeReportPopupView(challengeId: challengeId) {
-                coordinator.activePopup = nil
-                coordinator.push(.challengeReport(id: challengeId))
+                appCoordinator.closePopup()
+                appCoordinator.push(.challengeReport(id: challengeId))
             } closeAction: {
-                coordinator.activePopup = nil
+                appCoordinator.closePopup()
             }
 
         case let .modal(modal):
             modal
-            
+
         case .login:
             Modal(
                 title: "로그인이 필요해요",
                 content: "챌린지 생성 및 참여는 로그인 후 이용하실 수 있어요."
             ).buttons {
                 ModalButton(title: "닫기", colorType: .secondary) {
-                    coordinator.activePopup = nil
+                    appCoordinator.closePopup()
                 }
                 ModalButton(title: "로그인하기", size: .large) {
-                    coordinator.activePopup = nil
+                    appCoordinator.closePopup()
                     // TODO: [임시] 로그아웃 (로그인 NavigationStack으로 전환)
                     NotificationCenter.default.post(name: NSNotification.Name("userDidLogout"), object: nil)
                 }
             }
-            
+
 
         case let .reportFeedReason(feedId, confirmAction):
             container.makeReportReasonSelectorPopupView(
                 reason: ReportFeedReason.inappropriateBehavior,
                 reportType: .feed(feedId: feedId),
-                
+
                 confirmAction: {
                     confirmAction?()
-                    coordinator.activePopup = nil
+                    appCoordinator.closePopup()
                 },
                 closeAction: {
-                    coordinator.activePopup = nil
+                    appCoordinator.closePopup()
                 })
-            
+
         case let .reportUserReason(userId, challengeId, confirmAction):
             container.makeReportReasonSelectorPopupView(
                 reason: ReportUserReason.inappropriateBehavior,
                 reportType: .user(userId: userId, challengeId: challengeId),
                 confirmAction: {
                     confirmAction?()
-                    coordinator.activePopup = nil
+                    appCoordinator.closePopup()
                 },
                 closeAction: {
-                    coordinator.activePopup = nil
+                    appCoordinator.closePopup()
                 })
 
         case .none:
@@ -167,16 +184,19 @@ struct MainNavigationStack: View {
         }
     }
     
+    // MARK: - sheetContentView
+
     @ViewBuilder
     private var sheetContentView: some View {
-        
-        switch coordinator.activeSheet {
+
+        switch appCoordinator.activeSheet {
         case let .reportUser(reportUser, blockUser):
             container.makeReportUserSheet(onReportUser: reportUser, onBlockUser: blockUser, onCloseAction: {
-                coordinator.activeSheet = nil
+                appCoordinator.closeSheet()
+                
             })
                 .background(Color.white)
-                
+
         case .none:
             EmptyView()
         }
@@ -186,5 +206,7 @@ struct MainNavigationStack: View {
 }
 
 #Preview {
-    MainNavigationStack(container: MockMainDIContainer())
+    let container = MockMainDIContainer()
+    let appCoordinator = AppCoordinator(container: container)
+    return MainNavigationStack(container: container, appCoordinator: appCoordinator)
 }

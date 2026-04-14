@@ -2,166 +2,84 @@
 //  MainCoordinator.swift
 //  jjanpot
 //
-//  Created by 임주희 on 3/25/26.
+//  Created by 임주희 on 4/14/26.
 //
 
 import SwiftUI
-import Combine
 
-enum MainDestination: Route {
-    case createChallenge
-    case challengeDetail(id: Int)
-    case challengePost(id: Int)
-    // MyPage destinations
-    case settings
-    case alarmSettings
-    case challengeReport(id: Int)
-    case challengeHistory
-    case challengeEditFeed(entity: FeedEntity)
+final class MainCoordinator: MainNavigationCoordinatorProtocol {
+    private let appCoordinator: AppCoordinator
 
-    var id: String {
-        switch self {
-        case .createChallenge:
-            return "createChallenge"
-        case .challengeDetail:
-            return "challengeDetail"
-        case .challengePost:
-            return "challengePost"
-        case .settings:
-            return "settings"
-        case .alarmSettings:
-            return "alarmSettings"
-        case .challengeReport:
-            return "challengeReport"
-        case .challengeHistory:
-            return "challengeHistory"
-        case .challengeEditFeed:
-            return "challengeEditFeed"
-        }
+    init(appCoordinator: AppCoordinator) {
+        self.appCoordinator = appCoordinator
     }
 
-    var analyticsName: String {
-        switch self {
-        case .createChallenge:
-            return "main_create_challenge"
-        case .challengeDetail:
-            return "challenge_detail"
-        case .challengePost:
-            return "challengePost"
-        case .settings:
-            return "settings"
-        case .alarmSettings:
-            return "alarm_settings"
-        case .challengeReport:
-            return "challenge_report"
-        case .challengeHistory:
-            return "challengeHistory"
-        case .challengeEditFeed:
-            return "challengeEditFeed"
-        }
+    func navigateToCreateChallenge() {
+        appCoordinator.push(.createChallenge)
     }
 
-    var hidesTabBar: Bool {
-        switch self {
-        case .createChallenge:
-            return true
-        case .challengeDetail, .challengePost, .settings, .alarmSettings, .challengeReport,
-                .challengeHistory, .challengeEditFeed:
-            return true
-        }
-    }
-}
-enum MainPopupDestination {
-    case login
-    case inviteCode_Input
-    case inviteCode_Copy(inviteCode: String)
-
-    /// 챌린지 결과있음 팝업
-    case reportPopup(challengeId: Int)
-
-    /// 게시물 신고
-    case reportFeedReason(feedId: Int, confirmAction: (()->Void)?)
-    
-    /// 유저 신고
-    case reportUserReason(userId: Int, challengeId: Int, confirmAction: (()->Void)?)
-
-    case modal(modal: AnyView)
-}
-enum MainSheetDestination {
-    case reportUser(onReportUser: (()->Void)?, onBlockUser: (()->Void)?)
-    
-    
-    // sheet 크기 조절
-    var presentationDetents: Set<PresentationDetent> {
-        switch self {
-        case .reportUser: [.height(200)]
-        }
-    }
-    
-    // 손잡이 여부
-    var presentationDragIndicator: Visibility {
-        switch self {
-        case .reportUser: .hidden
-        }
-    }
-}
-
-@MainActor
-final class MainCoordinator: ObservableObject {
-    private let container: MainDIContainerProtocol
-    @Published var path = NavigationPath()
-    @Published var activePopup: MainPopupDestination?
-    @Published var activeSheet: MainSheetDestination?
-    @Published var webViewUrl: String?
-
-    init(container: MainDIContainerProtocol) {
-        self.container = container
+    func navigateToChallengeDetail(id: Int) {
+        appCoordinator.push(.challengeDetail(id: id))
     }
 
-    // MARK: - Navigation Methods
-
-
-    /// 특정 화면으로 이동
-    func push(_ destination: MainDestination) {
-        path.append(destination)
+    func navigateToChallengePost(id: Int) {
+        appCoordinator.push(.challengePost(id: id))
     }
 
-    /// 이전 화면으로 돌아가기
-    func pop() {
-        guard !path.isEmpty else { return }
-        path.removeLast()
+    func navigateToChallengeReport(id: Int) {
+        appCoordinator.push(.challengeReport(id: id))
     }
 
-    /// 특정 개수만큼 뒤로 가기
-    func pop(count: Int) {
-        guard path.count >= count else { return }
-        path.removeLast(count)
+    func navigateToChallengeEditFeed(entity: FeedEntity) {
+        appCoordinator.push(.challengeEditFeed(entity: entity))
     }
 
-    /// 네비게이션 스택 초기화 (루트로 이동)
-    func popToRoot() {
-        path = NavigationPath()
+    func navigateToSettings() {
+        appCoordinator.push(.settings)
     }
 
-    // MARK: - Popup Methods
+    func navigateToAlarmSettings() {
+        appCoordinator.push(.alarmSettings)
+    }
 
-    /// 모달 팝업 표시
-    func showReportModal(title: String, content: String, confirmButtonTitle: String = "확인", onConfirm: @escaping () -> Void) {
-        activePopup = .modal(modal: AnyView(
-            Modal(title: title, content: content).buttons {
-                ModalButton(title: "닫기", colorType: .secondary) {
-                    self.activePopup = nil
-                }
-                ModalButton(title: confirmButtonTitle, size: .large) {
-                    onConfirm()
-                }
-            }
-        ))
+    func navigateToChallengeHistory() {
+        appCoordinator.push(.challengeHistory)
     }
-    
-    func fullScreenWebView(url: String) {
-        webViewUrl = url
+
+    func showLoginPopup() {
+        appCoordinator.showPopup(.login)
+        
     }
-    
-    
+
+    func showInviteCodeInputPopup() {
+        appCoordinator.showPopup(.inviteCode_Input)
+    }
+
+    func showInviteCodeCopyPopup(inviteCode: String) {
+        appCoordinator.showPopup(.inviteCode_Copy(inviteCode: inviteCode))
+    }
+
+    func showReportFeedPopup(feedId: Int) {
+        appCoordinator.showPopup(.reportFeedReason(feedId: feedId, confirmAction: nil))
+    }
+
+    func showReportUserPopup(userId: Int, challengeId: Int) {
+        appCoordinator.showPopup(.reportUserReason(userId: userId, challengeId: challengeId, confirmAction: nil))
+    }
+
+    func showChallengeReportPopup(challengeId: Int) {
+        appCoordinator.showPopup(.reportPopup(challengeId: challengeId))
+    }
+
+    func showReportUserSheet(onReportUser: (() -> Void)?, onBlockUser: (() -> Void)?) {
+        appCoordinator.sheet( .reportUser(onReportUser: onReportUser, onBlockUser: onBlockUser))
+    }
+
+    func openFullScreenWebView(url: String) {
+        appCoordinator.fullScreen(url: url)
+    }
+
+    func closeScreen() {
+        appCoordinator.pop()
+    }
 }

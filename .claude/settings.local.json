@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /Users/limjuhee/Developments/iOS\\ Projects/jjanpot && find:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

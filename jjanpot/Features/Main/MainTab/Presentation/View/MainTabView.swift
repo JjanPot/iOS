@@ -51,13 +51,13 @@ struct MainTabView: View {
     }
 }
 
-#Preview {
-    let container = MockMainDIContainer()
-    let coordinator = container.makeMainCoordinator()
-    
-    MainTabView(
-        homeView: AnyView(container.makeHomeView(coordinator: coordinator)),
-        challengeView: AnyView(container.makeChallengeDashboardView(coordinator: coordinator)),
-        myPotView: AnyView(container.makeMyPotView(coordinator: coordinator))
-    )
-}
+//#Preview {
+//    let container = MockMainDIContainer()
+//    let coordinator = container.makeAppCoordinator()
+//    
+//    MainTabView(
+//        homeView: AnyView(container.makeHomeView(coordinator: coordinator)),
+//        challengeView: AnyView(container.makeChallengeDashboardView(coordinator: coordinator)),
+//        myPotView: AnyView(container.makeMyPotView(coordinator: coordinator))
+//    )
+//}

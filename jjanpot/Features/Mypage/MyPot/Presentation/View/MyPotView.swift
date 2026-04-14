@@ -11,9 +11,9 @@ import Kingfisher
 struct MyPotView: View {
     @ObservedObject private var authManager = AuthManager.shared
     @StateObject var viewModel: MyPotViewModel
-    private let coordinator: MainCoordinator
-    
-    init(viewModel: MyPotViewModel, coordinator: MainCoordinator) {
+    private let coordinator: MyPageCoordinatorProtocol
+
+    init(viewModel: MyPotViewModel, coordinator: MyPageCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -22,7 +22,7 @@ struct MyPotView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 MainHeader(type: .setting) {
-                    coordinator.push(.settings)
+                    coordinator.showSettings()
                 }
                 
                 Group {
@@ -36,7 +36,7 @@ struct MyPotView: View {
                     
                     Button {
                         guard authManager.isLoggedIn else { return }
-                        coordinator.push(.challengeHistory)
+                        coordinator.showChallengeHistory()
                     } label: {
                         HStack {
                             MyChallengeStatsItemView(.totalChallenge, content: viewModel.myStatsViewData?.totalCount ?? "0")
@@ -56,7 +56,7 @@ struct MyPotView: View {
                     
                     // 문의하기
                     Button {
-                        coordinator.fullScreenWebView(url: AppConstants.URLs.contactUs)
+                        coordinator.openFullScreenWebView(url: AppConstants.URLs.contactUs)
                     } label: {
                         contactView
                     }
@@ -223,10 +223,10 @@ struct MyPotView: View {
     }
 }
 
-#Preview {
-    let di = MockMainDIContainer()
-    di.makeMyPotView(coordinator: di.makeMainCoordinator())
-}
-
-
-
+//#Preview {
+//    let di = MockMainDIContainer()
+//    di.makeMyPotView(coordinator: di.makeAppCoordinator())
+//}
+//
+//
+//
