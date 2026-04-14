@@ -29,11 +29,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             options: authOptions,
             completionHandler: { granted, error in
                 if granted {
+                    Logger.success("✅ [AppDelegate] 알림 권한 허용됨")
                     DispatchQueue.main.async {
+                        print("🔧 [AppDelegate] registerForRemoteNotifications 호출 중...")
                         UIApplication.shared.registerForRemoteNotifications()
                     }
-                } else if let error = error {
-                    print("Notification authorization error: \(error)")
+                } else {
+                    Logger.error("❌ [AppDelegate] 알림 권한 거부됨")
+                    if let error = error {
+                        print("   에러: \(error.localizedDescription)")
+                    }
                 }
             }
         )
@@ -42,13 +47,18 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        
+        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
+        let token = tokenParts.joined()
+        Logger.success("✅ [AppDelegate] APNS 토큰 받음: \(token)")
+
         // Firebase에 device token 등록
-#if DEBUG
-        Messaging.messaging().setAPNSToken(deviceToken, type: .sandbox)
-        #else
-        Messaging.messaging().setAPNSToken(deviceToken, type: .prod)
-#endif
+        Messaging.messaging().apnsToken = deviceToken
+        
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        Logger.error("❌ [AppDelegate] 원격 알림 등록 실패: \(error.localizedDescription)")
+        Logger.error("   에러 코드: \(error._code)")
     }
 }
 
@@ -80,15 +90,20 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 // MARK: - MessagingDelegate
 
 extension AppDelegate: MessagingDelegate {
-    
+
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        
+
         // FCM 토큰이 갱신됐을 때 호출되는 메서드
-        // 여기서 받은 FCM 토큰을 서버에 전달해주어야함
-        Task {
-            AuthManager.shared.updateFcm(token: fcmToken)
+        if let token = fcmToken {
+            Logger.success("✅ [AppDelegate] FCM 토큰 받음: \(token)")
+            // 여기서 받은 FCM 토큰을 서버에 전달해주어야함
+            Task {
+                AuthManager.shared.updateFcm(token: fcmToken)
+            }
+        } else {
+            Logger.error("⚠️  [AppDelegate] FCM 토큰이 nil입니다")
         }
-        
+
         let dataDict: [String: String] = ["token": fcmToken ?? ""]
         NotificationCenter.default.post(
             name: Notification.Name("FCMToken"),

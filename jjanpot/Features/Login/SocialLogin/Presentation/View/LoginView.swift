@@ -133,6 +133,9 @@ struct LoginView: View {
 
 
         }
+        .task {
+            viewModel.requestAuthorization()
+        }
         .padding(.top, 20)
         .onChange(of: viewModel.shouldNavigateToSignup) { shouldNavigate in
             if shouldNavigate {
