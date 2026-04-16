@@ -130,7 +130,6 @@ struct ChallengeDashboardView: View {
                                             )
                                             
                                         }, onBlock: {
-                                            
                                             // 사용자 차단하기 모달 띄우기
                                             showBlockModal(authorId: feed.authorId, challengeId: challengeId, authorNickname: feed.authorNickname)
                                         })
@@ -173,7 +172,10 @@ struct ChallengeDashboardView: View {
             guard let editingFeedEntity else { return }
             coordinator.showEditFeed(entity: editingFeedEntity)
         }
-        
+        // 네비게이션 후 상태 초기화
+        .onDisappear {
+            viewModel.editingFeedEntity = nil
+        }
         .popup(isPresented: $isShowReportedPopup) {
             Modal(title: "신고가 접수되었습니다.", content: "24시간 이내 운영자 검토 후 서비스 이용 제한 등의 조치가 이루어질 수 있어요.")
                 .buttons {
@@ -260,9 +262,8 @@ struct ChallengeDashboardView: View {
             })
     }
 }
-//
-//#Preview {
-//    let di = MockMainDIContainer()
-//    let appCoordinator = di.makeAppCoordinator()
-//    di.makeChallengeDashboardView(coordinator: appCoordinator)
-//}
+
+#Preview {
+    let di = MockMainDIContainer()
+    di.makeChallengeDashboardView(coordinator: di.makeChallengeCoordinator(appCoordinator: di.makeAppCoordinator()))
+}
