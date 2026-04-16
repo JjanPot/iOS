@@ -41,7 +41,8 @@ struct LoginRepository: LoginRepositoryProtocol {
         return UIDevice.current.identifierForVendor!.uuidString
     }
     
-    func getFcmToken() async throws -> String? {
+
+    func getFcmToken() async -> String? {
         if let token = AuthManager.shared.getFcmToken() {
             return token
         }

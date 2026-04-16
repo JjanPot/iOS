@@ -38,4 +38,5 @@ class LaunchScreenUseCase: LaunchScreenUseCaseProtocol {
         let user = try await repository.getUserInfo()
         await repository.updateUser(user)
     }
+
 }

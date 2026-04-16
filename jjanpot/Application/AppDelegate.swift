@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 import FirebaseCore
-import FirebaseMessaging
+@preconcurrency import FirebaseMessaging
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,

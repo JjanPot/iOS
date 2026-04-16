@@ -133,6 +133,7 @@ struct LoginView: View {
 
 
         }
+        .loading(viewModel.isLoading)
         .task {
             viewModel.requestAuthorization()
         }

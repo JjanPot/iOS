@@ -83,12 +83,19 @@ final class LoginViewModel: ObservableObject {
         clearData()
 
         do {
+            // 로딩 중에 FCM 토큰 획득 (AuthManager → Firebase API → Notification 순서)
+            if let token = await useCase.getFCMToken() {
+                Logger.success("✅ FCM 토큰 획득: \(token)")
+            } else {
+                Logger.error("⏱️ FCM 토큰 못받음 (계속 진행)")
+            }
+
             let entity = try await loginAction()
             await MainActor.run {
                 isLoading = false
                 // 로그인 성공 처리 (토큰 + 사용자 정보 저장)
                 useCase.login(entity: entity)
-                
+
                 // 신규 유저 → 회원가입 화면 (NavigationStack에 push)
                 // 기존 유저 → 메인 화면 (Root 변경)
                 if entity.isNewUser {
