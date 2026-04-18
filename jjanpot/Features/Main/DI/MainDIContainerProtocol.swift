@@ -490,7 +490,7 @@ final class MockMainDIContainer: MainDIContainerProtocol {
                 challengeId: 6,
                 title: "배달아껴팀",
                 description: "함께 절약해보야요",
-                status: "진행중",
+                status: .waiting,
                 goalAmount: 300_000,
                 minPersonalGoalAmount: 25_000,
                 startDate: Date(),
@@ -506,6 +506,15 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
     
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
+        
+        func getMembers(challengeId: Int) async throws -> [OverviewEntity.Member] {
+            return [
+                .init(userId: 1, nickname: "닉네임1", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: false),
+                .init(userId: 2, nickname: "닉네임2", profileImageURL: nil, savedAmount: 10000, isMe: true, isLeader: true, isBlocked: false),
+                .init(userId: 3, nickname: "닉네임3", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: true),
+            ]
+        }
+        
         func cancel(challengeId: Int) async throws {
             throw NetworkError.dataNil
         }
@@ -515,7 +524,7 @@ final class MockMainDIContainer: MainDIContainerProtocol {
                 challengeId: 6,
                 title: "배달아껴팀",
                 description: "함께 절약해보야요",
-                status: "진행중",
+                status: .waiting,
                 goalAmount: 300_000,
                 minPersonalGoalAmount: 25_000,
                 startDate: Date(),
@@ -589,7 +598,7 @@ struct MockChallengeReportUseCase: ChallengeReportUseCaseProtocol {
             challengeId: 6,
             title: "배달아껴팀",
             description: "함께 절약해보야요",
-            status: "진행중",
+            status: .waiting,
             goalAmount: 300_000,
             minPersonalGoalAmount: 25_000,
             startDate: Date(),

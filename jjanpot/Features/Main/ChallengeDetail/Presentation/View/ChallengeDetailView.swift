@@ -22,10 +22,14 @@ struct ChallengeDetailView: View {
             VStack(alignment: .leading, spacing: 12) {
 
                 // 챌린지 기본 정보
-                ChallengeBasicInfoView(viewData: viewModel.viewData?.basicInfo)
+                ChallengeBasicInfoView(viewData: viewModel.viewData?.basicInfo,
+                                       memberViewDatas: viewModel.memberViewDatas)
                 
                 // 챌린지 설명
                 description
+                
+                // 팀원 소개
+                members
                 
                 // 챌린지 가이드 라인
                 ChallengeGuideLine()
@@ -77,6 +81,22 @@ struct ChallengeDetailView: View {
             Text(viewModel.viewData?.description ?? "")
                 .font(.pretendard(.regular, size: 14))
                 .foregroundStyle(.black600)
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+        .rounded(radius: 12)
+    }
+    
+    // 팀원 소개
+    var members: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            
+            Text("팀원 소개")
+                .font(.pretendard(.medium, size: 16))
+                .foregroundStyle(.black900)
+            
+            SimpleMemberPagerView(members: viewModel.memberViewDatas) { _ in }
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)

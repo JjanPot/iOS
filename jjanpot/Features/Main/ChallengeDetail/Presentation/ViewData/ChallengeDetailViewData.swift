@@ -7,14 +7,28 @@
 
 
 struct ChallengeDetailViewData {
+    let status: ChallengeStatus
     let basicInfo: ChallengeBasicInfoViewData
     
     // 챌린지 설명
     let description: String
     let hasCancelButton: Bool
+    
+    
+    enum ChallengeStatus {
+        /// 없음
+        case none
+        
+        /// 대기중
+        case waiting
+        
+        /// 챌린지 진행중
+        case inProgress
+    }
 }
 
 struct ChallengeBasicInfoViewData {
+    let status: ChallengeStatus
     let teamName: String
     let goals: String
     let category: String

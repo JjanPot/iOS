@@ -36,6 +36,17 @@ final class ChallengeDetailRepository: ChallengeDetailRepositoryProtocol {
             throw error
         }
     }
+    
+    func fetchChallengeOverview(challengeId: Int) async throws -> OverviewEntity {
+        let result = await apiClient.fetchChallengeOverview(challengeId: challengeId)
+        switch result {
+        case .success(let dto):
+            return OverviewEntity(from: dto)
+            
+        case .failure(let error):
+            throw error
+        }
+    }
 }
 
 

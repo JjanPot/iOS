@@ -67,7 +67,7 @@ struct ChallengeReportView: View {
                     
                     // 팀 정보
                     if let basicInfo = viewModel.detailViewData {
-                        ChallengeBasicInfoView(viewData: basicInfo)
+                        ChallengeBasicInfoView(viewData: basicInfo, memberViewDatas: nil)
                             .padding(.horizontal, 20)
                             .padding(.bottom, 16)
                     }

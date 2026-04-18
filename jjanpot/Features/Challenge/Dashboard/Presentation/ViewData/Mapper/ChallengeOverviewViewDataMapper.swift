@@ -14,7 +14,7 @@ struct ChallengeOverviewViewDataMapper {
 
         let date = entity.startDate.toString(format: "M월d일", locale: .kr)
         let segments = segments(from: entity.members, totalSavedAmount: entity.goalAmount)
-        let members = members(from: entity.members)
+        let members = MemberCardViewDataMapper().map(from: entity.members)
 
         return ChallengeOverviewViewData(
             title: entity.title,
@@ -47,8 +47,11 @@ struct ChallengeOverviewViewDataMapper {
             )
         }
     }
-    
-    private func members(from members: [OverviewEntity.Member]) -> [MemberCardViewData] {
+}
+
+
+struct MemberCardViewDataMapper {
+    func map(from members: [OverviewEntity.Member]) -> [MemberCardViewData] {
         members.enumerated().map { index, member in
             MemberCardViewData(
                 userId: member.userId,
@@ -63,5 +66,3 @@ struct ChallengeOverviewViewDataMapper {
         }
     }
 }
-
-

@@ -13,6 +13,7 @@ final class ChallengeDetailViewModel: ObservableObject {
     private let challengeId: Int
     
     @Published var viewData: ChallengeDetailViewData?
+    @Published var memberViewDatas: [MemberCardViewData] = []
     @Published var isLoading = false
     @Published var toastMessage: String?
     
@@ -36,6 +37,10 @@ final class ChallengeDetailViewModel: ObservableObject {
                 // Entity → ViewData 변환
                 viewData = ChallengeDetailViewDataMapper().map(from: entity)
                 
+                let memberEntitis = try await useCase.getMembers(challengeId: challengeId)
+                memberViewDatas = MemberCardViewDataMapper().map(from: memberEntitis)
+                
+                
             } catch {
                 Logger.error("상세정보 불러오기 실패: \(error.localizedDescription)")
                 toastMessage = "상세정보 불러오기 실패"
@@ -44,6 +49,10 @@ final class ChallengeDetailViewModel: ObservableObject {
         }
     }
     
+    
+    
+    
+    /// 챌린지 취소하기 (대기중에만 취소가능)
     @MainActor
     func cancel(){
         isCancelled = false

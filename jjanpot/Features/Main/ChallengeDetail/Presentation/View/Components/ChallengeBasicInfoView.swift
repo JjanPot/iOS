@@ -10,6 +10,7 @@ import SwiftUI
 // 기본 정보
 struct ChallengeBasicInfoView: View {
     let viewData: ChallengeBasicInfoViewData?
+    let memberViewDatas: [MemberCardViewData]?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -29,7 +30,14 @@ struct ChallengeBasicInfoView: View {
                 detailView(title: "개인금액", content: viewData?.personTargetAmound ?? "")
                 detailView(title: "팀 유형", content: viewData?.relationshipType ?? "")
                 detailView(title: "기간", content: viewData?.during ?? "")
-                detailView(title: "팀 인원", content: viewData?.memberCount ?? "")
+                
+                if viewData?.status == .inProgress {
+                    detailView(title: "팀 인원", content: viewData?.memberCount ?? "")
+                } else if viewData?.status == .waiting {
+                    waitingMember
+                    
+                }
+                
             }
         }
         .padding(20)
@@ -50,10 +58,35 @@ struct ChallengeBasicInfoView: View {
                 .foregroundStyle(Color.black900)
         }
     }
+    
+    // 대기중인 챌린지일때, 참가자
+    private var waitingMember: some View {
+        HStack(alignment: .center, spacing: 8){
+            Text("참가자")
+                .font(.pretendard(.medium, size: 14))
+                .foregroundStyle(Color.black500)
+                .frame(width: 55, alignment: .leading)
+            
+            HStack(alignment: .center, spacing: .zero) {
+                Text("\(memberViewDatas?.count ?? 0)명 대기중 ")
+                    .font(.pretendard(.medium, size: 14))
+                    .foregroundStyle(Color.black900)
+                
+                Text("\(memberViewDatas?.count ?? 0)")
+                    .font(.pretendard(.medium, size: 14))
+                    .foregroundStyle(Color.orange600)
+                
+                Text("/\(viewData?.memberCount ?? "")")
+                    .font(.pretendard(.medium, size: 14))
+                    .foregroundStyle(Color.black900)
+            }
+        }
+    }
 }
 
 #Preview {
     ChallengeBasicInfoView(viewData: ChallengeBasicInfoViewData(
+        status: .inProgress,
         teamName: "배달을 아껴요",
         goals: "30만원 목표로 1주 함께 절약하기",
         category: "외식/배달",
@@ -62,5 +95,10 @@ struct ChallengeBasicInfoView: View {
         relationshipType: "친구",
         during: "26.07.15 - 16.07.21(1주)",
         memberCount: "5명"
-    ))
+    ), memberViewDatas: [
+        .init(userId: 0, nickname: "닉네임0", imageUrl: "", color: .red, amount: 10000, isMe:  true, isLeader: true, isBlocked: false),
+        .init(userId: 0, nickname: "닉네임2닉에임", imageUrl: "", color: .black, amount: 12000, isMe:  false, isLeader: false, isBlocked: false),
+        .init(userId: 0, nickname: "닉네임3", imageUrl: "", color: .blue, amount: 13000, isMe:  false, isLeader: false, isBlocked: false),
+        .init(userId: 0, nickname: "닉네임4", imageUrl: "", color: .green, amount: 14000, isMe:  false, isLeader: false, isBlocked: false),
+             ])
 }

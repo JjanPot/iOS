@@ -14,7 +14,9 @@ struct ChallengeDetailViewDataMapper {
         let during = "\(entity.startDate.toString(.dateOnly2)) - \(entity.endDate.toString(.dateOnly2)) (1주)"
         
         return ChallengeDetailViewData(
+            status: status(from: entity.status),
             basicInfo: ChallengeBasicInfoViewData(
+                status: entity.status,
                 teamName: entity.title,
                 goals: "\(targetAmount) 목표로 1주동안 함께 절약하기",
                 category: categories(entity.categories),
@@ -25,9 +27,16 @@ struct ChallengeDetailViewDataMapper {
                 memberCount: "\(entity.team.maxMemberCount)명"
             ),
             description: entity.description,
-            hasCancelButton: (entity.isLeader && entity.status.contains("대기중"))
+            hasCancelButton: (entity.isLeader && entity.status == .waiting)
         )
-    }     
+    }
+    private func status(from status: ChallengeStatus) -> ChallengeDetailViewData.ChallengeStatus {
+        switch status {
+        case .inProgress: return .inProgress
+        case .waiting: return .waiting
+        default: return .none
+        }
+    }
     
     private func categories(_ categories: [CategoryEntity]) -> String {
         let result = stride(from: 0, to: categories.count, by: 2)
