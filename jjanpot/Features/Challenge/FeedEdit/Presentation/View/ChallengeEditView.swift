@@ -1,5 +1,5 @@
 //
-//  ChallengeEditView.swift
+//  FeedEditView.swift
 //  jjanpot
 //
 //  Created by 임주희 on 4/14/26.
@@ -12,10 +12,10 @@ import Kingfisher
 
 
 /// 인증 수정 뷰
-struct ChallengeEditView: View {
-    @StateObject var viewModel: ChallengeEditViewModel
+struct FeedEditView: View {
+    @StateObject var viewModel: FeedEditViewModel
     private let coordinator: ChallengeCoordinatorProtocol
-    init(viewModel: ChallengeEditViewModel, coordinator: ChallengeCoordinatorProtocol) {
+    init(viewModel: FeedEditViewModel, coordinator: ChallengeCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -328,7 +328,7 @@ struct ChallengeEditView: View {
 #Preview {
     let di = MockMainDIContainer()
     let coordinator = di.makeChallengeCoordinator(appCoordinator: di.makeAppCoordinator())
-    return MockMainDIContainer().makeChallengeEditView(
+    return MockMainDIContainer().makeFeedEditView(
         challengeId: 1,
         feedEntity: FeedEntity(
             certificationId: 126,

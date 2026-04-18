@@ -1,5 +1,5 @@
 //
-//  ChallengeEditRepository.swift
+//  FeedEditRepository.swift
 //  jjanpot
 //
 //  Created by 임주희 on 4/18/26.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ChallengeEditRepository: ChallengeEditRepositoryProtocol {
+struct FeedEditRepository: FeedEditRepositoryProtocol {
     private let apiClient: ChallengeApiClientProtocol
 
     init(challengeApiClient: ChallengeApiClientProtocol) {

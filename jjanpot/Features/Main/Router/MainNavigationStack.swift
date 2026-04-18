@@ -107,8 +107,8 @@ struct MainNavigationStack: View {
             container.makeChallengeHistoryView(coordinator: myPageCoordinator)
 
             // 챌린지 인증 수정
-        case let .challengeEditFeed(challengeId, entity):
-            container.makeChallengeEditView(challengeId: challengeId, feedEntity: entity, coordinator: challengeCoordinator)
+        case let .FeedEditFeed(challengeId, entity):
+            container.makeFeedEditView(challengeId: challengeId, feedEntity: entity, coordinator: challengeCoordinator)
         }
     }
     

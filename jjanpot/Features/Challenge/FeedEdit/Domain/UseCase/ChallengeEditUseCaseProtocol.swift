@@ -1,5 +1,5 @@
 //
-//  ChallengeEditUseCaseProtocol.swift
+//  FeedEditUseCaseProtocol.swift
 //  jjanpot
 //
 //  Created by 임주희 on 4/18/26.
@@ -7,13 +7,13 @@
 
 import Foundation
 
-protocol ChallengeEditUseCaseProtocol {
+protocol FeedEditUseCaseProtocol {
     func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity
     func updateFeed(feedId: Int, entity: ChallengePostRequestEntity, imageData: Data?) async throws
 }
-struct ChallengeEditUseCase: ChallengeEditUseCaseProtocol {
-    private let repository: ChallengeEditRepositoryProtocol
-    init(repository: ChallengeEditRepositoryProtocol) {
+struct FeedEditUseCase: FeedEditUseCaseProtocol {
+    private let repository: FeedEditRepositoryProtocol
+    init(repository: FeedEditRepositoryProtocol) {
         self.repository = repository
     }
     

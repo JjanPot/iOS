@@ -33,7 +33,7 @@ final class ChallengeCoordinator: ChallengeCoordinatorProtocol {
     }
 
     func showEditFeed(challengeId: Int, entity: FeedEntity) {
-        appCoordinator.push(.challengeEditFeed(challengeId: challengeId, entity: entity))
+        appCoordinator.push(.FeedEditFeed(challengeId: challengeId, entity: entity))
     }
     
     

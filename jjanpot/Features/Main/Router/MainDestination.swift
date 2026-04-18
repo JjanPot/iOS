@@ -17,7 +17,7 @@ enum MainDestination: Route {
     case alarmSettings
     case challengeReport(id: Int)
     case challengeHistory
-    case challengeEditFeed(challengeId: Int, entity: FeedEntity)
+    case FeedEditFeed(challengeId: Int, entity: FeedEntity)
 
     var id: String {
         switch self {
@@ -35,8 +35,8 @@ enum MainDestination: Route {
             return "challengeReport"
         case .challengeHistory:
             return "challengeHistory"
-        case .challengeEditFeed:
-            return "challengeEditFeed"
+        case .FeedEditFeed:
+            return "FeedEditFeed"
         }
     }
 
@@ -56,8 +56,8 @@ enum MainDestination: Route {
             return "challenge_report"
         case .challengeHistory:
             return "challengeHistory"
-        case .challengeEditFeed:
-            return "challengeEditFeed"
+        case .FeedEditFeed:
+            return "FeedEditFeed"
         }
     }
 
@@ -66,7 +66,7 @@ enum MainDestination: Route {
         case .createChallenge:
             return true
         case .challengeDetail, .challengePost, .settings, .alarmSettings, .challengeReport,
-                .challengeHistory, .challengeEditFeed:
+                .challengeHistory, .FeedEditFeed:
             return true
         }
     }

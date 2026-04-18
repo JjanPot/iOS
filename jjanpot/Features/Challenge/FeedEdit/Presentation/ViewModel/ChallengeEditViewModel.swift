@@ -1,5 +1,5 @@
 //
-//  ChallengeEditViewModel.swift
+//  FeedEditViewModel.swift
 //  jjanpot
 //
 //  Created by 임주희 on 4/16/26.
@@ -10,19 +10,17 @@ import SwiftUI
 import Combine
 
 
-final class ChallengeEditViewModel: ObservableObject {
+final class FeedEditViewModel: ObservableObject {
     
     private let challengeId: Int
     private let originFeedEntity: FeedEntity
-    private let useCase: ChallengeEditUseCaseProtocol
+    private let useCase: FeedEditUseCaseProtocol
     
     @Published var selectedTab: ChallengePostTab
     @Published var selectedCategory: CategorySelectorViewData? = nil
     @Published var categoryViewData: [CategorySelectorViewData] = []
     
-    
-    //----
-    
+    //
     
     @Published var price: String = ""
     
@@ -39,7 +37,7 @@ final class ChallengeEditViewModel: ObservableObject {
     @Published var toastMessage: String?
     
     
-    init(challengeId:Int, feedEntity: FeedEntity, useCase: ChallengeEditUseCaseProtocol){
+    init(challengeId:Int, feedEntity: FeedEntity, useCase: FeedEditUseCaseProtocol){
         self.useCase = useCase
         self.challengeId = challengeId
         self.originFeedEntity = feedEntity
