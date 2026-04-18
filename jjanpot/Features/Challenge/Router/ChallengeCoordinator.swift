@@ -21,7 +21,7 @@ final class ChallengeCoordinator: ChallengeCoordinatorProtocol {
     }
 
     func showPost(id: Int) {
-        appCoordinator.push(.challengePost(id: id))
+        appCoordinator.push(.FeedPost(id: id))
     }
 
     func showCreate() {

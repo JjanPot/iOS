@@ -11,7 +11,7 @@ import SwiftUI
 enum MainDestination: Route {
     case createChallenge
     case challengeDetail(id: Int)
-    case challengePost(id: Int)
+    case FeedPost(id: Int)
     // MyPage destinations
     case settings
     case alarmSettings
@@ -25,8 +25,8 @@ enum MainDestination: Route {
             return "createChallenge"
         case .challengeDetail:
             return "challengeDetail"
-        case .challengePost:
-            return "challengePost"
+        case .FeedPost:
+            return "FeedPost"
         case .settings:
             return "settings"
         case .alarmSettings:
@@ -46,8 +46,8 @@ enum MainDestination: Route {
             return "main_create_challenge"
         case .challengeDetail:
             return "challenge_detail"
-        case .challengePost:
-            return "challengePost"
+        case .FeedPost:
+            return "FeedPost"
         case .settings:
             return "settings"
         case .alarmSettings:
@@ -65,7 +65,7 @@ enum MainDestination: Route {
         switch self {
         case .createChallenge:
             return true
-        case .challengeDetail, .challengePost, .settings, .alarmSettings, .challengeReport,
+        case .challengeDetail, .FeedPost, .settings, .alarmSettings, .challengeReport,
                 .challengeHistory, .FeedEditFeed:
             return true
         }

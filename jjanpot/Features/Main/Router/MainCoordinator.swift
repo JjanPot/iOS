@@ -22,8 +22,8 @@ final class MainCoordinator: MainNavigationCoordinatorProtocol {
         appCoordinator.push(.challengeDetail(id: id))
     }
 
-    func navigateToChallengePost(id: Int) {
-        appCoordinator.push(.challengePost(id: id))
+    func navigateToFeedPost(id: Int) {
+        appCoordinator.push(.FeedPost(id: id))
     }
 
     func navigateToChallengeReport(id: Int) {

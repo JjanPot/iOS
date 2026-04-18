@@ -88,8 +88,8 @@ struct MainNavigationStack: View {
             container.makeChallengeDetailView(challengeId: id, coordinator: challengeCoordinator)
 
             // 인증하기
-        case let .challengePost(id):
-            container.makeChallengePostView(challengeId: id, coordinator: challengeCoordinator)
+        case let .FeedPost(id):
+            container.makeFeedPostView(challengeId: id, coordinator: challengeCoordinator)
 
             // 설정화면
         case .settings:

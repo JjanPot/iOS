@@ -10,7 +10,7 @@ import SwiftUI
 
 struct SegmentedToggleView: View {
     
-    @Binding var selectedTab: ChallengePostTab
+    @Binding var selectedTab: FeedPostTab
     @Namespace private var animation
     
     var body: some View {
@@ -25,7 +25,7 @@ struct SegmentedToggleView: View {
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: selectedTab)
     }
     
-    private func tabButton(title: String, tab: ChallengePostTab) -> some View {
+    private func tabButton(title: String, tab: FeedPostTab) -> some View {
         Button {
             selectedTab = tab
         } label: {

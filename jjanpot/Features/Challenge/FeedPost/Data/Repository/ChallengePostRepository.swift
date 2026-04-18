@@ -1,5 +1,5 @@
 //
-//  ChallengePostRepository.swift
+//  FeedPostRepository.swift
 //  jjanpot
 //
 //  Created by 임주희 on 4/1/26.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct ChallengePostRepository: ChallengePostRepositoryProtocol {
+struct FeedPostRepository: FeedPostRepositoryProtocol {
     private let apiClient: ChallengeApiClientProtocol
 
     init(challengeApiClient: ChallengeApiClientProtocol) {
@@ -27,8 +27,8 @@ struct ChallengePostRepository: ChallengePostRepositoryProtocol {
         }
     }
 
-    func postChallenge(entity: ChallengePostRequestEntity, imageData: Data?) async throws {
-        let dto = ChallengePostRequestDto(from: entity)
+    func postChallenge(entity: FeedPostRequestEntity, imageData: Data?) async throws {
+        let dto = FeedPostRequestDto(from: entity)
         let result = await apiClient.postChallenge(dto: dto, imageData: imageData)
 
         switch result {

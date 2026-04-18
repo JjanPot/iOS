@@ -1,5 +1,5 @@
 //
-//  ChallengePostRequestEntity.swift
+//  FeedPostRequestEntity.swift
 //  jjanpot
 //
 //  Created by 임주희 on 4/2/26.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ChallengePostRequestEntity {
+struct FeedPostRequestEntity {
     let challengeId: Int
     let spendType: String
     let categoryId: Int

@@ -9,7 +9,7 @@ import Foundation
 
 protocol FeedEditUseCaseProtocol {
     func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity
-    func updateFeed(feedId: Int, entity: ChallengePostRequestEntity, imageData: Data?) async throws
+    func updateFeed(feedId: Int, entity: FeedPostRequestEntity, imageData: Data?) async throws
 }
 struct FeedEditUseCase: FeedEditUseCaseProtocol {
     private let repository: FeedEditRepositoryProtocol
@@ -22,7 +22,7 @@ struct FeedEditUseCase: FeedEditUseCaseProtocol {
         try await repository.fetchDetail(challengeId: challengeId)
     }
     
-    func updateFeed(feedId: Int, entity: ChallengePostRequestEntity, imageData: Data?) async throws {
+    func updateFeed(feedId: Int, entity: FeedPostRequestEntity, imageData: Data?) async throws {
         try await repository.updateFeed(feedId: feedId, entity: entity, imageData: imageData)
     }
 }

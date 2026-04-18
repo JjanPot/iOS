@@ -10,5 +10,5 @@ import Foundation
 
 protocol FeedEditRepositoryProtocol {
     func fetchDetail(challengeId: Int) async throws -> ChallengeDetailEntity
-    func updateFeed(feedId: Int, entity: ChallengePostRequestEntity, imageData: Data?) async throws
+    func updateFeed(feedId: Int, entity: FeedPostRequestEntity, imageData: Data?) async throws
 }

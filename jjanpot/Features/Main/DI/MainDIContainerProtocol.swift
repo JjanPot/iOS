@@ -48,7 +48,7 @@ protocol MainDIContainerProtocol {
     func makeChallengeDashboardView(coordinator: ChallengeCoordinatorProtocol) -> ChallengeDashboardView
 
     /// 지출,무지출 인증
-    func makeChallengePostView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengePostView
+    func makeFeedPostView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> FeedPostView
 
     /// 지출, 무지출 인증 수정
     func makeFeedEditView(challengeId: Int, feedEntity: FeedEntity, coordinator: ChallengeCoordinatorProtocol) -> FeedEditView
@@ -208,21 +208,21 @@ final class MainDIContainer: MainDIContainerProtocol {
 
     // MARK: - 지출, 무지출 인증화면
 
-    private func makeChallengePostRepository() -> ChallengePostRepositoryProtocol {
-        return ChallengePostRepository(challengeApiClient: challengeApiClient)
+    private func makeFeedPostRepository() -> FeedPostRepositoryProtocol {
+        return FeedPostRepository(challengeApiClient: challengeApiClient)
     }
-    private func makeChallengePostUseCase() -> ChallengePostUseCaseProtocol {
-        let repo = makeChallengePostRepository()
-        return ChallengePostUseCase(repository: repo)
+    private func makeFeedPostUseCase() -> FeedPostUseCaseProtocol {
+        let repo = makeFeedPostRepository()
+        return FeedPostUseCase(repository: repo)
     }
-    private func makeChallengePostViewModel(challengeId: Int) -> ChallengePostViewModel {
-        let usecase = makeChallengePostUseCase()
-        return ChallengePostViewModel(challengeId: challengeId, useCase: usecase)
+    private func makeFeedPostViewModel(challengeId: Int) -> FeedPostViewModel {
+        let usecase = makeFeedPostUseCase()
+        return FeedPostViewModel(challengeId: challengeId, useCase: usecase)
     }
 
-    func makeChallengePostView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengePostView {
-        let vm = makeChallengePostViewModel(challengeId: challengeId)
-        return ChallengePostView(viewModel: vm, coordinator: coordinator)
+    func makeFeedPostView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> FeedPostView {
+        let vm = makeFeedPostViewModel(challengeId: challengeId)
+        return FeedPostView(viewModel: vm, coordinator: coordinator)
     }
 
     // MARK: - 지출, 무지출 인증 수정
@@ -406,10 +406,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
 
 
-    func makeChallengePostView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengePostView {
-        let usecase = MockChallengePostUseCase()
-        let viewModel = ChallengePostViewModel(challengeId: challengeId, useCase: usecase)
-        return ChallengePostView(viewModel: viewModel, coordinator: coordinator)
+    func makeFeedPostView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> FeedPostView {
+        let usecase = MockFeedPostUseCase()
+        let viewModel = FeedPostViewModel(challengeId: challengeId, useCase: usecase)
+        return FeedPostView(viewModel: viewModel, coordinator: coordinator)
     }
 
     func makeFeedEditView(challengeId: Int, feedEntity: FeedEntity, coordinator: ChallengeCoordinatorProtocol) -> FeedEditView {
@@ -481,7 +481,7 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     
 // MARK: - Mock UseCase
     struct MockFeedEditUseCase: FeedEditUseCaseProtocol{
-        func updateFeed(feedId: Int, entity: ChallengePostRequestEntity, imageData: Data?) async throws {
+        func updateFeed(feedId: Int, entity: FeedPostRequestEntity, imageData: Data?) async throws {
             return
         }
         
@@ -546,8 +546,8 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         }
     }
     
-    struct MockChallengePostUseCase: ChallengePostUseCaseProtocol {
-        func postChallenge(entity: ChallengePostRequestEntity, imageData: Data?) async throws {
+    struct MockFeedPostUseCase: FeedPostUseCaseProtocol {
+        func postChallenge(entity: FeedPostRequestEntity, imageData: Data?) async throws {
             throw NetworkError.dataNil
         }
         

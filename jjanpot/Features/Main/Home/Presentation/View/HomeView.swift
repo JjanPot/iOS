@@ -121,7 +121,7 @@ struct HomeView: View {
             coordinator.showInviteCodeCopyPopup(inviteCode: code)
 
         case let .submitSavingsProof(id):
-            coordinator.navigateToChallengePost(id: id)
+            coordinator.navigateToFeedPost(id: id)
         }
     }
 }

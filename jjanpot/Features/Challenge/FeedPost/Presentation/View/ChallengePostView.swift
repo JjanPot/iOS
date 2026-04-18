@@ -1,5 +1,5 @@
 //
-//  ChallengePostView.swift
+//  FeedPostView.swift
 //  jjanpot
 //
 //  Created by 임주희 on 4/1/26.
@@ -9,22 +9,22 @@ import SwiftUI
 import PhotosUI
 import Photos
 
-enum ChallengePostTab: String {
+enum FeedPostTab: String {
     case expense = "SPEND"  // 지출
     case noExpense = "NO_SPEND" // 무지출
 }
 
 
-struct ChallengePostView: View {
-    @StateObject var viewModel: ChallengePostViewModel
+struct FeedPostView: View {
+    @StateObject var viewModel: FeedPostViewModel
     private let coordinator: ChallengeCoordinatorProtocol
 
-    init(viewModel: ChallengePostViewModel, coordinator: ChallengeCoordinatorProtocol) {
+    init(viewModel: FeedPostViewModel, coordinator: ChallengeCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
     
-    @State private var selectedTab: ChallengePostTab = .expense
+    @State private var selectedTab: FeedPostTab = .expense
     
     @State private var price: String = ""
     @State private var description: String = ""
@@ -318,5 +318,5 @@ struct ChallengePostView: View {
 //
 //#Preview {
 //    let di = MockMainDIContainer()
-//    di.makeChallengePostView(challengeId: 1, coordinator: di.makeAppCoordinator())
+//    di.makeFeedPostView(challengeId: 1, coordinator: di.makeAppCoordinator())
 //}

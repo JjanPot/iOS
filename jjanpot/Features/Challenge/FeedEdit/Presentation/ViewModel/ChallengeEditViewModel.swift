@@ -16,7 +16,7 @@ final class FeedEditViewModel: ObservableObject {
     private let originFeedEntity: FeedEntity
     private let useCase: FeedEditUseCaseProtocol
     
-    @Published var selectedTab: ChallengePostTab
+    @Published var selectedTab: FeedPostTab
     @Published var selectedCategory: CategorySelectorViewData? = nil
     @Published var categoryViewData: [CategorySelectorViewData] = []
     
@@ -114,7 +114,7 @@ final class FeedEditViewModel: ObservableObject {
     }
     
      
-    private func requestEntity() -> ChallengePostRequestEntity? {
+    private func requestEntity() -> FeedPostRequestEntity? {
         
         // spendType 결정
         let spendType = selectedTab.rawValue
@@ -132,7 +132,7 @@ final class FeedEditViewModel: ObservableObject {
         
         guard let category = selectedCategory else { return nil }
         
-        return ChallengePostRequestEntity(
+        return FeedPostRequestEntity(
             challengeId: challengeId,
             spendType: spendType,
             categoryId: category.id,

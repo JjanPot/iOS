@@ -1,5 +1,5 @@
 //
-//  ChallengePostRequestDto.swift
+//  FeedPostRequestDto.swift
 //  jjanpot
 //
 //  Created by 임주희 on 4/2/26.
@@ -11,7 +11,7 @@ import Foundation
 // 무지출(NO_SPEND): spentAmount 불필요, (절약 금액 = 기준 금액 전액)
 
 
-struct ChallengePostRequestDto: Encodable {
+struct FeedPostRequestDto: Encodable {
     let challengeId: Int
     let spendType: String
     let categoryId: Int
@@ -30,8 +30,8 @@ struct ChallengePostRequestDto: Encodable {
     }
 }
 
-extension ChallengePostRequestDto {
-    init(from entity: ChallengePostRequestEntity){
+extension FeedPostRequestDto {
+    init(from entity: FeedPostRequestEntity){
         self.challengeId = entity.challengeId
         self.spendType = entity.spendType
         self.categoryId = entity.categoryId

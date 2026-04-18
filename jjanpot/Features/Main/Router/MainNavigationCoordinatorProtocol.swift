@@ -12,7 +12,7 @@ protocol MainNavigationCoordinatorProtocol: AnyObject {
     // Challenge Navigation
     func navigateToCreateChallenge()
     func navigateToChallengeDetail(id: Int)
-    func navigateToChallengePost(id: Int)
+    func navigateToFeedPost(id: Int)
     func navigateToChallengeReport(id: Int)
     func navigateToFeedEditFeed(challengeId: Int, entity: FeedEntity)
 

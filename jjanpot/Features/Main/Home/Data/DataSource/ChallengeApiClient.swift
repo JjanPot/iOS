@@ -268,7 +268,7 @@ protocol ChallengeApiClientProtocol {
     func submitInviteCode(code: String) async -> Result<SubmitInviteCodeResponseDto, NetworkError>
 
     /// 챌린지 인증 (이미지 포함)
-    func postChallenge(dto: ChallengePostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError>
+    func postChallenge(dto: FeedPostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError>
     
     
     /// 챌린지 오버뷰 가져오기
@@ -302,7 +302,7 @@ protocol ChallengeApiClientProtocol {
     func deleteFeed(feedId: Int) async -> Result<EmptyResponseDto, NetworkError>
     
     /// 피드 수정하기
-    func updateFeed(feedId: Int, dto: ChallengePostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError>
+    func updateFeed(feedId: Int, dto: FeedPostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError>
 
 }
 
@@ -383,7 +383,7 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     }
     
     /// 챌린지 인증
-    func postChallenge(dto: ChallengePostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError> {
+    func postChallenge(dto: FeedPostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError> {
         await upload(.postChallenge, body: dto, imageData: imageData)
     }
     
@@ -393,7 +393,7 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     }
     
     /// 피드 수정하기
-    func updateFeed(feedId: Int, dto: ChallengePostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError> {
+    func updateFeed(feedId: Int, dto: FeedPostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError> {
         await upload(.updateFeed(feedId: feedId), body: dto, imageData: imageData)
     }
 }

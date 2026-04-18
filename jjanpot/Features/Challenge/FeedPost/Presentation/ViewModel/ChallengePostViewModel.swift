@@ -1,5 +1,5 @@
 //
-//  ChallengePostViewModel.swift
+//  FeedPostViewModel.swift
 //  jjanpot
 //
 //  Created by 임주희 on 4/1/26.
@@ -10,10 +10,10 @@ import SwiftUI
 import Combine
 import UIKit
 
-final class ChallengePostViewModel: ObservableObject {
+final class FeedPostViewModel: ObservableObject {
 
     private let challengeId: Int
-    private let useCase: ChallengePostUseCaseProtocol
+    private let useCase: FeedPostUseCaseProtocol
 
     @Published var categoryViewData: [CategorySelectorViewData] = []
     @Published var selectedCategory: CategorySelectorViewData? = nil
@@ -25,7 +25,7 @@ final class ChallengePostViewModel: ObservableObject {
 
 
 
-    init(challengeId: Int, useCase: ChallengePostUseCaseProtocol) {
+    init(challengeId: Int, useCase: FeedPostUseCaseProtocol) {
         self.challengeId = challengeId
         self.useCase = useCase
     }
@@ -33,7 +33,7 @@ final class ChallengePostViewModel: ObservableObject {
     // MARK: input methods
     @MainActor
     func submit(
-        expenseType: ChallengePostTab,
+        expenseType: FeedPostTab,
         category: CategorySelectorViewData?,
         price: String,
         description: String,
@@ -82,13 +82,13 @@ final class ChallengePostViewModel: ObservableObject {
     }
     
     private func requestEntity(
-        expenseType: ChallengePostTab,
+        expenseType: FeedPostTab,
         category: CategorySelectorViewData,
         price: String,
         description: String,
         date: Date,
         selectedImageData: Data?
-    ) -> ChallengePostRequestEntity? {
+    ) -> FeedPostRequestEntity? {
         
         // spendType 결정
         let spendType = expenseType.rawValue
@@ -105,7 +105,7 @@ final class ChallengePostViewModel: ObservableObject {
         }
 
         
-        return ChallengePostRequestEntity(
+        return FeedPostRequestEntity(
             challengeId: challengeId,
             spendType: spendType,
             categoryId: category.id,
