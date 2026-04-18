@@ -30,7 +30,15 @@ struct ChallengeDetailViewDataMapper {
     }     
     
     private func categories(_ categories: [CategoryEntity]) -> String {
-        categories.map{$0.name}.joined(separator: ", ")
+        let result = stride(from: 0, to: categories.count, by: 2)
+            .map { i -> String in
+                let pair = categories[i..<min(i+2, categories.count)]
+                return pair
+                    .map { "\($0.name) (\(PriceFormatter.formatWon($0.amount)))" }
+                    .joined(separator: "  ")
+            }
+            .joined(separator: "\n")
+        return result
     }
     
     
