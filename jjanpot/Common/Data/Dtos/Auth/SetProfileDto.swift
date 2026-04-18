@@ -16,3 +16,6 @@ public struct SetProfileDto: Codable {
         case nickname, birthDate
     }
 }
+
+
+

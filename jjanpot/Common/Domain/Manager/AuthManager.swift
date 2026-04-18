@@ -19,6 +19,10 @@ final class AuthManager: ObservableObject {
     @Keychain(key: "accessToken") private var accessToken: String?
     @Keychain(key: "refreshToken") private var refreshToken: String?
     
+    // 토큰 임시 저장 (약관동의용)
+    @Keychain(key: "tempAccessToken") private var tempAccessToken: String?
+    @Keychain(key: "tempRefreshToken") private var tempRefreshToken: String?
+    
     // MARK: - Storage (UserDefault)
 
     @UserDefault(key: "fcmToken", defaultValue: nil)
@@ -40,6 +44,24 @@ final class AuthManager: ObservableObject {
     }
 
     // MARK: - Public Methods
+    
+    /// 임시 로그인 성공 시 호출 (토큰만 Keychain에 저장, 유저 정보는 메모리에만)
+    func tempLogin(_ entity: LoginEntity) {
+        // 1. 토큰 저장 (Keychain)
+        self.tempAccessToken = entity.accessToken
+        self.tempRefreshToken = entity.refreshToken
+        
+        // 2. 상태 업데이트 (메모리에만)
+        currentUser = entity.user
+        isLoggedIn = true
+
+        Logger.success("임시 로그인 성공: \(entity.user.nickname) (userId: \(entity.user.userId))")
+    }
+    func clearTempLogin(){
+        self.tempAccessToken = nil
+        self.tempRefreshToken = nil
+    }
+    
 
     /// 로그인 성공 시 호출 (토큰만 Keychain에 저장, 유저 정보는 메모리에만)
     func login(_ entity: LoginEntity) {
@@ -52,7 +74,6 @@ final class AuthManager: ObservableObject {
         isLoggedIn = true
 
         Logger.success("로그인 성공: \(entity.user.nickname) (userId: \(entity.user.userId))")
-
     }
     
     
@@ -79,12 +100,19 @@ final class AuthManager: ObservableObject {
     func getAccessToken() -> String? {
         return accessToken
     }
-
+    
     /// Refresh Token 가져오기
     func getRefreshToken() -> String? {
         return refreshToken
     }
     
+    func getTempAccessToken() -> String? {
+        return tempAccessToken
+    }
+    func getTempRefreshToken() -> String? {
+        return tempRefreshToken
+    }
+
     func getFcmToken() -> String? {
         return fcmToken
     }

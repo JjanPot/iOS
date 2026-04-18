@@ -9,4 +9,6 @@ import Foundation
 
 protocol InviteCodePopupRepositoryProtocol {
     func submitInviteCode(code: String) async throws
+    
+    func submitInviteCodeOnBoarding(code: String) async throws
 }

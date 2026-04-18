@@ -195,10 +195,23 @@ extension AuthRouter: Router {
     }
     
     public var headers: HTTPHeaders? {
-        return [
-            "Accept" : "application/json",
-            "Content-Type" : "application/json",
-        ]
+        switch self {
+        case .agreement, .setProfile:
+            var params: HTTPHeaders = [
+                "Accept" : "application/json",
+                "Content-Type" : "application/json",
+            ]
+            if let token = AuthManager.shared.getTempAccessToken() {
+                params.add(name: "Authorization", value: "Bearer \(token)")
+            }
+            return params
+            
+        default:
+            return [
+                "Accept" : "application/json",
+                "Content-Type" : "application/json",
+            ]
+        }
     }
 
     public var body: Encodable? {

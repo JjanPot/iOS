@@ -135,7 +135,7 @@ final class MainDIContainer: MainDIContainerProtocol {
     }
     private func makeInviteCodeViewModel() -> InviteCodeViewModel {
         let usecase = makeInviteCodePopupUseCase()
-        return InviteCodeViewModel(useCase: usecase)
+        return InviteCodeViewModel(useCase: usecase, isOnboarding: false)
     }
     
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
@@ -370,7 +370,7 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
 
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
-        let vm = InviteCodeViewModel(useCase: MockInviteCodePopupUseCase())
+        let vm = InviteCodeViewModel(useCase: MockInviteCodePopupUseCase(), isOnboarding: false)
         return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: { onCloseAction() })
     }
     func makeReportPopupView(challengeId: Int, comfirmAction: @escaping ()-> Void, closeAction : @escaping ()-> Void ) -> ReportPopupView {
@@ -592,6 +592,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
 }
 
 struct MockInviteCodePopupUseCase: InviteCodePopupUseCaseProtocol {
+    func submitInviteCode(code: String, isOnboarding: Bool) async throws {
+        throw NetworkError.dataNil
+    }
+    
     func submitInviteCode(code: String) async throws {
         throw NetworkError.dataNil
     }

@@ -24,7 +24,10 @@ struct ProfileSetupUseCase: ProfileSetupUseCaseProtocol {
         let imageUrl: String? = try await uplpadImage(image: image, directory: "profile/", contentType: "image/jpeg")
         
         // 프로필 등록
-        try await repository.setProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl)
+        let user = try await repository.setProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl)
+        
+        // 성공한 경우, 임시로그인에서 제대로 로그인 시키기.
+        repository.updateToken(user: user)
     }
     
     

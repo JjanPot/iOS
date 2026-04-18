@@ -42,6 +42,12 @@ final class LoginUseCase: LoginUseCaseProtocol {
         AuthManager.shared.login(entity)
     }
     
+    // 임시 로그인 처리 (토큰 임시저장)
+    func tempLogin(entity: LoginEntity){
+        Logger.success("임시 로그인 성공 \(entity)")
+        AuthManager.shared.tempLogin(entity)
+    }
+    
     private func fetchFCMToken() async throws -> String? {
         try await Messaging.messaging().token()
     }

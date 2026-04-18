@@ -93,16 +93,21 @@ final class LoginViewModel: ObservableObject {
             let entity = try await loginAction()
             await MainActor.run {
                 isLoading = false
-                // 로그인 성공 처리 (토큰 + 사용자 정보 저장)
-                useCase.login(entity: entity)
-
+               
                 // 신규 유저 → 회원가입 화면 (NavigationStack에 push)
                 // 기존 유저 → 메인 화면 (Root 변경)
                 if entity.isNewUser {
                     Logger.success("신규 유저 로그인 성공 → 회원가입 화면으로")
+                    // 토큰 임시저장
+                    useCase.tempLogin(entity: entity)
+                    
                     shouldNavigateToSignup = true
                 } else {
                     Logger.success("기존 유저 로그인 성공 → 메인 화면으로")
+                    
+                    // 로그인 성공 처리 (토큰 + 사용자 정보 저장)
+                    useCase.login(entity: entity)
+                    
                     shouldNavigateToMain = true
                 }
             }

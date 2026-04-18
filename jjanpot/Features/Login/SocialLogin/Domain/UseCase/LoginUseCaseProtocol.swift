@@ -15,6 +15,9 @@ protocol LoginUseCaseProtocol {
 
     /// 로그인 성공 처리 (토큰 + 사용자 정보 저장)
     func login(entity: LoginEntity)
+    
+    /// 임시로그인 처리 (토큰 임시 저장)
+    func tempLogin(entity: LoginEntity)
 
     /// FCM 토큰 획득 (AuthManager → Firebase API → Notification 순서로 시도)
     func getFCMToken() async -> String?

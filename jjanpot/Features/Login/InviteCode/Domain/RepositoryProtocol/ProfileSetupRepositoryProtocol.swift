@@ -9,8 +9,9 @@ import Foundation
 
 
 protocol ProfileSetupRepositoryProtocol {
-    func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async throws
+    func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async throws -> SetProfileEntity
     func getPresignedUrl(directory: String, contentType: String) async throws -> PresignedURLEntity
     
-    func uploadImageToS3(imageData: Data, presignedUrl: String) async throws 
+    func uploadImageToS3(imageData: Data, presignedUrl: String) async throws
+    func updateToken(user: SetProfileEntity)
 }

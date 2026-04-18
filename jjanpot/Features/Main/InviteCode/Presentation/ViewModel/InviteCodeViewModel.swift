@@ -9,15 +9,17 @@ import Foundation
 import Combine
 
 final class InviteCodeViewModel: ObservableObject {
+    private let useCase: InviteCodePopupUseCaseProtocol
+    private let isOnboarding: Bool
     
     @Published var isLoading = false
     @Published var toastMessage: String?
     @Published var inviteCodeErrorMessage: String? = nil
     @Published var isSuccess = false
     
-    private let useCase: InviteCodePopupUseCaseProtocol
-    init(useCase: InviteCodePopupUseCaseProtocol) {
+    init(useCase: InviteCodePopupUseCaseProtocol, isOnboarding: Bool) {
         self.useCase = useCase
+        self.isOnboarding = isOnboarding
     }
     
     func checkInviteCode(_ code: String)  {
@@ -25,7 +27,7 @@ final class InviteCodeViewModel: ObservableObject {
         isSuccess = false
         Task {
             do {
-                try await useCase.submitInviteCode(code: code)
+                try await useCase.submitInviteCode(code: code, isOnboarding: isOnboarding)
                 isLoading = false
                 isSuccess = true
                 ToastManager.shared.show("등록되었습니다.")

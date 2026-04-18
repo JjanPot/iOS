@@ -28,6 +28,9 @@ enum ChallengeRouter {
     /// 초대코드 입력
     case submitInviteCode(inviteCode: String)
     
+    /// 초대코드 입력 in onboarding
+    case submitInviteCodeInOnboarding(inviteCode: String)
+    
     /// 카테고리 조회
     case getCategories
     
@@ -94,6 +97,7 @@ extension ChallengeRouter: Router {
 
         case .createChallenge,
                 .submitInviteCode,
+                .submitInviteCodeInOnboarding,
                 .postChallenge,
                 .deleteChallenge,
                 .reportFeed,
@@ -124,7 +128,7 @@ extension ChallengeRouter: Router {
         case let .getDetail(id):
             return "/api/challenges/v1/\(id)/detail"
 
-        case .submitInviteCode:
+        case .submitInviteCode, .submitInviteCodeInOnboarding:
             return "/api/users/v1/onboarding/invite-code"
 
         case let .fetchFeed(id):
@@ -170,6 +174,17 @@ extension ChallengeRouter: Router {
         case .postChallenge:
             // multipart upload는 Alamofire가 자동으로 Content-Type 설정
             return [ "Accept" : "application/json"]
+            
+        case .submitInviteCodeInOnboarding:
+            var params: HTTPHeaders = [
+                "Accept" : "application/json",
+                "Content-Type" : "application/json",
+            ]
+            if let token = AuthManager.shared.getTempAccessToken() {
+                params.add(name: "Authorization", value: "Bearer \(token)")
+            }
+            return params
+            
         default:
             return [ "Accept" : "application/json",
                 "Content-Type" : "application/json"]
@@ -196,7 +211,8 @@ extension ChallengeRouter: Router {
         
 
 
-        case let .submitInviteCode(code):
+        case let .submitInviteCode(code),
+                let .submitInviteCodeInOnboarding(code):
             let params: Parameters = [
                 "inviteCode" : code,
             ]
@@ -266,6 +282,9 @@ protocol ChallengeApiClientProtocol {
 
     /// 초대 코드 입력
     func submitInviteCode(code: String) async -> Result<SubmitInviteCodeResponseDto, NetworkError>
+    
+    /// 초대 코드 입력
+    func submitInviteCodeInOnboarding(code: String) async -> Result<SubmitInviteCodeResponseDto, NetworkError>
 
     /// 챌린지 인증 (이미지 포함)
     func postChallenge(dto: FeedPostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError>
@@ -309,6 +328,7 @@ protocol ChallengeApiClientProtocol {
     // MARK: - ChallengeApiClient
 
 final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientProtocol {
+    
     func fetchChallenges() async -> Result<ChallengeResponseDto, NetworkError> {
         await request(.getChallenges)
     }
@@ -334,8 +354,13 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     func submitInviteCode(code: String) async -> Result<SubmitInviteCodeResponseDto, NetworkError>{
         await request(.submitInviteCode(inviteCode: code))
     }
+    
+    /// 초대 코드 입력 (온보딩용)
+    func submitInviteCodeInOnboarding(code: String) async -> Result<SubmitInviteCodeResponseDto, NetworkError>{
+        await request(.submitInviteCodeInOnboarding(inviteCode: code))
+    }
 
-   
+    
     
     /// 챌린지 오버뷰 가져오기
     func fetchChallengeOverview(challengeId: Int) async -> Result<OverviewDto, NetworkError> {

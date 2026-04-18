@@ -57,6 +57,7 @@ struct OnBoardingInviteCodeView: View {
                 
                 MainButton(title: "다음") {
                     hideKeyboard()
+                    guard code.isNotEmpty else { return }
                     viewModel.checkInviteCode(code)
                 }
             }

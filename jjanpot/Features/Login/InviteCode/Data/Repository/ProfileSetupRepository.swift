@@ -16,11 +16,11 @@ struct ProfileSetupRepository: ProfileSetupRepositoryProtocol {
     }
 
     
-    func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async throws {
+    func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async throws -> SetProfileEntity {
         let result = await authApiClient.setProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl)
         switch result {
-        case .success:
-            return
+        case let .success(dto):
+            return SetProfileEntity(from: dto)
         case .failure(let error):
             throw error
         }
@@ -58,6 +58,43 @@ struct ProfileSetupRepository: ProfileSetupRepositoryProtocol {
                     }
                 }
         }
+    }
+    
+    
+    
+    /// 임시토큰을 정식토큰으로 저장.
+    /// - 최초로그인 > 약관동의 > 프로필 등록까지는 임시토큰으로 진행
+    /// - 프로필등록 이후부터 회원가입 된 것
+    /// - 프로필 등록 성공 후, 임시토큰을 정식 토큰으로 저장,
+    func updateToken(user: SetProfileEntity){
+        guard let tempAccessToken = AuthManager.shared.getTempAccessToken(),
+              let tempRefreshToken = AuthManager.shared.getTempRefreshToken() else { return }
+        
+        let currentUser = AuthManager.shared.currentUser
+        if let userId = currentUser?.userId {
+            // 정식 로그인
+            let newUser = UserEntity(
+                userId: userId,
+                nickname: user.nickname,
+                imageUrl: user.profileImageURL
+            )
+            let loginEntity = LoginEntity(
+                user: newUser,
+                isNewUser: false,
+                accessToken: tempAccessToken,
+                refreshToken: tempRefreshToken
+            )
+            AuthManager.shared.login(loginEntity)
+        } else {
+            AuthManager.shared.refreshToken(
+                accessToken: tempAccessToken,
+                refreshToken: tempRefreshToken
+            )
+            AuthManager.shared.updateNickname(user.nickname)
+        }
+        
+        // 임시 토큰 삭제
+        AuthManager.shared.clearTempLogin()
     }
 }
 

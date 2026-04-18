@@ -120,7 +120,7 @@ final class LoginDIContainer: LoginDIContainerProtocol {
     }
     private func makeInviteCodeViewModel() -> InviteCodeViewModel {
         let usecase = makeInviteCodePopupUseCase()
-        return InviteCodeViewModel(useCase: usecase)
+        return InviteCodeViewModel(useCase: usecase, isOnboarding: true)
     }
     
     func makeInviteCodeView(coordinator: LoginCoordinator, hasSkip: Bool = true) -> OnBoardingInviteCodeView {
@@ -195,7 +195,7 @@ final class MockLoginDIContainer: LoginDIContainerProtocol {
     }
     
     func makeInviteCodeView(coordinator: LoginCoordinator, hasSkip: Bool) -> OnBoardingInviteCodeView {
-        let vm = InviteCodeViewModel(useCase: MockInviteCodePopupUseCase())
+        let vm = InviteCodeViewModel(useCase: MockInviteCodePopupUseCase(), isOnboarding: true)
         return OnBoardingInviteCodeView(viewModel: vm, coordinator: coordinator, hasSkip: hasSkip)
     }
     
@@ -214,6 +214,7 @@ struct MockLoginUseCase: LoginUseCaseProtocol {
     
     func cancelLogin(entity: LoginEntity) async throws {}
     func login(entity: LoginEntity) {}
+    func tempLogin(entity: LoginEntity) { }
     func loginWithApple() async throws -> LoginEntity {
         throw NetworkError.dataNil
     }
