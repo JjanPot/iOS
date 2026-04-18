@@ -1,5 +1,5 @@
 //
-//  ChallengeOverview.swift
+//  DashboardOverview.swift
 //  jjanpot
 //
 //  Created by 임주희 on 4/2/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ChallengeOverview: View {
+struct DashboardOverview: View {
     let viewData: ChallengeDashboardViewData?
     let onSelectedMember: (MemberCardViewData) -> Void
     
@@ -89,7 +89,7 @@ struct ChallengeOverview: View {
 }
 
 #Preview {
-    ChallengeOverview(viewData:
+    DashboardOverview(viewData:
             .inProgress(challengeId: 0,
                         overviewViewData: ChallengeOverviewViewData(
                             title: "카페는 이제 그만!",

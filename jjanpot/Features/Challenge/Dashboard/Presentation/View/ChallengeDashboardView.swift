@@ -46,7 +46,7 @@ struct ChallengeDashboardView: View {
                         }
                         .frame(height: 30)
 
-                        ChallengeOverview(viewData: viewModel.viewData, onSelectedMember: { selectedMember in
+                        DashboardOverview(viewData: viewModel.viewData, onSelectedMember: { selectedMember in
                             guard !selectedMember.isMe else { return }
                             coordinator.showReportUserSheet(onReportUser: {
                                 guard let challengeId =  viewModel.viewData?.challengeId
