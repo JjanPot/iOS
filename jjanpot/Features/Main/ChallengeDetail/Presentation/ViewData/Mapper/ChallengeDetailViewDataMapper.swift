@@ -9,8 +9,8 @@ import Foundation
 
 struct ChallengeDetailViewDataMapper {
     func map (from entity: ChallengeDetailEntity) -> ChallengeDetailViewData {
-        let targetAmount = PriceFormatUtil.formatWon(entity.goalAmount)
-        let personTargetAmound = PriceFormatUtil.formatWon(entity.minPersonalGoalAmount)
+        let targetAmount = PriceFormatter.formatWon(entity.goalAmount)
+        let personTargetAmound = PriceFormatter.formatWon(entity.minPersonalGoalAmount)
         let during = "\(entity.startDate.toString(.dateOnly2)) - \(entity.endDate.toString(.dateOnly2)) (1주)"
         
         return ChallengeDetailViewData(

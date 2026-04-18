@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PriceFormatUtil {
+struct PriceFormatter {
     static func formatWon(_ value: Int) -> String {
         if value < 10_000 {
             return "\(value)원"

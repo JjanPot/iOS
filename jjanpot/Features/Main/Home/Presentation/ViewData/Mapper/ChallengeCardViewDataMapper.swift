@@ -17,7 +17,7 @@ struct ChallengeCardViewDataMapper {
             let viewData = ChallengeWaitingViewData(
                 challengeId: entity.challengeId,
                 teamName: entity.title,
-                targetSavingsAmount: PriceFormatUtil.formatWon(entity.goalAmount),
+                targetSavingsAmount: PriceFormatter.formatWon(entity.goalAmount),
                 period: period(start: entity.startDate, end: entity.endDate),
                 inviteCode: entity.inviteCode
             )
