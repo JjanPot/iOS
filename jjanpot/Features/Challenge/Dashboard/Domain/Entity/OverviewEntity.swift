@@ -25,7 +25,6 @@ struct OverviewEntity {
         let isMe: Bool
         let isLeader: Bool
         let isBlocked: Bool
-        
     }
 }
 extension OverviewEntity {

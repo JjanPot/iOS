@@ -509,9 +509,15 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         
         func getMembers(challengeId: Int) async throws -> [OverviewEntity.Member] {
             return [
+                .init(userId: 0, nickname: "닉네임닉네임1", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: false),
                 .init(userId: 1, nickname: "닉네임1", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: false),
                 .init(userId: 2, nickname: "닉네임2", profileImageURL: nil, savedAmount: 10000, isMe: true, isLeader: true, isBlocked: false),
-                .init(userId: 3, nickname: "닉네임3", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: true),
+                .init(userId: 3, nickname: "네임3", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: true),
+                .init(userId: 8, nickname: "8", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: true),
+                .init(userId: 4, nickname: "네임4", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: true),
+                .init(userId: 5, nickname: "네임5", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: true),
+                .init(userId: 6, nickname: "임6", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: true),
+                .init(userId: 7, nickname: "77", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: true),
             ]
         }
         
@@ -688,6 +694,7 @@ struct MockChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
                 totalSavedAmount: 206100,
                 goalAmount: 300000,
                 members: [
+                    .init(userId: 1, nickname: "닉네임닉네임1", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: false),
                     .init(userId: 1, nickname: "닉네임1", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: false),
                     .init(userId: 2, nickname: "닉네임2", profileImageURL: nil, savedAmount: 10000, isMe: true, isLeader: true, isBlocked: false),
                     .init(userId: 3, nickname: "닉네임3", profileImageURL: nil, savedAmount: 10000, isMe: false, isLeader: true, isBlocked: true),

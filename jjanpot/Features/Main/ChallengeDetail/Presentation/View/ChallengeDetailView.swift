@@ -97,11 +97,13 @@ struct ChallengeDetailView: View {
                 .foregroundStyle(.black900)
             
             SimpleMemberPagerView(members: viewModel.memberViewDatas) { _ in }
+
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)
         .rounded(radius: 12)
+        
     }
 
 }
