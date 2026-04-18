@@ -498,7 +498,7 @@ final class MockMainDIContainer: MainDIContainerProtocol {
                 categories: [.init(categoryId: 1, name: "외식/배달", iconURL: nil, amount: 10000)],
                 team: .init(teamId: 1,
                             inviteCode: "code",
-                            currentMemberCount: 6, maxMemberCount: 6, teamType: ""),
+                            currentMemberCount: 6, maxMemberCount: 6, teamType: "친구"),
                 isLeader: true)
         }
         
@@ -511,7 +511,20 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         }
         
         func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
-            throw NetworkError.dataNil
+            return ChallengeDetailEntity(
+                challengeId: 6,
+                title: "배달아껴팀",
+                description: "함께 절약해보야요",
+                status: "진행중",
+                goalAmount: 300_000,
+                minPersonalGoalAmount: 25_000,
+                startDate: Date(),
+                endDate: Date(),
+                categories: [.init(categoryId: 1, name: "외식/배달", iconURL: nil, amount: 10000)],
+                team: .init(teamId: 1,
+                            inviteCode: "code",
+                            currentMemberCount: 6, maxMemberCount: 6, teamType: ""),
+                isLeader: true)
         }
     }
     
@@ -584,7 +597,7 @@ struct MockChallengeReportUseCase: ChallengeReportUseCaseProtocol {
             categories: [.init(categoryId: 1, name: "외식/배달", iconURL: nil, amount: 10000)],
             team: .init(teamId: 1,
                         inviteCode: "code",
-                        currentMemberCount: 6, maxMemberCount: 6, teamType: ""),
+                        currentMemberCount: 6, maxMemberCount: 6, teamType: "친구"),
             isLeader: true)
     }
     
