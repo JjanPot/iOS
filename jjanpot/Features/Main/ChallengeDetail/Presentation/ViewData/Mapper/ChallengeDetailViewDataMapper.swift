@@ -9,8 +9,8 @@ import Foundation
 
 struct ChallengeDetailViewDataMapper {
     func map (from entity: ChallengeDetailEntity) -> ChallengeDetailViewData {
-        let targetAmount = formatWonRange(entity.goalAmount)
-        let personTargetAmound = formatWonRange(entity.minPersonalGoalAmount)
+        let targetAmount = PriceFormatUtil.formatWon(entity.goalAmount)
+        let personTargetAmound = PriceFormatUtil.formatWon(entity.minPersonalGoalAmount)
         let during = "\(entity.startDate.toString(.dateOnly2)) - \(entity.endDate.toString(.dateOnly2)) (1주)"
         
         return ChallengeDetailViewData(
@@ -36,21 +36,5 @@ struct ChallengeDetailViewDataMapper {
     
     private func joinWithComma(_ array: [String]) -> String {
         return array.joined(separator: ", ")
-    }
-    
-    private func formatWonRange(_ value: Int) -> String {
-        if value < 10_000 {
-            return "\(value)원"
-        }
-        
-        let man = value / 10_000
-        let remainder = value % 10_000
-        
-        if remainder == 0 {
-            return "\(man)만원"
-        } else {
-            let thousand = remainder / 1_000
-            return "\(man)만\(thousand)천원"
-        }
     }
 }

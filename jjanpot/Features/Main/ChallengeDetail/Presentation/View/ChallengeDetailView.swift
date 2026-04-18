@@ -85,11 +85,12 @@ struct ChallengeDetailView: View {
     }
 
 }
+ 
+#Preview {
+    let di = MockMainDIContainer()
+    let coordinator =  di.makeChallengeCoordinator(appCoordinator: di.makeAppCoordinator())
+    di.makeChallengeDetailView(challengeId: 1, coordinator: coordinator)
+}
 
-//#Preview {
-//    let di = MockMainDIContainer()
-//    di.makeChallengeDetailView(challengeId: 1, coordinator: di.makeAppCoordinator())
-//}
-//
-//
+
 
