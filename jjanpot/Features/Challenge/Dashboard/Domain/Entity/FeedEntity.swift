@@ -9,7 +9,7 @@ import Foundation
 
 struct FeedEntity {
     let certificationId: Int
-    let spendType: String
+    let spendType: SpendType
     let categoryName: String
     let userId: Int
     let userNickname: String
@@ -19,11 +19,17 @@ struct FeedEntity {
     let createdAt: Date
     let likeCount: Int
     let isMe: Bool
+    
+    
+    enum SpendType {
+        case expense // 지출
+        case noExpense // 무지출
+    }
 }
 extension FeedEntity {
     init(from dto: FeedResponseDto) {
         self.certificationId = dto.certificationId
-        self.spendType = dto.spendType
+        self.spendType = dto.spendType == "무지출" ? .noExpense : .expense
         self.categoryName = dto.categoryName
         self.userId = dto.userId
         self.userNickname = dto.userNickname
@@ -37,6 +43,7 @@ extension FeedEntity {
     }
 }
 extension FeedEntity: Identifiable, Equatable, Hashable {
+    /// feed id
     var id: Int {
         certificationId
     }

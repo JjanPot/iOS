@@ -17,7 +17,7 @@ enum MainDestination: Route {
     case alarmSettings
     case challengeReport(id: Int)
     case challengeHistory
-    case challengeEditFeed(entity: FeedEntity)
+    case challengeEditFeed(challengeId: Int, entity: FeedEntity)
 
     var id: String {
         switch self {

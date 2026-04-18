@@ -142,6 +142,7 @@ public class ApiClient<R: Router> {
                 }
             },
             to: url,
+            method: router.method,
             headers: router.headers
         )
         .serializingData()

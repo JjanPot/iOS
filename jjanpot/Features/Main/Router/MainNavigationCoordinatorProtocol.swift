@@ -14,7 +14,7 @@ protocol MainNavigationCoordinatorProtocol: AnyObject {
     func navigateToChallengeDetail(id: Int)
     func navigateToChallengePost(id: Int)
     func navigateToChallengeReport(id: Int)
-    func navigateToChallengeEditFeed(entity: FeedEntity)
+    func navigateToChallengeEditFeed(challengeId: Int, entity: FeedEntity)
 
     // MyPage Navigation
     func navigateToSettings()

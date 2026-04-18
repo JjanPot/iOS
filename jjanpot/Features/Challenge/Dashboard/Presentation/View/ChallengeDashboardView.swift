@@ -170,7 +170,8 @@ struct ChallengeDashboardView: View {
         }
         .onChange(of: viewModel.editingFeedEntity) { editingFeedEntity in
             guard let editingFeedEntity else { return }
-            coordinator.showEditFeed(entity: editingFeedEntity)
+            guard let challengeId = viewModel.viewData?.challengeId else { return }
+            coordinator.showEditFeed(challengeId: challengeId, entity: editingFeedEntity)
         }
         // 네비게이션 후 상태 초기화
         .onDisappear {

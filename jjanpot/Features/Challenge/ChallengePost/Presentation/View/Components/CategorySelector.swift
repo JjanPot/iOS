@@ -8,14 +8,7 @@
 import SwiftUI
 
 
-struct CategorySelectorViewData: Identifiable {
-    //categoryId
-    let id: Int
-    let name: String
-    let icon: String
-    // 기준금액
-    let amount: Int
-}
+
 struct CategorySelector: View {
     
     @Binding var selected: CategorySelectorViewData?

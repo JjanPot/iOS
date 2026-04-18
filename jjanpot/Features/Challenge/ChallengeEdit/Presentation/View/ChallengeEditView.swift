@@ -13,21 +13,18 @@ import Kingfisher
 
 /// 인증 수정 뷰
 struct ChallengeEditView: View {
-    
-    @State var selectedTab: ChallengePostTab = .expense
-    @State var selectedCategory: CategorySelectorViewData? = nil
-    @State var categoryViewData: [CategorySelectorViewData] = []
-    
-    
-    @State private var price: String = ""
-    
-    @State private var description: String = ""
+    @StateObject var viewModel: ChallengeEditViewModel
+    private let coordinator: ChallengeCoordinatorProtocol
+    init(viewModel: ChallengeEditViewModel, coordinator: ChallengeCoordinatorProtocol) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.coordinator = coordinator
+    }
     
     @State private var isShowingPicker = false
-    @State private var selectedDate: Date = Date()
     
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var isShowingPhotoPicker = false
+    // 새로 선택한 로컬 이미지
     @State private var selectedImage: (data: Data, image: Image)? = nil
     @State private var showPermissionAlert = false
     
@@ -40,12 +37,13 @@ struct ChallengeEditView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 // 지출, 무지출 탭
-                SegmentedToggleView(selectedTab: $selectedTab)
+                SegmentedToggleView(selectedTab: $viewModel.selectedTab)
+                    
                 
                 // 카테고리
                 CategorySelector(
-                    selected: $selectedCategory,
-                    categories: categoryViewData)
+                    selected: $viewModel.selectedCategory,
+                    categories: viewModel.categoryViewData)
                 
                 // 금액
                 priceTextField
@@ -60,17 +58,19 @@ struct ChallengeEditView: View {
                 images
                 
                 // 수정하기 버튼
-                MainButton(title: "수정하기", isDisabled: isSubmitButtonDisabled()) {
+                MainButton(title: "수정하기",
+                           isDisabled: viewModel.isSubmitButtonDisabled()) {
+                    viewModel.submit(selectedImageData: selectedImage?.data)
                 }
-                
-                
-                
             }// ~VStack
             .padding(.horizontal, 20)
         } // ~ ScrollView
         .navigationTitle("인증 기록 수정")
-//        .loading(viewModel.isLoading)
-//        .toast(message: $viewModel.toastMessage)
+        .loading(viewModel.isLoading)
+        .toast(message: $viewModel.toastMessage)
+        .task {
+            viewModel.getDetail()
+        }
         .scrollDismissesKeyboard(.interactively)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
@@ -88,7 +88,7 @@ struct ChallengeEditView: View {
             VStack(spacing: 10) {
                         DatePicker(
                             "날짜를 선택하세요",
-                            selection: $selectedDate,
+                            selection: $viewModel.selectedDate,
                             displayedComponents: [.date, .hourAndMinute]
                         )
                         .datePickerStyle(.graphical) // 달력 형태로 표시
@@ -105,7 +105,9 @@ struct ChallengeEditView: View {
             Task {
                 if let data = try? await newItem?.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data){
+                    viewModel.uploadedImageUrl = nil
                     selectedImage = (data, Image(uiImage: uiImage))
+                    
                 }
             }
         }
@@ -120,6 +122,12 @@ struct ChallengeEditView: View {
             Text("앨범의 사진을 불러오려면 설정에서 사진 접근 권한을 허용해주세요.")
         }
         // ~ 사진 선택
+        .onChange(of: viewModel.isSuccess) { isSuccess in
+            // 저장완료시 화면 나가기
+            if isSuccess {
+                coordinator.close()
+            }
+        }
     }
     
         // MARK: - views..
@@ -127,15 +135,16 @@ struct ChallengeEditView: View {
     // 금액
     private var priceTextField: some View {
         VStack(alignment: .leading, spacing: 10) {
-            PostTitleView(title: selectedTab == .expense ? "지출 금액" : "절약 금액", isNeccessary: true)
+            PostTitleView(title: viewModel.selectedTab == .expense ? "지출 금액" : "절약 금액", isNeccessary: true)
             HStack {
-                if selectedTab == .expense {
-                    TextField("", text: $price, prompt:
+                if viewModel.selectedTab == .expense {
+                    TextField("", text: $viewModel.price, prompt:
                                 Text("오늘 쓴 금액을 기록해 주세요")
                         .font(.pretendard(.regular, size: 14))
                         .foregroundColor(Color.black200)
                     )
-                    .disabled(selectedTab == .noExpense)
+                    
+                    .disabled(viewModel.selectedTab == .noExpense)
                     .keyboardType(.numberPad)
                     .focused($isPriceFocused)
                     .font(.pretendard(.regular, size: 14))
@@ -143,8 +152,9 @@ struct ChallengeEditView: View {
                     .onSubmit {
                         isPriceFocused = false
                     }
+                    
                 } else {
-                    if let amount = selectedCategory?.amount {
+                    if let amount = viewModel.selectedCategory?.amount {
                         Text("\(amount)")
                             .font(.pretendard(.regular, size: 14))
                             .foregroundColor(Color.black700)
@@ -160,6 +170,12 @@ struct ChallengeEditView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .roundedBorder(color: .black100, radius: 12)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if viewModel.selectedTab == .expense {
+                        isPriceFocused = true
+                    }
+            }
         }
     }
     
@@ -169,16 +185,16 @@ struct ChallengeEditView: View {
 
             ZStack(alignment: .topLeading) {
                 // 1. 실제 입력창
-                TextEditor(text: $description)
+                TextEditor(text: $viewModel.description)
                     .font(.pretendard(.regular, size: 14))
                     .foregroundColor(Color.black700)
                     .focused($isMemoFocused)
                     .onSubmit {
                         isMemoFocused = false
                     }
-                    .onChange(of: description) { newValue in
+                    .onChange(of: viewModel.description) { newValue in
                         if newValue.count > 30 {
-                            description = String(newValue.prefix(30))
+                            viewModel.description = String(newValue.prefix(30))
                         }
                     }
                     .padding(.vertical, 10)
@@ -186,7 +202,7 @@ struct ChallengeEditView: View {
 
 
                 // 2. 글자가 비어있을 때만 보여주는 Placeholder
-                if description.isEmpty {
+                if viewModel.description.isEmpty {
                     Text("최대 30글자까지 입력해 주세요")
                         .font(.pretendard(.regular, size: 14))
                         .foregroundColor(Color.black200)
@@ -210,7 +226,7 @@ struct ChallengeEditView: View {
                 isShowingPicker = true
             } label: {
                 HStack(spacing: 10) {
-                    Text(selectedDate.toString(format: "M월 d일 HH:mm", locale: .kr))
+                    Text(viewModel.selectedDate.toString(format: "M월 d일 HH:mm", locale: .kr))
                         .font(.pretendard(.semiBold, size: 14))
                         .foregroundStyle(Color.black500)
                     
@@ -225,7 +241,7 @@ struct ChallengeEditView: View {
     // 사진 업로드
     private var images: some View {
         HStack(spacing: 8){
-            // 업로드 별점
+            // 사진 올리기 버튼
             Button {
                 requestPhotoLibraryPermission()
             } label: {
@@ -240,24 +256,46 @@ struct ChallengeEditView: View {
                     }
             }
             
-            // 업로드된 사진
-            if let contentImage = selectedImage?.image {
-                contentImage
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 84, height: 84)
-                    .rounded(radius: 12)
-                    .overlay(alignment: .topTrailing) {
-                        Button {
-                            // 사진 삭제
-                            self.selectedImage = nil
-                        } label: {
-                            Image(systemName: "x.circle.fill")
-                                .foregroundStyle(Color.orange500)
-                                .padding(4)
+            // 이미지
+            Group {
+                // 업로드된 사진
+                if let contentImage = selectedImage?.image {
+                    contentImage
+                        .resizable()
+                }
+                // 서버에 이미 올라간 이미지
+                if let imageUrl = viewModel.uploadedImageUrl {
+                    KFImage(URL(string: imageUrl))
+                        .placeholder {
+                            Placeholder()
+                                .frame(width: 85, height: 85)
+                                .rounded(radius: 12)
                         }
-                    }
+                        .retry(maxCount: 3, interval: .seconds(2))
+                        .onFailure { error in
+                            Logger.error("Image load failed: \(error.localizedDescription)")
+                        }
+                        .fade(duration: 0.25)
+                        .resizable()
+                        
+                }
             }
+            .scaledToFill()
+            .frame(width: 84, height: 84)
+            .rounded(radius: 12)
+            .clipShape(Rectangle())
+            .overlay(alignment: .topTrailing) {
+                Button {
+                    // 사진 삭제
+                    self.selectedImage = nil
+                    viewModel.uploadedImageUrl = nil
+                } label: {
+                    Image(systemName: "x.circle.fill")
+                        .foregroundStyle(Color.orange500)
+                        .padding(4)
+                }
+            }
+            
         }
     }
     
@@ -285,12 +323,25 @@ struct ChallengeEditView: View {
             break
         }
     }
-    
-    private func isSubmitButtonDisabled() -> Bool {
-        return (selectedTab == .expense) ? ((Int(price) ?? 0 <= 0) || selectedCategory == nil) : (selectedCategory == nil)
-    }
 }
 
 #Preview {
-    ChallengeEditView()
+    let di = MockMainDIContainer()
+    let coordinator = di.makeChallengeCoordinator(appCoordinator: di.makeAppCoordinator())
+    return MockMainDIContainer().makeChallengeEditView(
+        challengeId: 1,
+        feedEntity: FeedEntity(
+            certificationId: 126,
+            spendType: .expense,
+            categoryName: "교통",
+            userId: 4,
+            userNickname: "주휘",
+            memo: nil,
+            savedAmount: 3000,
+            imageURL: nil,
+            createdAt: Date(),
+            likeCount: 0,
+            isMe: true
+        ),
+        coordinator: coordinator)
 }

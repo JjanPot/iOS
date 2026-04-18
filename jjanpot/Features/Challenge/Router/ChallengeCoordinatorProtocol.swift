@@ -14,7 +14,7 @@ protocol ChallengeCoordinatorProtocol: AnyObject {
     func showPost(id: Int)
     func showCreate()
     func showReport(id: Int)
-    func showEditFeed(entity: FeedEntity)
+    func showEditFeed(challengeId: Int, entity: FeedEntity)
     
     /// 공통 모달  표시
     func showModal(title: String, content: String, confirmButtonTitle: String, onConfirm: @escaping () -> Void)
@@ -33,3 +33,4 @@ protocol ChallengeCoordinatorProtocol: AnyObject {
     // Navigation Control
     func close()
 }
+

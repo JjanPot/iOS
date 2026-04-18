@@ -23,7 +23,6 @@ final class ChallengeDashboardViewModel: ObservableObject {
     }
     
     
-    
     func loadChallengeDashboard() {
         isLoading = true
         Task {

@@ -43,6 +43,7 @@ enum ChallengeRouter {
     case postChallenge
     
     /// 피드 수정
+    case updateFeed(feedId: Int)
     
     
     /// 피드 삭제
@@ -100,6 +101,9 @@ extension ChallengeRouter: Router {
                 .blockUser
             : .post
             
+        case .updateFeed:
+                .put
+            
         case .deleteFeed:
                 .delete
         }
@@ -155,6 +159,9 @@ extension ChallengeRouter: Router {
             
         case let .deleteFeed(feedId):
             return "/api/certifications/v1/\(feedId)"
+            
+        case let .updateFeed(feedId):
+            return "/api/certifications/v1/\(feedId)"
         }
     }
 
@@ -183,7 +190,8 @@ extension ChallengeRouter: Router {
                 .getChallengeStats,
                 .getChallengeReport,
                 .getChallengeHistory,
-                .deleteFeed
+                .deleteFeed,
+                .updateFeed
             : return nil
         
 
@@ -222,7 +230,7 @@ extension ChallengeRouter: Router {
         switch self {
         case let .createChallenge(dto):
             return dto
-        case .postChallenge:
+        case .postChallenge, .updateFeed:
             // upload() 메서드에서 별도로 처리하므로 body는 nil
             return nil
 
@@ -292,6 +300,9 @@ protocol ChallengeApiClientProtocol {
     
     /// 피드 삭제하기
     func deleteFeed(feedId: Int) async -> Result<EmptyResponseDto, NetworkError>
+    
+    /// 피드 수정하기
+    func updateFeed(feedId: Int, dto: ChallengePostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError>
 
 }
 
@@ -324,10 +335,7 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
         await request(.submitInviteCode(inviteCode: code))
     }
 
-    /// 챌린지 인증
-    func postChallenge(dto: ChallengePostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError> {
-        await upload(.postChallenge, body: dto, imageData: imageData)
-    }
+   
     
     /// 챌린지 오버뷰 가져오기
     func fetchChallengeOverview(challengeId: Int) async -> Result<OverviewDto, NetworkError> {
@@ -374,8 +382,18 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
         await request(.blockUser(userId: userId, challengeId: challengeId))
     }
     
+    /// 챌린지 인증
+    func postChallenge(dto: ChallengePostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError> {
+        await upload(.postChallenge, body: dto, imageData: imageData)
+    }
+    
     /// 피드 삭제하기
     func deleteFeed(feedId: Int) async -> Result<EmptyResponseDto, NetworkError>{
         await request(.deleteFeed(feedId: feedId))
+    }
+    
+    /// 피드 수정하기
+    func updateFeed(feedId: Int, dto: ChallengePostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError> {
+        await upload(.updateFeed(feedId: feedId), body: dto, imageData: imageData)
     }
 }

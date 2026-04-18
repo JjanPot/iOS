@@ -30,8 +30,8 @@ final class MainCoordinator: MainNavigationCoordinatorProtocol {
         appCoordinator.push(.challengeReport(id: id))
     }
 
-    func navigateToChallengeEditFeed(entity: FeedEntity) {
-        appCoordinator.push(.challengeEditFeed(entity: entity))
+    func navigateToChallengeEditFeed(challengeId: Int, entity: FeedEntity) {
+        appCoordinator.push(.challengeEditFeed(challengeId: challengeId, entity: entity))
     }
 
     func navigateToSettings() {

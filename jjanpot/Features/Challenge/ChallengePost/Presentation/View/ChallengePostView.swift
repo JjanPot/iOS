@@ -9,9 +9,9 @@ import SwiftUI
 import PhotosUI
 import Photos
 
-enum ChallengePostTab {
-    case expense // 지출
-    case noExpense // 무지출
+enum ChallengePostTab: String {
+    case expense = "SPEND"  // 지출
+    case noExpense = "NO_SPEND" // 무지출
 }
 
 
@@ -179,6 +179,12 @@ struct ChallengePostView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .roundedBorder(color: .black100, radius: 12)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if selectedTab == .expense {
+                    isPriceFocused = true
+                }
+            }
         }
     }
     

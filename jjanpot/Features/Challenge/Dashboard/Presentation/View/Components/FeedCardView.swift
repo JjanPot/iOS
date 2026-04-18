@@ -21,29 +21,13 @@ struct FeedCardView: View {
     var body: some View {
         VStack (alignment: .leading, spacing: .zero){
             
-            // 카테고리, 메뉴
+            // 카테고리
             HStack(alignment: .center, spacing: .zero) {
                 Text(viewData.category)
                     .font(.pretendard(.regular , size: 12))
                     .foregroundStyle(.black600)
-                
+
                 Spacer()
-                
-                
-                // 메뉴 버튼
-                Button {
-                    if viewData.isMine {
-                        isMyMenuOpen = true
-                    }else {
-                        isMenuOpen = true
-                    }
-                    
-                } label: {
-                    Image("icon_three_dot")
-                        .resizable()
-                        .frame(width: 17, height: 3)
-                        .padding(.vertical, 8.5)
-                }
             }
             .padding(.bottom, 4)
             
@@ -86,7 +70,8 @@ struct FeedCardView: View {
                         .scaledToFill()
                         .frame(width: 85, height: 85)
                         .rounded(radius: 12)
-                } 
+                        .clipShape(Rectangle())
+                }
                 
             }
             .padding(.bottom, 10)
@@ -119,6 +104,25 @@ struct FeedCardView: View {
         .padding(.horizontal, 17)
         .roundedBorder(color: .black100, radius: 12)
         .overlay(alignment: .topTrailing, content: {
+            // 메뉴 버튼
+            Button {
+                if viewData.isMine {
+                    isMyMenuOpen = true
+                } else {
+                    isMenuOpen = true
+                }
+            } label: {
+                Image("icon_three_dot")
+                    .resizable()
+                    .frame(width: 17, height: 3)
+            }
+            
+            .padding(.top, 18)
+            .padding(.bottom, 12.5)
+            .padding(.horizontal, 20)
+            
+        })
+        .overlay(alignment: .topTrailing, content: {
             if isMenuOpen {
                 PopoverMenu(items: [
                     .init(title: "게시글 신고", icon: "icon_alert_triangle") {
@@ -142,8 +146,8 @@ struct FeedCardView: View {
                     .init(title: "삭제", icon: "icon_delete") {
                         onDelete()
                     },
-                   
-                ], isPresented: $isMenuOpen)
+
+                ], isPresented: $isMyMenuOpen)
             }
         })
         

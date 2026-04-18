@@ -51,7 +51,7 @@ protocol MainDIContainerProtocol {
     func makeChallengePostView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengePostView
 
     /// 지출, 무지출 인증 수정
-    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: ChallengeCoordinatorProtocol) -> ChallengeEditView
+    func makeChallengeEditView(challengeId: Int, feedEntity: FeedEntity, coordinator: ChallengeCoordinatorProtocol) -> ChallengeEditView
 
     // MyPage - 마이팟
     func makeMyPotView(coordinator: MyPageCoordinatorProtocol) -> MyPotView
@@ -226,8 +226,20 @@ final class MainDIContainer: MainDIContainerProtocol {
     }
 
     // MARK: - 지출, 무지출 인증 수정
-    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: ChallengeCoordinatorProtocol) -> ChallengeEditView {
-        ChallengeEditView()
+    private func makeChallengeEditRepository() -> ChallengeEditRepositoryProtocol {
+        return ChallengeEditRepository(challengeApiClient: challengeApiClient)
+    }
+    private func makeChallengeEditUseCase() -> ChallengeEditUseCaseProtocol {
+        let repo = makeChallengeEditRepository()
+        return ChallengeEditUseCase(repository: repo)
+    }
+    private func makeChallengeEditViewModel(challengeId: Int, feedEntity: FeedEntity) -> ChallengeEditViewModel {
+        let usecase = makeChallengeEditUseCase()
+        return ChallengeEditViewModel(challengeId: challengeId, feedEntity: feedEntity, useCase: usecase)
+    }
+    func makeChallengeEditView(challengeId: Int, feedEntity: FeedEntity, coordinator: ChallengeCoordinatorProtocol) -> ChallengeEditView {
+        let viewModel = makeChallengeEditViewModel(challengeId: challengeId, feedEntity: feedEntity)
+        return ChallengeEditView(viewModel: viewModel, coordinator: coordinator)
     }
     
     // MARK: - 완료된 챌린지 목록
@@ -400,8 +412,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return ChallengePostView(viewModel: viewModel, coordinator: coordinator)
     }
 
-    func makemakeChallengeEditView(feedEntity: FeedEntity, coordinator: ChallengeCoordinatorProtocol) -> ChallengeEditView {
-        ChallengeEditView()
+    func makeChallengeEditView(challengeId: Int, feedEntity: FeedEntity, coordinator: ChallengeCoordinatorProtocol) -> ChallengeEditView {
+        let usecase = MockChallengeEditUseCase()
+        let viewModel = ChallengeEditViewModel(challengeId: challengeId, feedEntity: feedEntity, useCase: usecase)
+        return ChallengeEditView(viewModel: viewModel, coordinator: coordinator)
     }
 
     func makeChallengeReportView(challengeId: Int, coordinator: ChallengeCoordinatorProtocol) -> ChallengeReportView {
@@ -466,6 +480,31 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
     
 // MARK: - Mock UseCase
+    struct MockChallengeEditUseCase: ChallengeEditUseCaseProtocol{
+        func updateFeed(feedId: Int, entity: ChallengePostRequestEntity, imageData: Data?) async throws {
+            return
+        }
+        
+        func getDetail(challengeId: Int) async throws -> ChallengeDetailEntity {
+            ChallengeDetailEntity(
+                challengeId: 6,
+                title: "배달아껴팀",
+                description: "함께 절약해보야요",
+                status: "진행중",
+                goalAmount: 300_000,
+                minPersonalGoalAmount: 25_000,
+                startDate: Date(),
+                endDate: Date(),
+                categories: [.init(categoryId: 1, name: "외식/배달", iconURL: nil, amount: 10000)],
+                team: .init(teamId: 1,
+                            inviteCode: "code",
+                            currentMemberCount: 6, maxMemberCount: 6, teamType: ""),
+                isLeader: true)
+        }
+        
+        
+    }
+    
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
         func cancel(challengeId: Int) async throws {
             throw NetworkError.dataNil

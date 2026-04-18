@@ -50,29 +50,17 @@ final class ChallengePostViewModel: ObservableObject {
 
         Task {
             do {
-                // spendType 결정
-                let spendType = expenseType == .expense ? "SPEND" : "NO_SPEND"
-
-                // 가격을 Int로 변환
-                var spentAmount: Int? = nil
-                if expenseType == .expense {
-                    guard let priceInt = Int(price) else {
-                        toastMessage = "올바른 금액을 입력해주세요"
-                        isLoading = false
-                        return
-                    }
-                    spentAmount = priceInt
-                }
-
-                //  생성
-                let entity = ChallengePostRequestEntity(
-                    challengeId: challengeId,
-                    spendType: spendType,
-                    categoryId: category.id,
-                    spentAmount: spentAmount,
-                    memo: description,
-                    spentAt: date
-                )
+                
+                //  request entity 생성
+                guard let entity = requestEntity(
+                    expenseType: expenseType,
+                    category: category,
+                    price: price,
+                    description: description,
+                    date: date,
+                    selectedImageData: selectedImageData
+                    )
+                else { return }
 
                 // API 호출
                 try await useCase.postChallenge(entity: entity, imageData: selectedImageData)
@@ -91,6 +79,40 @@ final class ChallengePostViewModel: ObservableObject {
             }
             isLoading = false
         }
+    }
+    
+    private func requestEntity(
+        expenseType: ChallengePostTab,
+        category: CategorySelectorViewData,
+        price: String,
+        description: String,
+        date: Date,
+        selectedImageData: Data?
+    ) -> ChallengePostRequestEntity? {
+        
+        // spendType 결정
+        let spendType = expenseType.rawValue
+
+        // 지출 탭일 때만, 가격을 Int로 변환
+        var spentAmount: Int? = nil
+        if expenseType == .expense {
+            guard let priceInt = Int(price) else {
+                toastMessage = "올바른 금액을 입력해주세요"
+                isLoading = false
+                return nil
+            }
+            spentAmount = priceInt
+        }
+
+        
+        return ChallengePostRequestEntity(
+            challengeId: challengeId,
+            spendType: spendType,
+            categoryId: category.id,
+            spentAmount: spentAmount,
+            memo: description,
+            spentAt: date
+        )
     }
     
     // 상세정보 가져오기
@@ -114,25 +136,3 @@ final class ChallengePostViewModel: ObservableObject {
 }
 
 
-extension CategorySelectorViewData {
-    init(from entity: CategoryEntity) {
-        
-        let imageName: String
-        switch entity.categoryId {
-        case 1: imageName = "icon_category_food"
-        case 2: imageName = "icon_category_cafe"
-        case 3: imageName = "icon_category_car"
-        case 4: imageName = "icon_category_fashion"
-        case 5: imageName = "icon_category_hobby"
-        case 6: imageName = "icon_category_bear"
-        case 7: imageName = "icon_category_etc"
-        default: imageName = ""
-        }
-        
-        self.id = entity.categoryId
-        self.name =  entity.name
-        self.icon = imageName
-        self.amount = entity.amount
-        
-    }
-}
