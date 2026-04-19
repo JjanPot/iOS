@@ -40,12 +40,14 @@ final class LoginUseCase: LoginUseCaseProtocol {
     func login(entity: LoginEntity){
         Logger.success("로그인 성공 \(entity)")
         AuthManager.shared.login(entity)
+        AuthManager.shared.updateIsReviewMode(entity.isReviewMode)
     }
     
     // 임시 로그인 처리 (토큰 임시저장)
     func tempLogin(entity: LoginEntity){
         Logger.success("임시 로그인 성공 \(entity)")
         AuthManager.shared.tempLogin(entity)
+        AuthManager.shared.updateIsReviewMode(entity.isReviewMode)
     }
     
     private func fetchFCMToken() async throws -> String? {

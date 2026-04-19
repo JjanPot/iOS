@@ -82,10 +82,13 @@ struct ProfileSetupRepository: ProfileSetupRepositoryProtocol {
                 user: newUser,
                 isNewUser: false,
                 accessToken: tempAccessToken,
-                refreshToken: tempRefreshToken
+                refreshToken: tempRefreshToken,
+                isReviewMode: false // 여기서 이 값은 AuthManager.login()통해서는 저장 안됨.
             )
             AuthManager.shared.login(loginEntity)
         } else {
+            // userId 없어진 경우? (있을리 없는 경우지만, 예외처리)
+            // 토큰만 정식으로 갱신
             AuthManager.shared.refreshToken(
                 accessToken: tempAccessToken,
                 refreshToken: tempRefreshToken

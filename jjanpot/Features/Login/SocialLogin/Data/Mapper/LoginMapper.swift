@@ -18,7 +18,8 @@ struct LoginMapper {
             ),
             isNewUser: dto.newUser,
             accessToken: dto.accessToken,
-            refreshToken: dto.refreshToken
+            refreshToken: dto.refreshToken,
+            isReviewMode: dto.reviewMode
         )
     }
 }

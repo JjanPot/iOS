@@ -16,6 +16,10 @@ public struct LoginResponseDto: Codable {
     // 토큰
     let accessToken: String
     let refreshToken: String
+    
+    
+    // 리뷰용 변수
+    let reviewMode: Bool
 }
 public struct UserDto: Codable {
     let userId: Int

@@ -15,4 +15,6 @@ struct LoginEntity {
     // 토큰 정보
     let accessToken: String
     let refreshToken: String
+    
+    let isReviewMode: Bool
 }

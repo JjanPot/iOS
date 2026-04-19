@@ -19,12 +19,14 @@ struct SettingsUseCase: SettingsUseCaseProtocol {
     }
     
     func logout() async throws {
+        AuthManager.shared.logout()
+        
+        // api: 로그아웃
         guard let userId = getUserId() else {
             Logger.error("user id 못가져옴")
             throw NetworkError.requestFailed("userId is nil")
         }
         try await repository.logout(userId: userId)
-        AuthManager.shared.logout()
     }
     
     private func getUserId() -> Int? {
