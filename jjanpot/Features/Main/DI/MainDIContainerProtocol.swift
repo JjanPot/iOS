@@ -506,6 +506,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
     
     final class MockChallengeDetailUseCase: ChallengeDetailUseCaseProtocol {
+        func startChallenge(id challengeId: Int) async throws { }
+        
+        func finishChallenge(id challengeId: Int) async throws { }
+        
         
         func getMembers(challengeId: Int) async throws -> [OverviewEntity.Member] {
             return [

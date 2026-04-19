@@ -47,6 +47,30 @@ final class ChallengeDetailRepository: ChallengeDetailRepositoryProtocol {
             throw error
         }
     }
+    
+    
+    
+    /// 리뷰용 - 챌린지 즉시 시작
+    func startChallenge(challengeId: Int) async throws {
+        let result = await apiClient.reviewMode_startChallenge(challengeId: challengeId)
+        switch result {
+        case .success:
+            break
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    /// 리뷰용 - 챌린지 즉시 종료
+    func finishChllaenge(challengeId: Int) async throws {
+        let result = await apiClient.reviewMode_finishChallenge(challengeId: challengeId)
+        switch result {
+        case .success:
+            break
+        case .failure(let error):
+            throw error
+        }
+    }
 }
 
 

@@ -18,7 +18,6 @@ final class FeedPostViewModel: ObservableObject {
     @Published var categoryViewData: [CategorySelectorViewData] = []
     @Published var selectedCategory: CategorySelectorViewData? = nil
 
-
     @Published var isSuccess = false
     @Published var isLoading = false
     @Published var toastMessage: String?

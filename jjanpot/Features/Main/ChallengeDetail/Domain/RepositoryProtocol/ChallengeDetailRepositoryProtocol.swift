@@ -11,4 +11,13 @@ protocol ChallengeDetailRepositoryProtocol {
     func cancelChallenge(challengeId: Int) async throws
     
     func fetchChallengeOverview(challengeId: Int) async throws -> OverviewEntity
+    
+    
+    
+    
+    /// 리뷰용 - 챌린지 즉시 시작
+    func startChallenge(challengeId: Int) async throws
+    
+    /// 리뷰용 - 챌린지 즉시 종료
+    func finishChllaenge(challengeId: Int) async throws
 }

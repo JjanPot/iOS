@@ -34,6 +34,14 @@ enum ChallengeRouter {
     /// 카테고리 조회
     case getCategories
     
+    // MARK: review Mode
+    
+    /// 심사용 - 챌린지 즉시 시작
+    case reviewMode_startChallenge(challengeId: Int)
+    
+    /// 심사용 - 챌린지 즉시 종료
+    case reviewMode_finishChallenge(challengeId: Int)
+    
     // MARK: 챌린지 대시보드
     
     /// 챌린지 오버뷰 가져오기
@@ -102,7 +110,9 @@ extension ChallengeRouter: Router {
                 .deleteChallenge,
                 .reportFeed,
                 .reportUser,
-                .blockUser
+                .blockUser,
+                .reviewMode_startChallenge,
+                .reviewMode_finishChallenge
             : .post
             
         case .updateFeed:
@@ -166,6 +176,12 @@ extension ChallengeRouter: Router {
             
         case let .updateFeed(feedId):
             return "/api/certifications/v1/\(feedId)"
+            
+        case let .reviewMode_startChallenge(challengeId):
+            return "/api/auth/v1/review/challenge/\(challengeId)/start"
+            
+        case let .reviewMode_finishChallenge(challengeId):
+            return "/api/auth/v1/review/challenge/\(challengeId)/finish"
         }
     }
 
@@ -175,6 +191,9 @@ extension ChallengeRouter: Router {
             // multipart upload는 Alamofire가 자동으로 Content-Type 설정
             return [ "Accept" : "application/json"]
             
+            
+            // 온보딩 헤더
+            // 여기선 임시로 저장한 토큰을 보낸다.
         case .submitInviteCodeInOnboarding:
             var params: HTTPHeaders = [
                 "Accept" : "application/json",
@@ -185,6 +204,7 @@ extension ChallengeRouter: Router {
             }
             return params
             
+            // 기본 헤드
         default:
             return [ "Accept" : "application/json",
                 "Content-Type" : "application/json"]
@@ -206,7 +226,9 @@ extension ChallengeRouter: Router {
                 .getChallengeReport,
                 .getChallengeHistory,
                 .deleteFeed,
-                .updateFeed
+                .updateFeed,
+                .reviewMode_startChallenge,
+                .reviewMode_finishChallenge
             : return nil
         
 
@@ -322,6 +344,12 @@ protocol ChallengeApiClientProtocol {
     
     /// 피드 수정하기
     func updateFeed(feedId: Int, dto: FeedPostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError>
+    
+    /// 심사용 - 챌린지 즉시 시작
+    func reviewMode_startChallenge(challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>
+    
+    /// 심사용 - 챌린지 즉시 종료
+    func reviewMode_finishChallenge(challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>
 
 }
 
@@ -420,5 +448,15 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     /// 피드 수정하기
     func updateFeed(feedId: Int, dto: FeedPostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError> {
         await upload(.updateFeed(feedId: feedId), body: dto, imageData: imageData)
+    }
+    
+    /// 심사용 - 챌린지 즉시 시작
+    func reviewMode_startChallenge(challengeId: Int) async -> Result<EmptyResponseDto, NetworkError> {
+        await request(.reviewMode_startChallenge(challengeId: challengeId))
+    }
+    
+    /// 심사용 - 챌린지 즉시 종료
+    func reviewMode_finishChallenge(challengeId: Int) async -> Result<EmptyResponseDto, NetworkError> {
+        await request(.reviewMode_finishChallenge(challengeId: challengeId))
     }
 }
