@@ -153,7 +153,6 @@ struct CreateChallengeView: View {
                     challengeName = String(newValue.prefix(14))
                 }
             }
-            
         }
     }
     
@@ -168,8 +167,6 @@ struct CreateChallengeView: View {
             ZStack(alignment: .topLeading) {
                 // 1. 실제 입력창
                 TextEditor(text: $description)
-//                    .scrollContentBackground(.hidden)
-//                    .background(Color.red)
                     .font(.pretendard(.regular, size: 14))
                     .foregroundColor(Color.black900)
                     .focused($focusedField, equals: .challengeDescription)

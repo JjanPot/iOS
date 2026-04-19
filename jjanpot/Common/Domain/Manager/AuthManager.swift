@@ -119,6 +119,10 @@ final class AuthManager: ObservableObject {
     func getFcmToken() -> String? {
         return fcmToken
     }
+    
+    func getIsReviewMode() -> Bool {
+        return isReviewMode ?? false
+    }
 
     // MARK: - update
     

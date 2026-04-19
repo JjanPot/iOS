@@ -9,6 +9,7 @@ import SwiftUI
 
 // 챌린지 상세 정보
 struct ChallengeDetailView: View {
+    @ObservedObject private var authManager = AuthManager.shared
     @StateObject var viewModel: ChallengeDetailViewModel
     private let coordinator: ChallengeCoordinatorProtocol
 
@@ -34,6 +35,14 @@ struct ChallengeDetailView: View {
                 // 챌린지 가이드 라인
                 ChallengeGuideLine()
                 
+                // 챌린지 시작 버튼 - 대기중 && 심사용 계정
+                if viewModel.viewData?.status == .waiting
+                    && authManager.getIsReviewMode() {
+                    MainButton(title: "시작하기") {
+                        viewModel.startChallenge( )
+                    }
+                }
+                
                 // 챌린지 취소 버튼 - 대기중일때만 노출
                 if (viewModel.viewData?.hasCancelButton ?? false) {
                     Button {
@@ -41,6 +50,14 @@ struct ChallengeDetailView: View {
                     } label: {
                         MainButton(title: "취소하기",
                                    isDisabled: true) {}
+                    }
+                }
+                
+                // 챌린지 종료 버튼 - 진행중 && 심사용 계정
+                if viewModel.viewData?.status == .inProgress
+                    && authManager.getIsReviewMode() {
+                    MainButton(title: "종료하기"){
+                        viewModel.finishChallenge()
                     }
                 }
             }

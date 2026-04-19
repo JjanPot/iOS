@@ -40,7 +40,6 @@ final class ChallengeDetailViewModel: ObservableObject {
                 let memberEntitis = try await useCase.getMembers(challengeId: challengeId)
                 memberViewDatas = MemberCardViewDataMapper().map(from: memberEntitis)
                 
-                
             } catch {
                 Logger.error("상세정보 불러오기 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
@@ -49,9 +48,8 @@ final class ChallengeDetailViewModel: ObservableObject {
                 } else {
                     toastMessage = "상세정보 불러오기 실패 \(error.localizedDescription)"
                 }
-                
-                
             }
+            
             isLoading = false
         }
     }
@@ -69,7 +67,7 @@ final class ChallengeDetailViewModel: ObservableObject {
                 isShowCancelAlert = false
                 isCancelled = true
                 // 홈화면 리로드
-                NotificationCenter.default.post(name: .shouldRefreshMain, object: nil)
+                //NotificationCenter.default.post(name: .shouldRefreshMain, object: nil)
             } catch {
                 Logger.error("챌린지 취소하기 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
@@ -85,16 +83,20 @@ final class ChallengeDetailViewModel: ObservableObject {
     
     
     /// 리뷰용 - 챌린지 즉시 시작
-    func startChallenge(id challengeId: Int) {
+    func startChallenge() {
         isLoading = true
         Task {
             do {
                 try await useCase.startChallenge(id: challengeId)
+                toastMessage = "챌린지가 시작되었습니다."
+                
+                // 새로고침
+                getDetail()
             } catch {
                 Logger.error("챌린지 시작 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("챌린지 시작 실패: \(networkError.description)")
-                    ToastManager.shared.show(networkError.description)
+                    toastMessage = networkError.description
                 } else {
                     toastMessage = "챌린지 시작 실패 \(error.localizedDescription)"
                 }
@@ -104,16 +106,21 @@ final class ChallengeDetailViewModel: ObservableObject {
     }
     
     /// 리뷰용 - 챌린지 즉시 종료
-    func finishChallenge(id challengeId: Int) {
+    func finishChallenge() {
         isLoading = true
         Task {
             do {
                 try await useCase.finishChallenge(id: challengeId)
+                ToastManager.shared.show("챌린지가 종료되었습니다.")
+                isCancelled = true
+                
+                // 홈화면 리로드
+                //NotificationCenter.default.post(name: .shouldRefreshMain, object: nil)
             } catch {
                 Logger.error("챌린지 종료 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("챌린지 종료 실패: \(networkError.description)")
-                    ToastManager.shared.show(networkError.description)
+                    toastMessage = networkError.description
                 } else {
                     toastMessage = "챌린지 종료 실패 \(error.localizedDescription)"
                 }
