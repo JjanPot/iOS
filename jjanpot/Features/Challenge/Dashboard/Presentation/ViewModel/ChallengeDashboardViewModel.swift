@@ -59,27 +59,6 @@ final class ChallengeDashboardViewModel: ObservableObject {
     }
     
     
-    /// 사용자 차단
-    func blockUser(userId: Int, challengeId: Int) {
-        isLoading = true
-        Task {
-            do {
-                try await useCase.blockUser(userId: userId, challengeId: challengeId)
-                removeFeed(userId: userId)
-                toastMessage = "사용자가 차단되었습니다."
-            } catch {
-                Logger.error("사용자 차단 실패: \(error.localizedDescription)")
-                if let networkError = error as? NetworkError {
-                    Logger.error("사용자 차단 실패: \(networkError.description)")
-                    toastMessage = networkError.description
-                } else {
-                    toastMessage = "사용자 차단 실패"
-                }
-            }
-            isLoading = false
-        }
-    }
-    
     // 피드 수정하기
     func editFeed(id targetId: Int){
         let selected = feedEntities?.first { entity in
@@ -107,8 +86,31 @@ final class ChallengeDashboardViewModel: ObservableObject {
             }
             isLoading = false
         }
-        
     }
+    
+    /// 사용자 차단
+    func blockUser(userId: Int, challengeId: Int) {
+        isLoading = true
+        Task {
+            do {
+                try await useCase.blockUser(userId: userId, challengeId: challengeId)
+                toastMessage = "사용자가 차단되었습니다."
+                // 새로고침
+                loadChallengeDashboard()
+            } catch {
+                Logger.error("사용자 차단 실패: \(error.localizedDescription)")
+                if let networkError = error as? NetworkError {
+                    Logger.error("사용자 차단 실패: \(networkError.description)")
+                    toastMessage = networkError.description
+                } else {
+                    toastMessage = "사용자 차단 실패"
+                }
+            }
+            isLoading = false
+        }
+    }
+    
+    
     
     /// 신고한 피드를 목록에서 제거
     func removeFeed(feedId targetId: Int){

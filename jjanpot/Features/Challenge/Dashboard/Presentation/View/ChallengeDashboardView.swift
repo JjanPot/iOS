@@ -215,8 +215,8 @@ struct ChallengeDashboardView: View {
             onConfirm: {
                 coordinator.showReportFeedPopup(feedId: feedId, confirmAction: {
                     isShowReportedPopup = true
-                    // 게시물 비노출
-                    viewModel.removeFeed(feedId: feedId)
+                    // 새로고침
+                    viewModel.loadChallengeDashboard()
                 })
             })
     }
@@ -232,6 +232,8 @@ struct ChallengeDashboardView: View {
                 // 차단 이유 선택지 띄우기
                 coordinator.showReportUserPopup(userId: authorId, challengeId: challengeId, confirmAction: {
                     isShowReportedPopup = true
+                    // 새로고침
+                    viewModel.loadChallengeDashboard()
                 })
             })
     }
