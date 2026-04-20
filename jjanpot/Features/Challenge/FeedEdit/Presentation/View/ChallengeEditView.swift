@@ -34,44 +34,59 @@ struct FeedEditView: View {
     
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                // 지출, 무지출 탭
-                SegmentedToggleView(selectedTab: $viewModel.selectedTab)
+        VStack(alignment: .center, spacing: .zero) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    // 지출, 무지출 탭
+                    SegmentedToggleView(selectedTab: $viewModel.selectedTab)
                     
+                    
+                    // 카테고리
+                    CategorySelector(
+                        selected: $viewModel.selectedCategory,
+                        categories: viewModel.categoryViewData)
+                    
+                    // 금액
+                    priceTextField
+                    
+                    // 메모
+                    memoTextField
+                    
+                    // 등록일시
+                    dateField
+                    
+                    // 사진 업로드
+                    images
+                    
+                    
+                }// ~VStack
+                .padding(.horizontal, 20)
+            } // ~ ScrollView
+            .scrollDismissesKeyboard(.interactively)
+            
+            VStack(alignment: .center, spacing: 22) {
                 
-                // 카테고리
-                CategorySelector(
-                    selected: $viewModel.selectedCategory,
-                    categories: viewModel.categoryViewData)
-                
-                // 금액
-                priceTextField
-                
-                // 메모
-                memoTextField
-                
-                // 등록일시
-                dateField
-                
-                // 사진 업로드
-                images
+                Text("부적절하거나 불쾌한 콘텐츠는 제재될 수 있어요")
+                    .font(.pretendard(.regular, size: 14))
+                    .foregroundColor(Color.black500)
                 
                 // 수정하기 버튼
                 MainButton(title: "수정하기",
                            isDisabled: viewModel.isSubmitButtonDisabled()) {
                     viewModel.submit(selectedImageData: selectedImage?.data)
                 }
-            }// ~VStack
+            }
             .padding(.horizontal, 20)
-        } // ~ ScrollView
+            
+            
+        }// ~VStack
         .navigationTitle("인증 기록 수정")
         .loading(viewModel.isLoading)
         .toast(message: $viewModel.toastMessage)
         .task {
             viewModel.getDetail()
         }
-        .scrollDismissesKeyboard(.interactively)
+        
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()

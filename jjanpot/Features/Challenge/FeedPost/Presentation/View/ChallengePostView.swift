@@ -42,28 +42,42 @@ struct FeedPostView: View {
     @State private var showPermissionAlert = false
         
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+        
+        VStack(alignment: .center, spacing: .zero) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    
+                    // 지출, 무지출 탭
+                    SegmentedToggleView(selectedTab: $selectedTab)
+                    
+                    // 카테고리
+                    CategorySelector(
+                        selected: $viewModel.selectedCategory,
+                        categories: viewModel.categoryViewData)
+                    
+                    // 금액
+                    priceTextField
+                    
+                    // 메모
+                    memoTextField
+                    
+                    // 등록일시
+                    dateField
+                    
+                    // 사진 업로드
+                    images
+                    
+                   
+                } // ~VStack
+                .padding(.horizontal, 20)
+            } // ~ ScrollView
+            .scrollDismissesKeyboard(.interactively)
+            
+            VStack(alignment: .center, spacing: 22) {
+                Text("부적절하거나 불쾌한 콘텐츠는 제재될 수 있어요")
+                    .font(.pretendard(.regular, size: 14))
+                    .foregroundColor(Color.black500)
                 
-                // 지출, 무지출 탭
-                SegmentedToggleView(selectedTab: $selectedTab)
-                
-                // 카테고리
-                CategorySelector(
-                    selected: $viewModel.selectedCategory,
-                    categories: viewModel.categoryViewData)
-                
-                // 금액
-                priceTextField
-                
-                // 메모
-                memoTextField
-                
-                // 등록일시
-                dateField
-                
-                // 사진 업로드
-                images
                 
                 // 등록하기 버튼
                 MainButton(title: "등록하기", isDisabled: isSubmitButtonDisabled()) {
@@ -75,16 +89,18 @@ struct FeedPostView: View {
                         date: selectedDate,
                         selectedImageData: selectedImage?.data)
                 }
-            } // ~VStack
+            }
             .padding(.horizontal, 20)
-        } // ~ ScrollView
+            
+            
+        }// ~VStack
         .navigationTitle("인증하기")
         .loading(viewModel.isLoading)
         .toast(message: $viewModel.toastMessage)
         .task {
             viewModel.getDetail()
         }
-        .scrollDismissesKeyboard(.interactively)
+        
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
