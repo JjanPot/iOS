@@ -110,6 +110,13 @@ struct ChallengeDashboardView: View {
                                                                 closeMenu()
                                                             }
                                                         }),
+                                                     onClickImage: {
+                                            print(">>>>> click image: \(feed.imageUrl)")
+                                            guard let url = feed.imageUrl else {
+                                                return
+                                            }
+                                            coordinator.showPostImageDetail(imageUrl: url)
+                                        },
                                                      onEdit: { // 수정하기
                                             viewModel.editFeed(id: feed.feedId)
                                         },

@@ -15,6 +15,7 @@ protocol ChallengeCoordinatorProtocol: AnyObject {
     func showCreate()
     func showReport(id: Int)
     func showEditFeed(challengeId: Int, entity: FeedEntity)
+    func showPostImageDetail(imageUrl: String)
     
     /// 공통 모달  표시
     func showModal(title: String, content: String, confirmButtonTitle: String, onConfirm: @escaping () -> Void)

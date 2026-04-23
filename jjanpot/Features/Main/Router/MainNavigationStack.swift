@@ -88,7 +88,7 @@ struct MainNavigationStack: View {
             container.makeChallengeDetailView(challengeId: id, coordinator: challengeCoordinator)
 
             // 인증하기
-        case let .FeedPost(id):
+        case let .feedPost(id):
             container.makeFeedPostView(challengeId: id, coordinator: challengeCoordinator)
 
             // 설정화면
@@ -107,8 +107,11 @@ struct MainNavigationStack: View {
             container.makeChallengeHistoryView(coordinator: myPageCoordinator)
 
             // 챌린지 인증 수정
-        case let .FeedEditFeed(challengeId, entity):
+        case let .feedEditFeed(challengeId, entity):
             container.makeFeedEditView(challengeId: challengeId, feedEntity: entity, coordinator: challengeCoordinator)
+            
+        case .postImageDetail(imageUrl: let imageUrl):
+            container.makePostImageDetailView(imageUrl: imageUrl)
         }
     }
     

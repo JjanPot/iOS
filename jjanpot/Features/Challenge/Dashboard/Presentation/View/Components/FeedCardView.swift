@@ -12,6 +12,7 @@ struct FeedCardView: View {
     let viewData: FeedCardViewData
     @Binding var isMyMenuOpen: Bool
     @Binding var isMenuOpen: Bool
+    let onClickImage: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
     let onReport: () -> Void
@@ -55,22 +56,26 @@ struct FeedCardView: View {
                 
                 // 이미지
                 if let image = viewData.imageUrl {
-                    KFImage(URL(string: image))
-                        .placeholder {
-                            Placeholder()
-                                .frame(width: 85, height: 85)
-                                .rounded(radius: 12)
-                        }
-                        .retry(maxCount: 3, interval: .seconds(2))
-                        .onFailure { error in
-                            Logger.error("Image load failed: \(error.localizedDescription)")
-                        }
-                        .fade(duration: 0.25)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 85, height: 85)
-                        .rounded(radius: 12)
-                        .clipShape(Rectangle())
+                    Button(action:{
+                        onClickImage()
+                    }, label: {
+                        KFImage(URL(string: image))
+                            .placeholder {
+                                Placeholder()
+                                    .frame(width: 85, height: 85)
+                                    .rounded(radius: 12)
+                            }
+                            .retry(maxCount: 3, interval: .seconds(2))
+                            .onFailure { error in
+                                Logger.error("Image load failed: \(error.localizedDescription)")
+                            }
+                            .fade(duration: 0.25)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 85, height: 85)
+                            .rounded(radius: 12)
+                            .clipShape(Rectangle())
+                    })
                 }
                 
             }
@@ -176,6 +181,7 @@ struct FeedCardView: View {
                 
             ), isMyMenuOpen: $isMyMenuOpen,
                          isMenuOpen: $isMenuOpen,
+                         onClickImage: {},
                          onEdit: {},
                          onDelete: {},
                          onReport: {},

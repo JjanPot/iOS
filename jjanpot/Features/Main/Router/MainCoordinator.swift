@@ -23,7 +23,7 @@ final class MainCoordinator: MainNavigationCoordinatorProtocol {
     }
 
     func navigateToFeedPost(id: Int) {
-        appCoordinator.push(.FeedPost(id: id))
+        appCoordinator.push(.feedPost(id: id))
     }
 
     func navigateToChallengeReport(id: Int) {
@@ -31,7 +31,7 @@ final class MainCoordinator: MainNavigationCoordinatorProtocol {
     }
 
     func navigateToFeedEditFeed(challengeId: Int, entity: FeedEntity) {
-        appCoordinator.push(.FeedEditFeed(challengeId: challengeId, entity: entity))
+        appCoordinator.push(.feedEditFeed(challengeId: challengeId, entity: entity))
     }
 
     func navigateToSettings() {

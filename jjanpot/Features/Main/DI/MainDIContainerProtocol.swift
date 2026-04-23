@@ -82,6 +82,8 @@ protocol MainDIContainerProtocol {
     func makeWebView(url: String, onDismiss: @escaping ()-> Void) -> WebView
     
     func makeReportUserSheet(onReportUser: (()-> Void)?, onBlockUser: (()-> Void)?, onCloseAction: (()-> Void)?) -> ReportUserSheetView
+    
+    func makePostImageDetailView(imageUrl: String) -> ImageDetailView
 }
 
 // MARK: - MainDIContainer
@@ -203,8 +205,11 @@ final class MainDIContainer: MainDIContainerProtocol {
         let vm = makeChallengeDashboardViewModel()
         return ChallengeDashboardView(viewModel: vm, coordinator: coordinator)
     }
-
-
+    
+    // MARK: - 챌린지 인증사진 상세보기
+    func makePostImageDetailView(imageUrl: String) -> ImageDetailView {
+        return ImageDetailView(imageUrl: imageUrl)
+    }
 
     // MARK: - 지출, 무지출 인증화면
 
@@ -403,6 +408,10 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         let usecase = MockChallengeDashboardUseCase()
         let vm = ChallengeDashboardViewModel(useCase: usecase)
         return ChallengeDashboardView(viewModel: vm, coordinator: coordinator)
+    }
+    
+    func makePostImageDetailView(imageUrl: String) -> ImageDetailView {
+        return ImageDetailView(imageUrl: imageUrl)
     }
 
 

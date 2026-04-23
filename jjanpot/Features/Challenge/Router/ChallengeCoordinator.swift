@@ -21,7 +21,7 @@ final class ChallengeCoordinator: ChallengeCoordinatorProtocol {
     }
 
     func showPost(id: Int) {
-        appCoordinator.push(.FeedPost(id: id))
+        appCoordinator.push(.feedPost(id: id))
     }
 
     func showCreate() {
@@ -33,9 +33,13 @@ final class ChallengeCoordinator: ChallengeCoordinatorProtocol {
     }
 
     func showEditFeed(challengeId: Int, entity: FeedEntity) {
-        appCoordinator.push(.FeedEditFeed(challengeId: challengeId, entity: entity))
+        appCoordinator.push(.feedEditFeed(challengeId: challengeId, entity: entity))
     }
     
+    // 피드 인증사진 상세보기
+    func showPostImageDetail(imageUrl: String){
+        appCoordinator.push(.postImageDetail(imageUrl: imageUrl))
+    }
     
     // 공용 팝업모달
     func showModal(title: String, content: String, confirmButtonTitle: String = "확인", onConfirm: @escaping () -> Void) {

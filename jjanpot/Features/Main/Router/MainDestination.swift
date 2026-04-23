@@ -11,13 +11,14 @@ import SwiftUI
 enum MainDestination: Route {
     case createChallenge
     case challengeDetail(id: Int)
-    case FeedPost(id: Int)
+    case feedPost(id: Int)
     // MyPage destinations
     case settings
     case alarmSettings
     case challengeReport(id: Int)
     case challengeHistory
-    case FeedEditFeed(challengeId: Int, entity: FeedEntity)
+    case feedEditFeed(challengeId: Int, entity: FeedEntity)
+    case postImageDetail(imageUrl: String)
 
     var id: String {
         switch self {
@@ -25,8 +26,8 @@ enum MainDestination: Route {
             return "createChallenge"
         case .challengeDetail:
             return "challengeDetail"
-        case .FeedPost:
-            return "FeedPost"
+        case .feedPost:
+            return "feedPost"
         case .settings:
             return "settings"
         case .alarmSettings:
@@ -35,8 +36,10 @@ enum MainDestination: Route {
             return "challengeReport"
         case .challengeHistory:
             return "challengeHistory"
-        case .FeedEditFeed:
+        case .feedEditFeed:
             return "FeedEditFeed"
+        case .postImageDetail:
+            return "postImageDetail"
         }
     }
 
@@ -46,8 +49,8 @@ enum MainDestination: Route {
             return "main_create_challenge"
         case .challengeDetail:
             return "challenge_detail"
-        case .FeedPost:
-            return "FeedPost"
+        case .feedPost:
+            return "feedPost"
         case .settings:
             return "settings"
         case .alarmSettings:
@@ -56,8 +59,10 @@ enum MainDestination: Route {
             return "challenge_report"
         case .challengeHistory:
             return "challengeHistory"
-        case .FeedEditFeed:
-            return "FeedEditFeed"
+        case .feedEditFeed:
+            return "feedEditFeed"
+        case .postImageDetail:
+            return "postImageDetail"
         }
     }
 
@@ -65,8 +70,8 @@ enum MainDestination: Route {
         switch self {
         case .createChallenge:
             return true
-        case .challengeDetail, .FeedPost, .settings, .alarmSettings, .challengeReport,
-                .challengeHistory, .FeedEditFeed:
+        case .challengeDetail, .feedPost, .settings, .alarmSettings, .challengeReport,
+                .challengeHistory, .feedEditFeed, .postImageDetail:
             return true
         }
     }
