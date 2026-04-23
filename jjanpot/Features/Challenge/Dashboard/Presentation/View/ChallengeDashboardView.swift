@@ -111,7 +111,6 @@ struct ChallengeDashboardView: View {
                                                             }
                                                         }),
                                                      onClickImage: {
-                                            print(">>>>> click image: \(feed.imageUrl)")
                                             guard let url = feed.imageUrl else {
                                                 return
                                             }
