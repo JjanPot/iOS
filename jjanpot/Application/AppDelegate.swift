@@ -60,6 +60,20 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         Logger.error("❌ [AppDelegate] 원격 알림 등록 실패: \(error.localizedDescription)")
         Logger.error("   에러 코드: \(error._code)")
     }
+    
+    // MARK: - 포그라운드 진입 시 토큰 갱신
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        // 로그인 상태이면 토큰 갱신 시도
+        if AuthManager.shared.isLoggedIn {
+            TokenRefreshService.shared.refreshToken { success in
+                if success {
+                    Logger.info("포그라운드 진입 시 토큰 갱신 성공")
+                } else {
+                    Logger.info("포그라운드 진입 시 토큰 갱신 실패 (로그아웃 처리)")
+                }
+            }
+        }
+    }
 }
 
 // MARK: - UNUserNotificationCenterDelegate

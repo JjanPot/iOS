@@ -16,14 +16,7 @@ public final class APIRequestInterceptor: RequestInterceptor {
 
     public init() {
         
-        // 토큰 갱신 전용 서비스 (순환 의존성 방지를 위해 interceptor 없는 별도 session 사용)
-        let configuration = URLSessionConfiguration.af.default
-        configuration.timeoutIntervalForRequest = 20
-        let refreshSession = Session(configuration: configuration)
-        let authApiClient = AuthApiClient(session: refreshSession)
-        
-        // 토큰 갱신
-        self.tokenRefreshService = TokenRefreshService(authApiClient: authApiClient)
+        self.tokenRefreshService = TokenRefreshService.shared
     }
 
     // Adapt request if needed (e.g., attach auth headers)
@@ -52,7 +45,7 @@ public final class APIRequestInterceptor: RequestInterceptor {
 
         // 401,403 에러 시 토큰 갱신 후 재시도
         if [401, 403].contains(response.statusCode) {
-            Logger.error("네트워킹 [권한없음] \(response.statusCode)")
+            Logger.error("네트워킹 [권한없음] \(response.statusCode) -> 토큰 갱신 후 재시도")
             
             tokenRefreshService.refreshToken { success in
                 completion(success ? .retry : .doNotRetry)
@@ -65,7 +58,7 @@ public final class APIRequestInterceptor: RequestInterceptor {
             let retryCount = request.retryCount
             completion(retryCount < 3 ? .retryWithDelay(2.0) : .doNotRetry)
             
-            Logger.error("네트워크 서버에러 재시도 \(retryCount)차시")
+            Logger.debug("서버 에러 시 최대 3번까지 재시도: \(retryCount)/3...")
         } else {
             completion(.doNotRetry)
         }

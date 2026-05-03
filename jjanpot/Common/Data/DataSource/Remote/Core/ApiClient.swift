@@ -44,7 +44,10 @@ public class ApiClient<R: Router> {
             return .failure(.urlError)
         }
         
-        let result = await session.request(request).serializingData().response
+        let result = await session.request(request)
+            .validate()
+            .serializingData()
+            .response
 
         // 에러 처리
         if let error = result.error {
