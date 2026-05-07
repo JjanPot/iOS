@@ -94,6 +94,10 @@ struct MainNavigationStack: View {
             // 설정화면
         case .settings:
             container.makeSettingsView(coordinator: myPageCoordinator)
+            
+            // 프로필 수정
+        case .profileEdit:
+            container.makeProfileEditView()
 
             // 알람 설정
         case .alarmSettings:

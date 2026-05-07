@@ -84,6 +84,10 @@ protocol MainDIContainerProtocol {
     func makeReportUserSheet(onReportUser: (()-> Void)?, onBlockUser: (()-> Void)?, onCloseAction: (()-> Void)?) -> ReportUserSheetView
     
     func makePostImageDetailView(imageUrl: String) -> ImageDetailView
+    
+
+    // 프로필 수정화면
+    func makeProfileEditView() -> ProfileEditView
 }
 
 // MARK: - MainDIContainer
@@ -364,6 +368,13 @@ final class MainDIContainer: MainDIContainerProtocol {
     func makeReportUserSheet(onReportUser: (()-> Void)?, onBlockUser: (()-> Void)?, onCloseAction: (()-> Void)?) -> ReportUserSheetView {
         ReportUserSheetView(onReportUser: onReportUser, onBlockUser: onBlockUser, onCloseAction: onCloseAction)
     }
+    
+    // 프로필 수정화면
+    func makeProfileEditView() -> ProfileEditView {
+        return ProfileEditView()
+    }
+    
+    
 }
 
 // MARK: - Mock
@@ -601,6 +612,11 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         func reportFeed(feedId: Int, reason: String) async throws {}
         
         func reportUser(userId: Int, challengeId: Int, reason: String) async throws {}
+    }
+    
+    // 프로필 수정화면
+    func makeProfileEditView() -> ProfileEditView {
+        return ProfileEditView()
     }
 }
 

@@ -10,6 +10,8 @@ import Foundation
 /// MyPage Feature의 기능 인터페이스
 protocol MyPageCoordinatorProtocol: AnyObject {
     func showSettings()
+    
+    func showProfileEdit()
     func showAlarmSettings()
     func showChallengeHistory()
     func showChallengeReport(id: Int)

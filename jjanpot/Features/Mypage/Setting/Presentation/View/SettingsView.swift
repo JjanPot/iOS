@@ -33,6 +33,14 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 40) {
                 
                 if authManager.isLoggedIn {
+                    
+                    MenuSection("내 정보") {
+                        MenuButton("프로필 수정") {
+                            coordinator.showProfileEdit()
+                        }
+                    }
+                    
+                    
                     MenuSection("앱 설정") {
                         MenuButton("알림 설정") {
                             coordinator.showAlarmSettings()

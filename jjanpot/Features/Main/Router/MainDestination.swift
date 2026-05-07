@@ -14,6 +14,7 @@ enum MainDestination: Route {
     case feedPost(id: Int)
     // MyPage destinations
     case settings
+    case profileEdit
     case alarmSettings
     case challengeReport(id: Int)
     case challengeHistory
@@ -40,6 +41,8 @@ enum MainDestination: Route {
             return "FeedEditFeed"
         case .postImageDetail:
             return "postImageDetail"
+        case .profileEdit:
+            return "profileEdit"
         }
     }
 
@@ -63,6 +66,8 @@ enum MainDestination: Route {
             return "feedEditFeed"
         case .postImageDetail:
             return "postImageDetail"
+        case .profileEdit:
+            return "profileEdit"
         }
     }
 
@@ -71,7 +76,7 @@ enum MainDestination: Route {
         case .createChallenge:
             return true
         case .challengeDetail, .feedPost, .settings, .alarmSettings, .challengeReport,
-                .challengeHistory, .feedEditFeed, .postImageDetail:
+                .challengeHistory, .feedEditFeed, .postImageDetail, .profileEdit:
             return true
         }
     }

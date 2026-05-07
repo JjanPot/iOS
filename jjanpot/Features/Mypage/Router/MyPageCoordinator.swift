@@ -17,6 +17,10 @@ final class MyPageCoordinator: MyPageCoordinatorProtocol {
     func showSettings() {
         appCoordinator.push(.settings)
     }
+    
+    func showProfileEdit() {
+        appCoordinator.push(.profileEdit)
+    }
 
     func showAlarmSettings() {
         appCoordinator.push(.alarmSettings)
