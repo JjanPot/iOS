@@ -80,7 +80,9 @@ final class HomeViewModel: ObservableObject {
                 Logger.error("챌린지 기록 불러오기 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("챌린지 기록 불러오기 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "불러오기 실패"
                 }
@@ -102,7 +104,12 @@ final class HomeViewModel: ObservableObject {
 
         } catch {
             Logger.error("홈 데이터 로드 실패: \(error)")
-            toastMessage = "데이터를 불러오는데 실패했습니다."
+
+            if let networkError = error as? NetworkError, networkError.isUserFacing {
+                toastMessage = networkError.description
+            } else if error as? NetworkError == nil {
+                toastMessage = "데이터를 불러오는데 실패했습니다."
+            }
             isLoading = false
         }
     }

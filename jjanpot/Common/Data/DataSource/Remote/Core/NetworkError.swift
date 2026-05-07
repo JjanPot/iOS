@@ -59,10 +59,16 @@ public enum NetworkError: Error, Equatable {
     }
 
     // 사용자에게 보여줄지 여부
+    
     public var isUserFacing: Bool {
         switch self {
-        case .noInternet, .serverError, .serverFailed, .timeout, .unauthorized, .forbidden, .notFound:
+            // 보여줄거
+        case .noInternet, .serverError, .serverFailed, .timeout, .notFound:
             return true
+            
+            // 401,403은 이미 네트워크 계층에서 재시도 시도했으므로 사용자에게 별도 표시 불필요
+        case .unauthorized, .forbidden:
+            return false
         default:
             return false
         }

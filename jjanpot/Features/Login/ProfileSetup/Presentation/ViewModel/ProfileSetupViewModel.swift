@@ -42,13 +42,11 @@ final class ProfileSetupViewModel: ObservableObject {
             } catch {
                 Logger.error("프로필 설정 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
-                    toastMessage = networkError.description
-                } else {
-                    if let networkError = error as? NetworkError {
+                    if networkError.isUserFacing {
                         toastMessage = networkError.description
-                    } else {
-                        toastMessage = "프로필 설정 실패"
                     }
+                } else {
+                    toastMessage = "프로필 설정 실패"
                 }
             }
             isLoading = false

@@ -30,7 +30,9 @@ final class MyPotViewModel: ObservableObject {
             } catch {
                 if let networkError = error as? NetworkError {
                     Logger.error("나의 챌린지 정보 가져오기 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     Logger.error("나의 챌린지 정보 가져오기 실패: \(error.localizedDescription)")
                     //toastMessage = error.localizedDescription

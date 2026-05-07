@@ -44,7 +44,9 @@ final class ChallengeDetailViewModel: ObservableObject {
                 Logger.error("상세정보 불러오기 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("상세정보 불러오기 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "상세정보 불러오기 실패 \(error.localizedDescription)"
                 }
@@ -72,7 +74,9 @@ final class ChallengeDetailViewModel: ObservableObject {
                 Logger.error("챌린지 취소하기 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("챌린지 취소하기 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "취소하기 실패 \(error.localizedDescription)"
                 }
@@ -96,7 +100,9 @@ final class ChallengeDetailViewModel: ObservableObject {
                 Logger.error("챌린지 시작 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("챌린지 시작 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "챌린지 시작 실패 \(error.localizedDescription)"
                 }
@@ -120,7 +126,9 @@ final class ChallengeDetailViewModel: ObservableObject {
                 Logger.error("챌린지 종료 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("챌린지 종료 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "챌린지 종료 실패 \(error.localizedDescription)"
                 }

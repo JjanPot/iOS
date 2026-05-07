@@ -49,7 +49,9 @@ final class ChallengeDashboardViewModel: ObservableObject {
             } catch {
                 Logger.error("loadChallengeOverview 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
-                    ToastManager.shared.show(networkError.description)
+                    if networkError.isUserFacing {
+                        ToastManager.shared.show(networkError.description)
+                    }
                 } else {
                     toastMessage = "불러오기 실패"
                 }
@@ -79,7 +81,9 @@ final class ChallengeDashboardViewModel: ObservableObject {
                 Logger.error("피드 삭제하기 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("삭제 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "삭제 실패"
                 }
@@ -101,7 +105,9 @@ final class ChallengeDashboardViewModel: ObservableObject {
                 Logger.error("사용자 차단 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("사용자 차단 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "사용자 차단 실패"
                 }

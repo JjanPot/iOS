@@ -65,7 +65,9 @@ final class SettingsViewModel: ObservableObject {
                 Logger.error("회원 탈퇴 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("회원 탈퇴 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "회원 탈퇴 실패"
                 }
@@ -96,7 +98,9 @@ final class SettingsViewModel: ObservableObject {
                 Logger.error("알림 설정 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("알림 설정 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "설정 실패"
                 }
@@ -125,7 +129,9 @@ final class SettingsViewModel: ObservableObject {
                 Logger.error("알림 설정 불러오기 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("알림 설정 불러오기 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "불러오기 실패"
                 }

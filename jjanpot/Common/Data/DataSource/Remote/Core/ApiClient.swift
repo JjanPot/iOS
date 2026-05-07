@@ -101,6 +101,13 @@ public class ApiClient<R: Router> {
             return .failure(.failToDecode("Unable to decode as ResponseBody or direct T"))
 
         } else { // 실패 (4xx, 5xx)
+            // 401, 403은 바디 상관없이 특별 처리
+            if response.statusCode == 401 {
+                return .failure(.unauthorized)
+            } else if response.statusCode == 403 {
+                return .failure(.forbidden)
+            }
+
             guard let data = result.data else {
                 return .failure(.dataNil)
             }
@@ -199,6 +206,13 @@ public class ApiClient<R: Router> {
             return .failure(.failToDecode("Unable to decode as ResponseBody or direct T"))
 
         } else {
+            // 401, 403은 바디 상관없이 특별 처리
+            if response.statusCode == 401 {
+                return .failure(.unauthorized)
+            } else if response.statusCode == 403 {
+                return .failure(.forbidden)
+            }
+
             guard let data = result.data else {
                 return .failure(.dataNil)
             }

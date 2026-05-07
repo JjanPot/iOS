@@ -71,7 +71,9 @@ final class FeedPostViewModel: ObservableObject {
             } catch {
                 Logger.error("챌린지 인증 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "인증에 실패했습니다"
                 }

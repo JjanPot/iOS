@@ -29,7 +29,9 @@ final class ChallengeHistoryViewModel: ObservableObject {
                 Logger.error("챌린지 기록 불러오기 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
                     Logger.error("챌린지 기록 불러오기 실패: \(networkError.description)")
-                    toastMessage = networkError.description
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
                 } else {
                     toastMessage = "불러오기 실패"
                 }
