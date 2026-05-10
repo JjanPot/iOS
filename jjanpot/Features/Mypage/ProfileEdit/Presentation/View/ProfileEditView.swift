@@ -9,7 +9,7 @@ import SwiftUI
 
 /// 프로필 수정화면
 struct ProfileEditView: View {
-    @State var profileImage: Image? = nil
+    @State var imageSource: ProfileImageSource? = nil
     @State var nickname: String = ""
     @State var nicknameErrorMessage: String? = ""
     @State var selectedDate: Date = Date()
@@ -27,7 +27,7 @@ struct ProfileEditView: View {
                     
                     // 프로필 이미지, 닉네임
                     ProfileContentView(
-                        profileImage: $profileImage,
+                        imageSource: $imageSource,
                         nickname: $nickname,
                         nicknameErrorMessage: $nicknameErrorMessage,
                         onSubmit: {

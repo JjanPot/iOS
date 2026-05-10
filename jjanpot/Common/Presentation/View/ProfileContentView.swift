@@ -6,14 +6,24 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ProfileContentView: View {
-    @Binding var profileImage: Image?
+    @Binding var imageSource: ProfileImageSource?
     @Binding var nickname: String
     @Binding var nicknameErrorMessage: String?
     let onSubmit: (() -> Void)?
     let onProfileImageTapped: (() -> Void)?
     
+    private var placeholderImage: some View {
+        Color.black100
+            .overlay(alignment: .center) {
+                Image(systemName: "camera.fill")
+                    .renderingMode(.template)
+                    .foregroundStyle(Color.black300)
+            }
+    }
+
     var body: some View {
         
         VStack(alignment: .leading, spacing: 40) {
@@ -23,22 +33,25 @@ struct ProfileContentView: View {
                 
                 
                 Group {
-                    if let profileImage {
-                        profileImage
+                    switch imageSource {
+                    case .local(let image):
+                        image
                             .resizable()
                             .scaledToFill()
-                    } else {
-                        // placeHolder
-                        Color.black100
-                            .overlay(alignment: .center) {
-                                Image(systemName: "camera.fill")
-                                    .renderingMode(.template)
-                                    .foregroundStyle(Color.black300)
-                            }
+                    case .network(let urlString):
+                        if let url = URL(string: urlString) {
+                            KFImage(url)
+                                .resizable()
+                                .scaledToFill()
+                        } else {
+                            placeholderImage
+                        }
+                    case nil:
+                        placeholderImage
                     }
                 }
                 .frame(width: 66, height: 66)
-                    .rounded(radius: 12)
+                .clipShape(Circle())
                 
                     
                 
@@ -76,7 +89,7 @@ struct ProfileContentView: View {
 
 #Preview {
     ProfileContentView(
-        profileImage: .constant(nil),
+        imageSource: .constant(nil),
         nickname: .constant(""),
         nicknameErrorMessage: .constant(nil),
         onSubmit: {},

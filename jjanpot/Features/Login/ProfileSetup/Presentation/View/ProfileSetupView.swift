@@ -20,7 +20,7 @@ struct ProfileSetupView: View {
     
     // 앨범 접근 권한 재요청
     @State private var showPermissionAlert = false
-    @State private var profileImage: Image?
+    @State private var imageSource: ProfileImageSource?
 
     init(viewModel: ProfileSetupViewModel, coordinator: LoginCoordinator) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -40,7 +40,7 @@ struct ProfileSetupView: View {
                     
                     // 프로필 이미지, 닉네임
                     ProfileContentView(
-                        profileImage: $profileImage,
+                        imageSource: $imageSource,
                         nickname: $viewModel.nickname,
                         nicknameErrorMessage: $viewModel.nicknameErrorMessage,
                         onSubmit: {
@@ -104,7 +104,7 @@ struct ProfileSetupView: View {
                 if let data = try? await newItem?.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data) {
                     viewModel.profileImage = uiImage
-                    profileImage = Image(uiImage: uiImage)
+                    imageSource = .local(Image(uiImage: uiImage))
                 }
             }
         }
