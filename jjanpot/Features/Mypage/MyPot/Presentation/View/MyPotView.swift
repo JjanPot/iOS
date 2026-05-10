@@ -151,7 +151,7 @@ struct MyPotView: View {
     }
     
     private var contactView: some View {
-        HStack(alignment: .center, spacing: .zero ) {
+        HStack(alignment: .center, spacing: 8 ) {
             Image("file")
                 .resizable()
                 .frame(width: 24, height: 24)
