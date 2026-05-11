@@ -217,7 +217,7 @@ final class ChallengeDashboardViewModel: ObservableObject {
             guard case let .item(id, feed) = feedViewData, feed.feedId == feedId else {
                 return feedViewData
             }
-            return .item(id: id, feed: feed.withUpdatedLikeCount(likeInfo.likeCount))
+            return .item(id: id, feed: feed.withUpdatedLikeCount(likeInfo.likeCount, isLiked: likeInfo.isLiked))
         }
 
         self.viewData = .inProgress(
@@ -227,7 +227,3 @@ final class ChallengeDashboardViewModel: ObservableObject {
         )
     }
 }
-  
-
-
-

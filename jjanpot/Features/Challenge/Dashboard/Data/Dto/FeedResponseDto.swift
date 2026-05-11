@@ -16,13 +16,16 @@ struct FeedResponseDto: Codable {
     let imageURL: String?
     /// "2027-08-15T09:35:00"
     let createdAt: String
+    
     let likeCount: Int
+    let isLiked: Bool
+    
     let isMe: Bool
 
     enum CodingKeys: String, CodingKey {
         case certificationId, userId
         case spendType, categoryName, userNickname, memo, savedAmount
         case imageURL = "imageUrl"
-        case createdAt, likeCount, isMe
+        case createdAt, likeCount, isMe, isLiked
     }
 }

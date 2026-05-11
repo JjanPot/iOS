@@ -91,6 +91,8 @@ struct FeedCardView: View {
                 } label: {
                     HStack{
                         Image("thumb")
+                            .renderingMode(.template)
+                            .foregroundStyle(viewData.isLiked ? Color.orange500: Color.black500)
                         Text("\(viewData.likeCount)")
                             .font(.pretendard(.regular, size: 12))
                             .foregroundStyle(.black600)
@@ -176,6 +178,7 @@ struct FeedCardView: View {
                 content: "텀블러에 담아서 먹었는데 그럭저럭 먹을만하더라구요. 다들 맛있게 절약하세요.",
                 price: "+3,500원",
                 likeCount: 3,
+                isLiked: false,
                 date: "2027.09.18 18:30",
                 imageUrl: "https://picsum.photos/50/50",
                 isMine: true

@@ -20,7 +20,7 @@ struct FeedCardViewData {
     let price: String
     
     let likeCount: Int
-    //    let isLiked: Bool
+    let isLiked: Bool
     
     let date: String
     let imageUrl: String?
@@ -29,7 +29,7 @@ struct FeedCardViewData {
     
 }
 extension FeedCardViewData {
-    func withUpdatedLikeCount(_ count: Int) -> FeedCardViewData {
+    func withUpdatedLikeCount(_ count: Int, isLiked: Bool) -> FeedCardViewData {
         FeedCardViewData(
             feedId: self.feedId,
             authorId: self.authorId,
@@ -38,6 +38,7 @@ extension FeedCardViewData {
             content: self.content,
             price: self.price,
             likeCount: count,
+            isLiked: isLiked,
             date: self.date,
             imageUrl: self.imageUrl,
             isMine: self.isMine

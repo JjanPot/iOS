@@ -356,6 +356,7 @@ struct FeedEditView: View {
             imageURL: nil,
             createdAt: Date(),
             likeCount: 0,
+            isLiked: false,
             isMe: true
         ),
         coordinator: coordinator)

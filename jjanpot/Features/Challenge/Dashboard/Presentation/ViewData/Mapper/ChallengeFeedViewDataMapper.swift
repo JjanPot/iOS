@@ -32,6 +32,7 @@ struct ChallengeFeedViewDataMapper {
                 content: entity.memo ?? "",
                 price: "\(entity.savedAmount > 0 ? "+" : "")\(entity.savedAmount)원",
                 likeCount: entity.likeCount,
+                isLiked: entity.isLiked,
                 date: entity.createdAt.toString(.dateTime2, locale: .kr),
                 imageUrl: entity.imageURL,
                 isMine: entity.isMe

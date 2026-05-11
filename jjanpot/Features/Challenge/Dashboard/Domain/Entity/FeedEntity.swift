@@ -18,6 +18,7 @@ struct FeedEntity {
     let imageURL: String?
     let createdAt: Date
     let likeCount: Int
+    let isLiked: Bool
     let isMe: Bool
     
     
@@ -39,6 +40,7 @@ extension FeedEntity {
         /// "2027-08-15T09:35:00"
         self.createdAt = dto.createdAt.toDate(.iso8601) ?? Date()
         self.likeCount = dto.likeCount
+        self.isLiked = dto.isLiked
         self.isMe = dto.isMe
     }
 }
