@@ -56,9 +56,11 @@ enum ChallengeRouter {
     /// 피드 수정
     case updateFeed(feedId: Int)
     
-    
     /// 피드 삭제
     case deleteFeed(feedId: Int)
+    
+    /// 좋아요
+    case likes(feedId: Int)
     
     
     
@@ -112,7 +114,8 @@ extension ChallengeRouter: Router {
                 .reportUser,
                 .blockUser,
                 .reviewMode_startChallenge,
-                .reviewMode_finishChallenge
+                .reviewMode_finishChallenge,
+                .likes
             : .post
             
         case .updateFeed:
@@ -182,6 +185,9 @@ extension ChallengeRouter: Router {
             
         case let .reviewMode_finishChallenge(challengeId):
             return "/api/auth/v1/review/challenge/\(challengeId)/finish"
+            
+        case let .likes(feedId):
+            return "/api/certifications/v1/\(feedId)/likes"
         }
     }
 
@@ -228,7 +234,8 @@ extension ChallengeRouter: Router {
                 .deleteFeed,
                 .updateFeed,
                 .reviewMode_startChallenge,
-                .reviewMode_finishChallenge
+                .reviewMode_finishChallenge,
+                .likes
             : return nil
         
 
@@ -350,6 +357,9 @@ protocol ChallengeApiClientProtocol {
     
     /// 심사용 - 챌린지 즉시 종료
     func reviewMode_finishChallenge(challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>
+    
+    /// 좋아요
+    func likes(feedId: Int) async -> Result<LikesDto, NetworkError>
 
 }
 
@@ -458,5 +468,10 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     /// 심사용 - 챌린지 즉시 종료
     func reviewMode_finishChallenge(challengeId: Int) async -> Result<EmptyResponseDto, NetworkError> {
         await request(.reviewMode_finishChallenge(challengeId: challengeId))
+    }
+    
+    /// 좋아요
+    func likes(feedId: Int) async -> Result<LikesDto, NetworkError>  {
+        await request(.likes(feedId: feedId))
     }
 }

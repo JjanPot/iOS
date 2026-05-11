@@ -94,8 +94,20 @@ struct ChallengeDashboardRepository: ChallengeDashboardRepositoryProtocol {
     func deleteFeed(feedId: Int) async throws {
         let result = await apiClient.deleteFeed(feedId: feedId)
         switch result {
-        case .success(let dto):
+        case .success(_):
             return
+            
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    // 좋아요
+    func updateLikes(feedId: Int) async throws -> LikesEntity {
+        let result = await apiClient.likes(feedId: feedId)
+        switch result {
+        case .success(let dto):
+            return LikesEntity(from: dto)
             
         case .failure(let error):
             throw error

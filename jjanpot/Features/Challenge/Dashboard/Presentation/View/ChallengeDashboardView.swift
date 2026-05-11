@@ -112,6 +112,7 @@ struct ChallengeDashboardView: View {
                                                         }),
                                                      onClickLike: {
                                             print(">>>>> 좋아요 클릭 \(feed.feedId)")
+                                            viewModel.updateLikes(feedId: feed.feedId)
                                             
                                         },
                                                      onClickImage: {

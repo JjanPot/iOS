@@ -33,4 +33,8 @@ protocol ChallengeDashboardRepositoryProtocol {
     
     /// 피드 삭제하기
     func deleteFeed(feedId: Int) async throws
+    
+    
+    /// 피드 좋아요 기능
+    func updateLikes(feedId: Int) async throws -> LikesEntity
 }

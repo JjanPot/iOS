@@ -184,6 +184,48 @@ final class ChallengeDashboardViewModel: ObservableObject {
         return result
     }
     
+    // 피드 좋아요
+    func updateLikes(feedId: Int) {
+        isLoading = true
+        Task {
+            do {
+                let likeInfo = try await useCase.updateLikes(feedId: feedId)
+                
+                // 목록 새로고침
+                updateFeedLikeInfo(feedId: feedId, likeInfo: likeInfo)
+            } catch {
+                Logger.error("좋아요 실패: \(error.localizedDescription)")
+                if let networkError = error as? NetworkError {
+                    Logger.error("좋아요 실패: \(networkError.description)")
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
+                } else {
+                    toastMessage = "좋아요 실패"
+                }
+            }
+            isLoading = false
+        }
+    }
+    
+    func updateFeedLikeInfo(feedId: Int, likeInfo: LikesEntity) {
+        guard case let .inProgress(challengeId, overviewViewData, feeds) = self.viewData else {
+            return
+        }
+
+        let updatedFeeds = feeds.map { feedViewData -> ChallengeFeedViewData in
+            guard case let .item(id, feed) = feedViewData, feed.feedId == feedId else {
+                return feedViewData
+            }
+            return .item(id: id, feed: feed.withUpdatedLikeCount(likeInfo.likeCount))
+        }
+
+        self.viewData = .inProgress(
+            challengeId: challengeId,
+            overviewViewData: overviewViewData,
+            feedViewData: updatedFeeds
+        )
+    }
 }
   
 

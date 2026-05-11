@@ -18,9 +18,30 @@ struct FeedCardViewData {
     let category: String
     let content: String
     let price: String
+    
     let likeCount: Int
+    //    let isLiked: Bool
+    
     let date: String
     let imageUrl: String?
     
     let isMine: Bool
+    
 }
+extension FeedCardViewData {
+    func withUpdatedLikeCount(_ count: Int) -> FeedCardViewData {
+        FeedCardViewData(
+            feedId: self.feedId,
+            authorId: self.authorId,
+            authorNickname: self.authorNickname,
+            category: self.category,
+            content: self.content,
+            price: self.price,
+            likeCount: count,
+            date: self.date,
+            imageUrl: self.imageUrl,
+            isMine: self.isMine
+        )
+    }
+}
+

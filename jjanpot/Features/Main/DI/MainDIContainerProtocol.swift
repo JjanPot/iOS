@@ -689,6 +689,7 @@ struct MockChallengeReportUseCase: ChallengeReportUseCaseProtocol {
     }
     
     func report(challengeId: Int) async throws -> ChallengeReportEntity {
+        // 성공 결과값
         return ChallengeReportEntity(
             isTeamSuccess: true,
             goalAmount: 300_000,
@@ -698,7 +699,7 @@ struct MockChallengeReportUseCase: ChallengeReportUseCaseProtocol {
             personalSavedAmount: 25000
         )
         
-        // 실패의 경우
+        // 챌린지 실패한 경우 결과
 //            ChallengeReportEntity(
 //                isTeamSuccess: false,
 //                goalAmount: 300_000,
@@ -709,6 +710,7 @@ struct MockChallengeReportUseCase: ChallengeReportUseCaseProtocol {
 //            )
     }
 }
+
 struct MockSettingsUseCase: SettingsUseCaseProtocol {
     func setNotificationSettings(setting entity: NotificationEntity) async throws {}
     
@@ -748,6 +750,10 @@ struct MockChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
     
     func blockUser(userId: Int, challengeId: Int) async throws {
         return
+    }
+    
+    func updateLikes(feedId: Int) async throws -> LikesEntity {
+        return LikesEntity(isLiked: true, likeCount: 3)
     }
     
     func getChallengeDashboardData() async throws -> ChallengeDashboardEntity {

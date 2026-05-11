@@ -21,6 +21,9 @@ protocol ChallengeDashboardUseCaseProtocol {
     
     /// 피드 삭제하기
     func deleteFeed(feedId: Int) async throws
+    
+    /// 피드 좋아요
+    func updateLikes(feedId: Int) async throws -> LikesEntity
 }
 
 // MARK: - ChallengeDashboardUseCase
@@ -91,6 +94,11 @@ struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
     // 피드 삭제하기
     func deleteFeed(feedId: Int) async throws {
         try await repository.deleteFeed(feedId: feedId)
+    }
+    
+    // 피드 좋아요
+    func updateLikes(feedId: Int) async throws -> LikesEntity {
+        try await repository.updateLikes(feedId: feedId)
     }
     
     
