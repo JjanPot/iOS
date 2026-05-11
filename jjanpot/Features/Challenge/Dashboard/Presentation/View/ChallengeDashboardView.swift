@@ -110,6 +110,10 @@ struct ChallengeDashboardView: View {
                                                                 closeMenu()
                                                             }
                                                         }),
+                                                     onClickLike: {
+                                            print(">>>>> 좋아요 클릭 \(feed.feedId)")
+                                            
+                                        },
                                                      onClickImage: {
                                             guard let url = feed.imageUrl else {
                                                 return

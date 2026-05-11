@@ -12,6 +12,7 @@ struct FeedCardView: View {
     let viewData: FeedCardViewData
     @Binding var isMyMenuOpen: Bool
     @Binding var isMenuOpen: Bool
+    let onClickLike: (() -> Void)
     let onClickImage: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
@@ -85,9 +86,8 @@ struct FeedCardView: View {
             HStack(alignment: .center, spacing: .zero) {
                 
                 // 좋아요 버튼
-                /*
                 Button {
-                    
+                    onClickLike()
                 } label: {
                     HStack{
                         Image("thumb")
@@ -97,7 +97,8 @@ struct FeedCardView: View {
                     }
                     .frame(minWidth: 50, alignment: .leading)
                 }
-                */
+                .disabled(viewData.isMine)
+                
                 Spacer()
 
                 Text(viewData.date)
@@ -181,6 +182,7 @@ struct FeedCardView: View {
                 
             ), isMyMenuOpen: $isMyMenuOpen,
                          isMenuOpen: $isMenuOpen,
+                         onClickLike: {},
                          onClickImage: {},
                          onEdit: {},
                          onDelete: {},
