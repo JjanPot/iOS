@@ -15,7 +15,6 @@ struct ProfileSetupRepository: ProfileSetupRepositoryProtocol {
         self.authApiClient = authApiClient
     }
 
-    
     func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async throws -> SetProfileEntity {
         let result = await authApiClient.setProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl)
         switch result {
@@ -76,7 +75,8 @@ struct ProfileSetupRepository: ProfileSetupRepositoryProtocol {
             let newUser = UserEntity(
                 userId: userId,
                 nickname: user.nickname,
-                imageUrl: user.profileImageURL
+                imageUrl: user.profileImageURL,
+                birthDate: user.birthDate
             )
             let loginEntity = LoginEntity(
                 user: newUser,
@@ -101,12 +101,4 @@ struct ProfileSetupRepository: ProfileSetupRepositoryProtocol {
     }
 }
 
-struct PresignedURLEntity {
-    let uploadUrl: String
-    let imageUrl: String
-    
-    init(from dto: PresignedURLDto) {
-        self.uploadUrl = dto.uploadUrl
-        self.imageUrl = dto.imageUrl
-    }
-}
+

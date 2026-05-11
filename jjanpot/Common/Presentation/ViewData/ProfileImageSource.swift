@@ -1,6 +1,7 @@
 import SwiftUI
+import UIKit
 
 enum ProfileImageSource {
-    case local(Image)
+    case local(UIImage)
     case network(String)
 }

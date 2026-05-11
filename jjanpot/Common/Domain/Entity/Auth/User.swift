@@ -13,6 +13,7 @@ struct UserEntity {
     let userId: Int
     let nickname: String
     let imageUrl: String?
+    let birthDate: Date?
 }
 
 extension UserEntity {
@@ -20,5 +21,7 @@ extension UserEntity {
         self.userId = dto.userId
         self.nickname = dto.nickname
         self.imageUrl = dto.profileUrl
+        // "2000-01-15",
+        self.birthDate = dto.birthDate?.toDate(.dateOnly)
     }
 }

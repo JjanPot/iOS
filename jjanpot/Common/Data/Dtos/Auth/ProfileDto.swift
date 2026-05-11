@@ -11,10 +11,13 @@ public struct ProfileDto: Codable {
     let userId: Int
     let nickname: String
     let profileUrl: String?
+    let birthDate: String?
     
     enum CodingKeys: CodingKey {
         case userId
         case nickname
         case profileUrl
+        case birthDate
     }
+    
 }

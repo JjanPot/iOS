@@ -14,7 +14,9 @@ final class ProfileSetupViewModel: ObservableObject {
     @Published var nickname: String = ""
     @Published var nicknameErrorMessage: String? = nil
     @Published var birthDate: Date? = nil
-    @Published var profileImage: UIImage? = nil
+    
+    // 여기서는 .local만 쓰임
+    @Published var imageSource: ProfileImageSource?
     
     @Published var isLoading = false
     @Published var toastMessage: String?
@@ -34,6 +36,11 @@ final class ProfileSetupViewModel: ObservableObject {
         
         let date = birthDate?.toString(.dateOnly)
         
+        var profileImage: UIImage?
+        if case let .local(uiImage) = imageSource {
+            profileImage = uiImage
+        }
+        
         Task {
             do {
                 try await useCase.setProfile(nickname: nickname, birthDate: date, image: profileImage)
@@ -51,6 +58,9 @@ final class ProfileSetupViewModel: ObservableObject {
             }
             isLoading = false
         }
-        
+    }
+    
+    func updateLocalImage(_ uiImage:  UIImage){
+        imageSource = .local(uiImage)
     }
 }

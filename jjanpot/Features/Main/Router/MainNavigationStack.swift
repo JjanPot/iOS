@@ -23,7 +23,7 @@ struct MainNavigationStack: View {
         self.appCoordinator = appCoordinator
         self.mainCoordinator = MainCoordinator(appCoordinator: appCoordinator)
         self.challengeCoordinator = container.makeChallengeCoordinator(appCoordinator: appCoordinator)
-        self.myPageCoordinator = MyPageCoordinator(appCoordinator: appCoordinator)
+        self.myPageCoordinator = container.makeMyPageCoordinator(appCoordinator: appCoordinator)
     }
 
     var body: some View {
@@ -97,7 +97,7 @@ struct MainNavigationStack: View {
             
             // 프로필 수정
         case .profileEdit:
-            container.makeProfileEditView()
+            container.makeProfileEditView(coordinator: myPageCoordinator)
 
             // 알람 설정
         case .alarmSettings:

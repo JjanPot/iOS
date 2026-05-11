@@ -29,6 +29,9 @@ public enum AuthRouter {
     // 프로필 가져오기
     case getProfile
     
+    // 프로필 수정하기  birthDate "2000-01-15"
+    case editProfile(nickname: String, birthDate: String?, imageUrl: String?)
+    
     // MARK : mypage
     case getNotificationSettings
     case setNotificationSettings(setting: NotificationDto)
@@ -67,8 +70,13 @@ extension AuthRouter: Router {
             // 프로필 설정
         case .setProfile:
             return "/api/users/v1/onboarding/profile"
+       
             // 프로필 가져오기
         case .getProfile:
+            return "/api/users/v1/profile"
+            
+            // 프로필 수정
+        case .editProfile:
             return "/api/users/v1/profile"
             
         case .logout:
@@ -107,6 +115,9 @@ extension AuthRouter: Router {
             
         case .withdraw:
             return .delete
+            
+        case .editProfile:
+            return .put
         }
     }
     
@@ -160,6 +171,18 @@ extension AuthRouter: Router {
             return params
             
         case let .setProfile(nickname, birthDate, imageUrl):
+            var params: Parameters = [
+                "nickname" : nickname,
+            ]
+            if let birthDate {
+                params["birthDate"] = birthDate
+            }
+            if let imageUrl {
+                params["profileImageUrl"] = imageUrl
+            }
+            return params
+            
+        case let .editProfile(nickname, birthDate, imageUrl):
             var params: Parameters = [
                 "nickname" : nickname,
             ]
@@ -244,6 +267,9 @@ public protocol AuthApiClientProtocol {
     /// 프로필 가져오기
     func getProfile() async -> Result<ProfileDto, NetworkError>
     
+    /// 프로필 수정하기
+    func editProfile(nickname: String, birthDate: String?, imageUrl: String?) async -> Result<ProfileDto, NetworkError>
+    
     /// presignedUrl 가져오기
     func presignedUrl(directory: String, contentType: String) async -> Result<PresignedURLDto, NetworkError>
     
@@ -295,6 +321,12 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
     public func getProfile() async -> Result<ProfileDto, NetworkError> {
         await request(.getProfile)
     }
+    
+    /// 프로필 수정하기
+    public func editProfile(nickname: String, birthDate: String?, imageUrl: String?) async -> Result<ProfileDto, NetworkError> {
+        await request(.editProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl))
+    }
+    
     
     /// presignedUrl 가져오기
     public func presignedUrl(directory: String, contentType: String) async -> Result<PresignedURLDto, NetworkError> {

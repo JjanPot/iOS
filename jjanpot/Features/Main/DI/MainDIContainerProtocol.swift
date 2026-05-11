@@ -31,6 +31,7 @@ import Alamofire
 protocol MainDIContainerProtocol {
     func makeAppCoordinator() -> AppCoordinator
     func makeChallengeCoordinator(appCoordinator: AppCoordinator) -> ChallengeCoordinatorProtocol
+    func makeMyPageCoordinator(appCoordinator: AppCoordinator) -> MyPageCoordinatorProtocol
 
     // 홈 화면
     func makeHomeView(coordinator: MainNavigationCoordinatorProtocol) -> HomeView
@@ -87,7 +88,7 @@ protocol MainDIContainerProtocol {
     
 
     // 프로필 수정화면
-    func makeProfileEditView() -> ProfileEditView
+    func makeProfileEditView(coordinator: MyPageCoordinatorProtocol) -> ProfileEditView
 }
 
 // MARK: - MainDIContainer
@@ -109,6 +110,10 @@ final class MainDIContainer: MainDIContainerProtocol {
 
     func makeChallengeCoordinator(appCoordinator: AppCoordinator) -> ChallengeCoordinatorProtocol {
         return ChallengeCoordinator(appCoordinator: appCoordinator)
+    }
+    
+    func makeMyPageCoordinator(appCoordinator: AppCoordinator) -> any MyPageCoordinatorProtocol {
+        return MyPageCoordinator(appCoordinator: appCoordinator)
     }
 
     // MARK: - Home
@@ -369,12 +374,24 @@ final class MainDIContainer: MainDIContainerProtocol {
         ReportUserSheetView(onReportUser: onReportUser, onBlockUser: onBlockUser, onCloseAction: onCloseAction)
     }
     
-    // 프로필 수정화면
-    func makeProfileEditView() -> ProfileEditView {
-        return ProfileEditView()
+    // MARK: - ProfileEdit 프로필 수정
+
+    private func makeProfileEditRepository() -> ProfileEditRepositoryProtocol {
+        return ProfileEditRepository(authApiClient: authApiClient)
+    }
+    private func makeProfileEditUseCase() -> ProfileEditUseCaseProtocol {
+        let repo = makeProfileEditRepository()
+        return ProfileEditUseCase(repository: repo)
+    }
+    private func makeProfileEditViewModel() -> ProfileEditViewModel {
+        let usecase = makeProfileEditUseCase()
+        return ProfileEditViewModel(useCase: usecase)
     }
     
-    
+    func makeProfileEditView(coordinator: MyPageCoordinatorProtocol) -> ProfileEditView {
+        let vm = makeProfileEditViewModel()
+        return ProfileEditView(viewModel: vm, coordinator: coordinator)
+    }
 }
 
 // MARK: - Mock
@@ -383,6 +400,12 @@ final class MockMainDIContainer: MainDIContainerProtocol {
 
     func makeAppCoordinator() -> AppCoordinator {
         return AppCoordinator(container: self)
+    }
+    func makeChallengeCoordinator(appCoordinator: AppCoordinator) -> ChallengeCoordinatorProtocol {
+        return ChallengeCoordinator(appCoordinator: appCoordinator)
+    }
+    func makeMyPageCoordinator(appCoordinator: AppCoordinator) -> any MyPageCoordinatorProtocol {
+        return MyPageCoordinator(appCoordinator: appCoordinator)
     }
 
     func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
@@ -393,10 +416,6 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return ReportPopupView(challengeId: challengeId, comfirmAction: comfirmAction, closeAction: closeAction)
     }
     
-    func makeChallengeCoordinator(appCoordinator: AppCoordinator) -> ChallengeCoordinatorProtocol {
-        return ChallengeCoordinator(appCoordinator: appCoordinator)
-    }
-
     func makeHomeView(coordinator: MainNavigationCoordinatorProtocol) -> HomeView {
         let useCase = MockHomeUseCase()
         let viewModel = HomeViewModel(useCase: useCase)
@@ -615,8 +634,21 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     }
     
     // 프로필 수정화면
-    func makeProfileEditView() -> ProfileEditView {
-        return ProfileEditView()
+    func makeProfileEditView(coordinator: MyPageCoordinatorProtocol) -> ProfileEditView {
+        let usecase = MockProfileEditUseCase()
+        let vm = ProfileEditViewModel(useCase: usecase)
+        return ProfileEditView(viewModel: vm, coordinator: coordinator)
+    }
+    struct MockProfileEditUseCase: ProfileEditUseCaseProtocol {
+        func getUserInfo() async throws -> UserEntity {
+            UserEntity(userId: 3, nickname: "주희희", imageUrl: "https://picsum.photos/100/100", birthDate: Date())
+        }
+        
+        func setProfile(nickname: String, birthDate: String?, image: UIImage?) async throws -> UserEntity {
+            UserEntity(userId: 3, nickname: "주희희", imageUrl: "https://picsum.photos/100/100", birthDate: Date())
+        }
+        
+        
     }
 }
 
@@ -692,7 +724,7 @@ struct MockSettingsUseCase: SettingsUseCaseProtocol {
 }
 struct MockMyPotUseCase: MyPotUseCaseProtocol {
     func getUserInfo() async throws -> UserEntity {
-        UserEntity(userId: 3, nickname: "주희희", imageUrl: "https://picsum.photos/100/100")
+        UserEntity(userId: 3, nickname: "주희희", imageUrl: "https://picsum.photos/100/100", birthDate: Date())
     }
     
     func getMyChallengeStats() async throws -> ChallengeStatsEntity {
