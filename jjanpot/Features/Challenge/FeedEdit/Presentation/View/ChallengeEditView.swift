@@ -52,9 +52,6 @@ struct FeedEditView: View {
                     // 메모
                     memoTextField
                     
-                    // 등록일시
-                    dateField
-                    
                     // 사진 업로드
                     images
                     
@@ -228,27 +225,6 @@ struct FeedEditView: View {
             }
             .frame(height: 104)
             .roundedBorder(color: .black100, radius: 12)
-        }
-    }
-    
-    // 등록일시
-    private var dateField: some View {
-        HStack(spacing: .zero){
-            PostTitleView(title: "등록일시", isNeccessary: false)
-            Spacer()
-            
-            Button {
-                isShowingPicker = true
-            } label: {
-                HStack(spacing: 10) {
-                    Text(viewModel.selectedDate.toString(format: "M월 d일 HH:mm", locale: .kr))
-                        .font(.pretendard(.semiBold, size: 14))
-                        .foregroundStyle(Color.black500)
-                    
-                    Image(systemName: "chevron.right")
-                        .foregroundStyle(Color.black500)
-                }
-            }
         }
     }
     
