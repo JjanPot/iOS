@@ -25,6 +25,12 @@ struct MyPotView: View {
                     coordinator.showSettings()
                 }
                 
+                // 배너 광고
+                BannerAd()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 76)
+                    //.padding(.horizontal, 20)
+                
                 Group {
                     if viewModel.profileViewData != nil {
                         profill
@@ -62,13 +68,13 @@ struct MyPotView: View {
                     }
                     
                     
-                        #if DEBUG
-                        
-                        Button("로그 공유 (\(Logger.getLogCount())개)"){
-                            shareLog()
-                        }
-                       
-                        #endif
+                    #if DEBUG
+                    
+                    Button("로그 공유 (\(Logger.getLogCount())개)"){
+                        shareLog()
+                    }
+                   
+                    #endif
                                             
                     
                 }
@@ -223,10 +229,8 @@ struct MyPotView: View {
     }
 }
 
-//#Preview {
-//    let di = MockMainDIContainer()
-//    di.makeMyPotView(coordinator: di.makeAppCoordinator())
-//}
-//
-//
-//
+#Preview {
+    let di = MockMainDIContainer()
+    
+    di.makeMyPotView(coordinator: di.makeMyPageCoordinator(appCoordinator: di.makeAppCoordinator()))
+}

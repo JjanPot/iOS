@@ -46,4 +46,14 @@ enum AppConstants {
 //        static let animationDuration: TimeInterval = 0.3
 //        static let cornerRadius: CGFloat = 12
 //    }
+    
+    // MARK: - google admob SDK key
+    enum SDKKeys {
+        //  TODO: 앰플리튜드 키 옮기기
+        #if DEBUG
+        static let ad_banner = "ca-app-pub-3940256099942544/2435281174"
+        #else
+        static let ad_banner = "ca-app-pub-6540441490742026/5660827309"
+        #endif
+    }
 }

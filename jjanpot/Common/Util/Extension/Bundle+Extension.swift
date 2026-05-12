@@ -25,4 +25,9 @@ extension Bundle {
     var googleClientID: String {
         return infoDictionary(for: "GOOGLE_CLIENT_ID")
     }
+    
+    /// Google admob ID
+    var googleAdmobID: String {
+        return infoDictionary(for: "GAD_APP_ID")
+    }
 }

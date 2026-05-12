@@ -56,6 +56,12 @@ struct HomeView: View {
                         ChallengeSummaryView(viewData: summary)
                     }
                     
+                    // 배너 광고
+                    BannerAd()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 76)
+                        //.padding(.horizontal, 20)
+                    
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 50)

@@ -9,6 +9,7 @@ import SwiftUI
 import KakaoSDKCommon
 import KakaoSDKAuth
 import GoogleSignIn
+import GoogleMobileAds
 
 @main
 struct jjanpotApp: App {
@@ -25,6 +26,9 @@ struct jjanpotApp: App {
         // Kakao SDK 초기화 (환경변수에서 가져옴)
         let kakaoAppKey = Bundle.main.kakaoAppKey
         KakaoSDK.initSDK(appKey: kakaoAppKey)
+        
+        // 애드몹 초기화 (Initialize the Google Mobile Ads SDK.)
+        MobileAds.shared.start()    
     }
 
     var body: some Scene {
