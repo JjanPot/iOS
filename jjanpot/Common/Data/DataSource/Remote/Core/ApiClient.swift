@@ -57,19 +57,18 @@ public class ApiClient<R: Router> {
                     return .failure(.noInternet)
                 case .explicitlyCancelled:
                     return .failure(.cancelled)
-                default:
-                    return .failure(.requestFailed(afError.localizedDescription))
+                default: break
                 }
             }
-            return .failure(.requestFailed(error.localizedDescription))
         }
 
+        // 응답값이 없음
         guard let response = result.response else {
             return .failure(.invalidResponse)
         }
 
         if 200..<300 ~= response.statusCode {
-            // data가 없는 경우 (204 No Content 등)
+            // data가 없는 경우 (204 No Content 등) //약관동의에서 data nil로 내려와서 여기에 넣음
             guard let data = result.data else {
                 if T.self == EmptyResponseDto.self {
                     return .success(EmptyResponseDto() as! T)
