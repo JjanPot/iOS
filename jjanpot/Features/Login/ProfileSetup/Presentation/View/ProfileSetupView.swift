@@ -38,17 +38,30 @@ struct ProfileSetupView: View {
                         .foregroundStyle(Color.black900)
                     
                     // 프로필 이미지, 닉네임
-                    ProfileContentView(
-                        imageSource: $viewModel.imageSource,
-                        nickname: $viewModel.nickname,
-                        nicknameErrorMessage: $viewModel.nicknameErrorMessage,
-                        onSubmit: {
-                            viewModel.setProfile()
-                        },
-                        onProfileImageTapped: {
-                            requestPhotoLibraryPermission()
-                        }
-                    )
+//                    ProfileContentView(
+//                        imageSource: $viewModel.imageSource,
+//                        nickname: $viewModel.nickname,
+//                        nicknameErrorMessage: $viewModel.nicknameErrorMessage,
+//                        onSubmit: {
+//                            viewModel.setProfile()
+//                        },
+//                        onProfileImageTapped: {
+//                            requestPhotoLibraryPermission()
+//                        }
+//                    )
+                    
+                    // 닉네임
+                    MainTextField(
+                        title: "닉네임",
+                        placeHolder: "최대 10글자까지 입력해 주세요.",
+                        textValue: $viewModel.nickname,
+                        isNeccessary: true,
+                        textLimit: 10,
+                        errorMessage: $viewModel.nicknameErrorMessage
+                    ) {
+                        hideKeyboard()
+                        viewModel.setProfile()
+                    }
                     
                     // 생년월일
                     Button {
