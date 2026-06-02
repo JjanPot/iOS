@@ -35,6 +35,15 @@ struct MainNavigationStack: View {
                 challengeView: AnyView(container.makeChallengeDashboardView(coordinator: challengeCoordinator)),
                 myPotView: AnyView(container.makeMyPotView(coordinator: myPageCoordinator))
             )
+            .onAppear {
+                // 앱 초기 실행 시 pending deep link 처리
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    if let code = DeepLinkHandler.shared.pendingDeepLink {
+                        appCoordinator.activePopup = .invite_code_input(inviteCode: code)
+                        DeepLinkHandler.shared.pendingDeepLink = nil
+                    }
+                }
+            }
             // MARK: navigationDestination
             .navigationDestination(for: MainDestination.self) { destination in
                 destinationView(for: destination)

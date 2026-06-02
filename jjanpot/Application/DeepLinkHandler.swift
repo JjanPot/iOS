@@ -8,9 +8,11 @@
 import Foundation
 import Combine
 
-class DeepLinkHandler {
+class DeepLinkHandler: ObservableObject {
     static let shared = DeepLinkHandler()
     private init(){}
+
+    @Published var pendingDeepLink: String?
 
     func handle(url: URL) {
         // Universal Link: https://jjanpot.shop/invite?code=aaaa
@@ -29,10 +31,14 @@ class DeepLinkHandler {
         switch path {
         case "/invite":
             guard let code = components?.queryItems?.first(where: { $0.name == "code" })?.value else { return }
-            NotificationCenter.default.post(
-                name: NSNotification.Name("deepLink_invite"),
-                object: code
-            )
+            DispatchQueue.main.async {
+                self.pendingDeepLink = code
+                // 앱이 이미 실행 중일 때를 위한 notification
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("deepLink_invite"),
+                    object: code
+                )
+            }
 
         default:
             break

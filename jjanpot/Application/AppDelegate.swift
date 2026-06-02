@@ -43,6 +43,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             }
         )
 
+        // 앱 초기 실행 시 딥링크 처리
+        if let url = launchOptions?[.url] as? URL {
+            DeepLinkHandler.shared.handle(url: url)
+        }
+
         return true
     }
     
