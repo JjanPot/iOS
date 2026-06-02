@@ -65,6 +65,13 @@ struct OnBoardingInviteCodeView: View {
         }//Vstack
         .padding()
         .loading(viewModel.isLoading)
+        .onAppear {
+            // 앱 초기 실행 시 pending deep link 처리
+            if let inviteCode = DeepLinkHandler.shared.pendingDeepLink {
+                code = inviteCode
+                DeepLinkHandler.shared.pendingDeepLink = nil
+            }
+        }
         .onChange(of: viewModel.isSuccess) { isSuccess in
             if isSuccess {
                 coordinator.navigateToSignUpComplete()
