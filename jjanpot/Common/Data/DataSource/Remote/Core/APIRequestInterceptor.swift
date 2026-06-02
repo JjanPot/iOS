@@ -28,8 +28,20 @@ public final class APIRequestInterceptor: RequestInterceptor {
         //request.setValue("application/json", forHTTPHeaderField: "Accept")
 
         
-        // 인증 토큰 있으면 추가
-         if let token = AuthManager.shared.getAccessToken() {
+        // Content-Type이 없을 때만 추가
+        if request.value(forHTTPHeaderField: "Content-Type") == nil {
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+
+        // Accept가 없을 때만 추가
+        if request.value(forHTTPHeaderField: "Accept") == nil {
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+        }
+
+
+        // Authorization가 비어있고, 인증 토큰 있으면 추가
+        if request.value(forHTTPHeaderField: "Authorization") == nil,
+           let token = AuthManager.shared.getAccessToken() {
              request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
          }
 

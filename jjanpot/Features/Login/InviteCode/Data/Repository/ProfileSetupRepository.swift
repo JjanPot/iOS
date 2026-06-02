@@ -60,7 +60,6 @@ struct ProfileSetupRepository: ProfileSetupRepositoryProtocol {
     }
     
     
-    
     /// 임시토큰을 정식토큰으로 저장.
     /// - 최초로그인 > 약관동의 > 프로필 등록까지는 임시토큰으로 진행
     /// - 프로필등록 이후부터 회원가입 된 것

@@ -197,7 +197,6 @@ extension ChallengeRouter: Router {
             // multipart upload는 Alamofire가 자동으로 Content-Type 설정
             return [ "Accept" : "application/json"]
             
-            
             // 온보딩 헤더
             // 여기선 임시로 저장한 토큰을 보낸다.
         case .submitInviteCodeInOnboarding:
@@ -210,10 +209,8 @@ extension ChallengeRouter: Router {
             }
             return params
             
-            // 기본 헤드
         default:
-            return [ "Accept" : "application/json",
-                "Content-Type" : "application/json"]
+            return nil
         }
     }
     

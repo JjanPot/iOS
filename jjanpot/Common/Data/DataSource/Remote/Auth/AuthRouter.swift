@@ -219,21 +219,18 @@ extension AuthRouter: Router {
     
     public var headers: HTTPHeaders? {
         switch self {
-        case .agreement, .setProfile:
+        case .agreement, .setProfile, .presignedUrl:
             var params: HTTPHeaders = [
                 "Accept" : "application/json",
                 "Content-Type" : "application/json",
             ]
+            // 가입 전, 임시 토큰
             if let token = AuthManager.shared.getTempAccessToken() {
                 params.add(name: "Authorization", value: "Bearer \(token)")
             }
             return params
             
-        default:
-            return [
-                "Accept" : "application/json",
-                "Content-Type" : "application/json",
-            ]
+        default: return nil
         }
     }
 
