@@ -71,6 +71,12 @@ struct MainNavigationStack: View {
                     })
                 }
             }
+            // MARK: deepLink
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("deepLink_invite"))) { notification in
+                if let code = notification.object as? String {
+                    appCoordinator.activePopup = .invite_code_input(inviteCode: code)
+                }
+            }
         }
     }
     
@@ -124,13 +130,16 @@ struct MainNavigationStack: View {
     @ViewBuilder
     private var popupContentView: some View {
         switch appCoordinator.activePopup {
-        case .inviteCode_Input: // 초대코드 팝업
-            container.makeInviteCodePopupView(inviteCode: nil, onCloseAction: {
-                appCoordinator.closePopup()
-            })
+        case let .invite_code_input(inviteCode): // 초대코드 팝업 입력뷰
+            container.makeInviteCodePopupView(
+                invireViewType: .inputForm(code: inviteCode),
+                onCloseAction: {
+                    appCoordinator.closePopup()
+                }
+            )
 
-        case let .inviteCode_Copy(inviteCode):
-            container.makeInviteCodePopupView(inviteCode: inviteCode, onCloseAction: {
+        case let .invite_code_copy(inviteCode): // 카피용
+            container.makeInviteCodePopupView(invireViewType: .viewer(code: inviteCode), onCloseAction: {
                 appCoordinator.closePopup()
             })
 

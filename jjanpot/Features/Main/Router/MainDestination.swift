@@ -86,8 +86,8 @@ enum MainDestination: Route {
 
 enum MainPopupDestination {
     case login
-    case inviteCode_Input
-    case inviteCode_Copy(inviteCode: String)
+    case invite_code_input(inviteCode: String?)
+    case invite_code_copy(inviteCode: String)
 
     /// 챌린지 결과있음 팝업
     case reportPopup(challengeId: Int)

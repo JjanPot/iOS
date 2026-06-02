@@ -41,3 +41,4 @@ protocol MainNavigationCoordinatorProtocol: AnyObject {
     // Navigation Control
     func closeScreen()
 }
+

@@ -37,7 +37,7 @@ protocol MainDIContainerProtocol {
     func makeHomeView(coordinator: MainNavigationCoordinatorProtocol) -> HomeView
 
     // 초대 코드 화면
-    func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView
+    func makeInviteCodePopupView(invireViewType: InviteCodePopupView.InvireViewType, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView
 
     // 챌린지 생성 화면
     func makeCreateChallengeView(coordinator: ChallengeCoordinatorProtocol) -> CreateChallengeView
@@ -149,9 +149,12 @@ final class MainDIContainer: MainDIContainerProtocol {
         return InviteCodeViewModel(useCase: usecase, isOnboarding: false)
     }
     
-    func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
+    func makeInviteCodePopupView(invireViewType: InviteCodePopupView.InvireViewType, onCloseAction: @escaping () -> Void) -> InviteCodePopupView {
         let vm = makeInviteCodeViewModel()
-        return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: { onCloseAction() })
+        return InviteCodePopupView(
+            viewModel: vm,
+            viewType: invireViewType,
+            onCloseAction: { onCloseAction() })
     }
     func makeReportPopupView(challengeId: Int, comfirmAction: @escaping ()-> Void, closeAction : @escaping ()-> Void ) -> ReportPopupView {
         return ReportPopupView(challengeId: challengeId, comfirmAction: comfirmAction, closeAction: closeAction)
@@ -408,10 +411,16 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return MyPageCoordinator(appCoordinator: appCoordinator)
     }
 
-    func makeInviteCodePopupView(inviteCode: String?, onCloseAction: @escaping ()-> Void ) -> InviteCodePopupView {
+
+    func makeInviteCodePopupView(invireViewType: InviteCodePopupView.InvireViewType, onCloseAction: @escaping () -> Void) -> InviteCodePopupView {
         let vm = InviteCodeViewModel(useCase: MockInviteCodePopupUseCase(), isOnboarding: false)
-        return InviteCodePopupView(viewModel: vm, inviteCode: inviteCode, onCloseAction: { onCloseAction() })
+        return InviteCodePopupView(
+            viewModel: vm,
+            viewType: invireViewType,
+            onCloseAction: { onCloseAction() }
+        )
     }
+    
     func makeReportPopupView(challengeId: Int, comfirmAction: @escaping ()-> Void, closeAction : @escaping ()-> Void ) -> ReportPopupView {
         return ReportPopupView(challengeId: challengeId, comfirmAction: comfirmAction, closeAction: closeAction)
     }

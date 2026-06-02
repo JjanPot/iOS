@@ -11,45 +11,45 @@ import SwiftUI
 
 struct InviteCodePopupView: View {
     
-    enum Viewer {
-        case leader
-        case member
+    enum InvireViewType {
+        case viewer(code: String) // 멤버들에게 공유할 코드
+        case inputForm(code: String?) //딥링크로 받아온 코드 (입력할거임)
         
         var title: String {
             switch self {
-            case .leader: "팀원을 초대하고 챌린지를 같이해요"
-            case .member: "팀장에게 받은 코드를 입력하세요"
+            case .viewer: "팀원을 초대하고 챌린지를 같이해요"
+            case .inputForm: "팀장에게 받은 코드를 입력하세요"
             }
         }
         
         var subTitle: String {
             switch self {
-            case .leader: "초대 코드를 복사하고 팀원을 초대해 보세요."
-            case .member: "초대 코드를 입려하고 함께 절약을 시작해요."
+            case .viewer: "초대 코드를 복사하고 팀원을 초대해 보세요."
+            case .inputForm: "초대 코드를 입려하고 함께 절약을 시작해요."
             }
         }
     }
     
     @StateObject var viewModel: InviteCodeViewModel
-    let inviteCode: String?
     let onCloseAction: () -> Void
     
-    init(viewModel: InviteCodeViewModel, inviteCode: String?, onCloseAction: @escaping () -> Void) {
+    init(viewModel: InviteCodeViewModel, viewType: InvireViewType, onCloseAction: @escaping () -> Void) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.inviteCode = inviteCode
         self.onCloseAction = onCloseAction
-        
-        if let inviteCode, inviteCode.isNotEmpty {
-            viewer = .leader
+        self.viewType = viewType
+
+        if case .inputForm(let code) = viewType, let code {
+            // 딥링크로 코드 받아옴.
+            _inputCode = State(initialValue: code)
         } else {
-            viewer = .member
+            _inputCode = State(initialValue: "")
         }
     }
-    
+
     @State var inputCode: String = ""
     @State var isError: Bool = false
     @FocusState private var isFocused: Bool
-    private let viewer: Viewer
+    private let viewType: InvireViewType
     
     var body: some View {
         VStack(alignment: .center, spacing: 42){
@@ -60,10 +60,10 @@ struct InviteCodePopupView: View {
                     .clipShape(Capsule())
                 
                 VStack(alignment: .center, spacing: 3){
-                    Text(viewer.title)
+                    Text(viewType.title)
                         .font(.pretendard(.semiBold, size: 20))
                         .foregroundStyle(Color.black900)
-                    Text(viewer.subTitle)
+                    Text(viewType.subTitle)
                         .font(.pretendard(.semiBold, size: 16))
                         .foregroundStyle(Color.black400)
                 }
@@ -71,8 +71,8 @@ struct InviteCodePopupView: View {
                 Image("charater2")
                     
                 VStack(alignment: .center, spacing: 2) {
-                    // 초대코드 있음 -> 복사뷰
-                    if let inviteCode {
+                    // 초대코드 복사뷰
+                    if case let .viewer(inviteCode)  = viewType {
                         Text("내 초대 코드")
                             .font(.pretendard(.medium, size: 17))
                 
@@ -90,8 +90,10 @@ struct InviteCodePopupView: View {
                                     .frame(width: 12, height: 12)
                             }
                         }
-                    } else {
-                        // 초대코드 없음 -> 입력뷰
+                        
+                        // 초대코드 입력뷰
+                    } else  if case .inputForm = viewType {
+                        
                         Text("받은 초대 코드")
                             .font(.pretendard(.medium, size: 17))
                         
@@ -120,7 +122,7 @@ struct InviteCodePopupView: View {
                 // 키보드 내리기
                 isFocused = false
                 
-                if viewer == .leader || inputCode.isEmpty {
+                if viewType == .viewer(code: "") || inputCode.isEmpty {
                     onCloseAction()
                 } else {
                     // 입력 코드 확인하기 -> 맞으면 자동으로 닫기
@@ -141,8 +143,19 @@ struct InviteCodePopupView: View {
 }
 
 #Preview {
-    MockMainDIContainer().makeInviteCodePopupView(inviteCode: nil, onCloseAction: {})
+    MockMainDIContainer().makeInviteCodePopupView(invireViewType: .viewer(code: "aaabbb"), onCloseAction: {})
         .padding(20)
         .border(.red)
 }
 
+
+
+extension InviteCodePopupView.InvireViewType: Equatable {
+    static func == (lhs: InviteCodePopupView.InvireViewType, rhs: InviteCodePopupView.InvireViewType) -> Bool {
+        switch (lhs, rhs) {
+        case (.viewer, .viewer): return true
+        case (.inputForm, .inputForm): return true
+        default: return false
+        }
+    }
+}

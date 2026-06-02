@@ -52,11 +52,11 @@ final class MainCoordinator: MainNavigationCoordinatorProtocol {
     }
 
     func showInviteCodeInputPopup() {
-        appCoordinator.showPopup(.inviteCode_Input)
+        appCoordinator.showPopup(.invite_code_input(inviteCode: nil))
     }
 
     func showInviteCodeCopyPopup(inviteCode: String) {
-        appCoordinator.showPopup(.inviteCode_Copy(inviteCode: inviteCode))
+        appCoordinator.showPopup(.invite_code_copy(inviteCode: inviteCode))
     }
 
     func showReportFeedPopup(feedId: Int) {
