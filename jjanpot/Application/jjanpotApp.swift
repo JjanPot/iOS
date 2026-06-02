@@ -53,11 +53,18 @@ struct jjanpotApp: App {
                         container.makeMainNavigationStack(appCoordinator: appCoordinator)
                     }
                 }
-                // 인증 리디렉션 url 처리
+                // URL 처리 (딥링크, 인증 리디렉션 등)
                 .onOpenURL(perform: { url in
-                    if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                    // 커스텀 딥링크 또는 Universal Link 처리
+                    if url.scheme == "jjanpot" || url.host == "jjanpot.shop" {
+                        DeepLinkHandler.shared.handle(url: url)
+                    }
+                    // 카카오 로그인
+                    else if AuthApi.isKakaoTalkLoginUrl(url) {
                         AuthController.handleOpenUrl(url: url)
-                    } else {
+                    }
+                    // 구글 로그인
+                    else {
                         GIDSignIn.sharedInstance.handle(url)
                     }
                 })
