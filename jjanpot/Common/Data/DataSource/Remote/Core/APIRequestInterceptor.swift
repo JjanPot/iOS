@@ -58,11 +58,11 @@ public final class APIRequestInterceptor: RequestInterceptor {
         // 401,403 에러 시 토큰 갱신 후 재시도
         if [401, 403].contains(response.statusCode) {
             Logger.error("네트워킹 [권한없음] \(response.statusCode) -> 토큰 갱신 후 재시도")
-            
+
             tokenRefreshService.refreshToken { success in
                 completion(success ? .retry : .doNotRetry)
             }
-            completion(.doNotRetry)
+            return
             
             
         } else if (500...599).contains(response.statusCode) {

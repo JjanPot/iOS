@@ -37,15 +37,21 @@ struct ProfileSetupUseCase: ProfileSetupUseCaseProtocol {
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
             throw FileManagerError.imageConversionFailed
         }
-        
-        // presignedUrl 받기
-        let entity = try await repository.getPresignedUrl(directory: directory, contentType: contentType)
-        
-        // S3에 이미지 업로드
-        try await repository.uploadImageToS3(
-            imageData: imageData,
-            presignedUrl: entity.uploadUrl
-        )
-        return entity.imageUrl
+
+        do {
+            // presignedUrl 받기
+            let entity = try await repository.getPresignedUrl(directory: directory, contentType: contentType)
+
+            // S3에 이미지 업로드
+            try await repository.uploadImageToS3(
+                imageData: imageData,
+                presignedUrl: entity.uploadUrl
+            )
+            return entity.imageUrl
+        } catch {
+            // presignedUrl 못 받거나 업로드 실패 시 로그만 하고 nil 반환
+            Logger.error("이미지 업로드 실패: \(error.localizedDescription)")
+            return nil
+        }
     }
 }
