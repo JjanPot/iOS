@@ -28,24 +28,17 @@ struct ChallengeDashboardView: View {
     
     var body: some View {
         ZStack {
-            VStack {
-                Color.orange50
-                    .ignoresSafeArea(edges: .top)
-                    .frame(height: 300)
-                Color.clear
-            }
-            
             ScrollView {
                 VStack (alignment: .leading, spacing: .zero){
-
+                    
                     // MARK: 오버뷰 //
                     VStack (alignment: .center, spacing: .zero){
-
+                        
                         HStack {
                             Spacer()
                         }
                         .frame(height: 30)
-
+                        
                         DashboardOverview(viewData: viewModel.viewData, onSelectedMember: { selectedMember in
                             guard !selectedMember.isMe else { return }
                             coordinator.showReportUserSheet(onReportUser: {
@@ -57,20 +50,26 @@ struct ChallengeDashboardView: View {
                                     challengeId: challengeId,
                                     authorNickname: selectedMember.nickname
                                 )
-
+                                
                             }, onBlockUser: {
                                 guard let challengeId =  viewModel.viewData?.challengeId else { return }
-
+                                
                                 // 사용자 차단하기 모달 띄우기
                                 showBlockModal(authorId: selectedMember.userId, challengeId: challengeId, authorNickname: selectedMember.nickname)
                             })
                         })
                     }
-                    .background(Color.orange50)
-
+                    .background(
+                        LinearGradient(
+                            colors: [.white, .orange50],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    
                     // MARK: 피드 //
                     VStack (alignment: .leading, spacing: 12){
-
+                        
                         HStack() {
                             Spacer()
                             Text("모든 게시글")
@@ -80,7 +79,20 @@ struct ChallengeDashboardView: View {
                             Spacer()
                         }
                         .padding(.bottom, 12)
-
+                        .background(
+                            RoundedCorner(radius: 12, corners: [.topLeft, .topRight])
+                                .fill(Color.white)
+                                .shadow(color: Color.black.opacity(0.1),
+                                        radius: 5,
+                                        x: 0,
+                                        y: -2)
+                                .mask(
+                                    Rectangle()
+                                        .padding(.top, -20)
+                                )
+                        )
+                        //                        .border(.red)
+                        
                         // 게시물 목록 //
                         switch viewModel.viewData {
                         case let .inProgress(challengeId, _, feeds):
@@ -89,7 +101,7 @@ struct ChallengeDashboardView: View {
                                     switch feed {
                                     case let .header(_, date):
                                         FeedHeaderView(title: date)
-
+                                        
                                     case let .item(_, feed):
                                         FeedCardView(viewData: feed,
                                                      isMyMenuOpen: Binding(
@@ -144,23 +156,23 @@ struct ChallengeDashboardView: View {
                                             // 사용자 차단하기 모달 띄우기
                                             showBlockModal(authorId: feed.authorId, challengeId: challengeId, authorNickname: feed.authorNickname)
                                         })
-
+                                        
                                     case .bottom:
                                         Spacer()
                                             .frame(height: 28)
                                     }
                                 }
                             }.padding(.horizontal, 20)
-
+                            
                         default: // 피드 없을
                             Spacer()
                         }
-
+                        
                         Spacer()
-
+                        
                     }
                     .background(Color.white)
-
+                    
                 }
             } // ScrollView
             .simultaneousGesture(
@@ -274,6 +286,20 @@ struct ChallengeDashboardView: View {
                 coordinator.closePopup()
                 viewModel.deleteFeed(feedId: feedId)
             })
+    }
+}
+
+
+struct TopRoundedCorner: Shape {
+    var radius: CGFloat = 16
+    
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: [.topLeft, .topRight],
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
     }
 }
 
