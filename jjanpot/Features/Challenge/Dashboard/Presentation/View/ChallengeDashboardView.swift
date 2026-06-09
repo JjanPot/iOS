@@ -289,20 +289,6 @@ struct ChallengeDashboardView: View {
     }
 }
 
-
-struct TopRoundedCorner: Shape {
-    var radius: CGFloat = 16
-    
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: [.topLeft, .topRight],
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
-    }
-}
-
 #Preview {
     let di = MockMainDIContainer()
     di.makeChallengeDashboardView(coordinator: di.makeChallengeCoordinator(appCoordinator: di.makeAppCoordinator()))
