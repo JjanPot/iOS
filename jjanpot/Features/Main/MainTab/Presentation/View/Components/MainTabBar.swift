@@ -40,20 +40,17 @@ struct MainTabBar: View {
         .frame(height: 43)
         .padding(.top, 16)
         .background(
-            ZStack {
-                Color.white
-                    .clipShape(RoundedCorner(radius: 10, corners: [.topLeft, .topRight]))
-
-                Color.white
-                    .clipShape(RoundedCorner(radius: 10, corners: [.topLeft, .topRight]))
-                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: -2)
-                    .mask(
-                        Rectangle()
-                            .padding(.top, -20)
-                    )
-            }
+            RoundedCorner(radius: 10, corners: [.topLeft, .topRight])
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.1),
+                        radius: 5,
+                        x: 0,
+                        y: -2)
+                .mask(
+                    Rectangle()
+                        .padding(.top, -20)
+                )
         )
-
 
         // Safe Area 영역 채우기
 //        Color.gray900
