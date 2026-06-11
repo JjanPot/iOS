@@ -37,7 +37,7 @@ struct InviteCodePopupView: View {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.onCloseAction = onCloseAction
         self.viewType = viewType
-
+        
         if case .inputForm(let code) = viewType, let code {
             // 딥링크로 코드 받아옴.
             _inputCode = State(initialValue: code)
@@ -45,7 +45,7 @@ struct InviteCodePopupView: View {
             _inputCode = State(initialValue: "")
         }
     }
-
+    
     @State var inputCode: String = ""
     @State var isError: Bool = false
     @State var showShareSheet = false
@@ -70,13 +70,13 @@ struct InviteCodePopupView: View {
                 }
                 
                 Image("charater2")
-                    
+                
                 VStack(alignment: .center, spacing: 2) {
                     // 초대코드 복사뷰
                     if case let .viewer(inviteCode)  = viewType {
                         Text("내 초대 코드")
                             .font(.pretendard(.medium, size: 17))
-                
+                        
                         Button {
                             // 초대코드 클립보드에 복사
                             //UIPasteboard.general.string = inviteCode
@@ -148,13 +148,20 @@ struct InviteCodePopupView: View {
         .sheet(isPresented: $showShareSheet, onDismiss: {
             viewModel.isLoading = false
         }) {
-            if case let .viewer(inviteCode)  = viewType,
-               let inviteUrl = URL(string: "https://jjanpot.shop/invite?code=\(inviteCode)")
-            {
-                ShareSheet(items: [inviteUrl], title: "짠팟 | 초대링크 공유", showImagePreview: false)
+            if case let .viewer(inviteCode)  = viewType {
+                let url = "https://jjanpot.shop/invite?code=\(inviteCode)"
+                let message = """
+                    짠팟에서 챌린지 같이 해요! 아래 링크를 눌러 우리 팀에 바로 들어와요. 
+
+                    
+                    ▶ 초대 링크: \(url)
+                    
+                    (링크가 안 열릴 경우 로그인 후에 팀 코드 [CODE] 를 직접 입력해 주세요!)
+                    """
+                
+                ShareSheet(items: [message], title: "짠팟 | 초대링크 공유", showImagePreview: false)
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
-                
             }
         }
     }
