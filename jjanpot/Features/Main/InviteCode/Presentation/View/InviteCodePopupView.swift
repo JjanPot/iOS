@@ -48,6 +48,7 @@ struct InviteCodePopupView: View {
 
     @State var inputCode: String = ""
     @State var isError: Bool = false
+    @State var showShareSheet = false
     @FocusState private var isFocused: Bool
     private let viewType: InvireViewType
     
@@ -78,8 +79,13 @@ struct InviteCodePopupView: View {
                 
                         Button {
                             // 초대코드 클립보드에 복사
-                            UIPasteboard.general.string = inviteCode
-                            ToastManager.shared.show("초대 코드가 복사되었습니다.")
+                            //UIPasteboard.general.string = inviteCode
+                            //ToastManager.shared.show("초대 코드가 복사되었습니다.")
+                            
+                            // TODO: 공유시트 띄우기
+                            viewModel.isLoading = true
+                            showShareSheet = true
+                            
                         } label: {
                             HStack(alignment: .center, spacing: 7) {
                                 Text(inviteCode)
@@ -137,6 +143,18 @@ struct InviteCodePopupView: View {
             if isSuccess {
                 NotificationCenter.default.post(name: .shouldRefreshMain, object: nil)
                 onCloseAction()
+            }
+        }
+        .sheet(isPresented: $showShareSheet, onDismiss: {
+            viewModel.isLoading = false
+        }) {
+            if case let .viewer(inviteCode)  = viewType,
+               let inviteUrl = URL(string: "https://jjanpot.shop/invite?code=\(inviteCode)")
+            {
+                ShareSheet(items: [inviteUrl], title: "짠팟 | 초대링크 공유", showImagePreview: false)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                
             }
         }
     }
