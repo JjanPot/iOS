@@ -64,30 +64,32 @@ struct FeedPostView: View {
                     // 사진 업로드
                     images
                     
+                    Spacer()
+                        .frame(height: 50)
+                    
+                    VStack(alignment: .center, spacing: 22) {
+                        Text("부적절하거나 불쾌한 콘텐츠는 제재될 수 있어요")
+                            .font(.pretendard(.regular, size: 14))
+                            .foregroundColor(Color.black500)
+                        
+                        
+                        // 등록하기 버튼
+                        MainButton(title: "등록하기", isDisabled: isSubmitButtonDisabled()) {
+                            viewModel.submit(
+                                expenseType: selectedTab,
+                                category: viewModel.selectedCategory,
+                                price: price,
+                                description: description,
+                                date: selectedDate,
+                                selectedImageData: selectedImage?.data)
+                        }
+                    }
+                    
                    
                 } // ~VStack
                 .padding(.horizontal, 20)
             } // ~ ScrollView
             .scrollDismissesKeyboard(.interactively)
-            
-            VStack(alignment: .center, spacing: 22) {
-                Text("부적절하거나 불쾌한 콘텐츠는 제재될 수 있어요")
-                    .font(.pretendard(.regular, size: 14))
-                    .foregroundColor(Color.black500)
-                
-                
-                // 등록하기 버튼
-                MainButton(title: "등록하기", isDisabled: isSubmitButtonDisabled()) {
-                    viewModel.submit(
-                        expenseType: selectedTab,
-                        category: viewModel.selectedCategory,
-                        price: price,
-                        description: description,
-                        date: selectedDate,
-                        selectedImageData: selectedImage?.data)
-                }
-            }
-            .padding(.horizontal, 20)
             
             
         }// ~VStack
