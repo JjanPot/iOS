@@ -26,10 +26,10 @@ struct FeedEditRepository: FeedEditRepositoryProtocol {
         }
     }
     
-    func updateFeed(feedId: Int, entity: FeedPostRequestEntity, imageData: Data?) async throws {
+    func updateFeed(feedId: Int, entity: FeedPostRequestEntity, imageData: Data?, isDeleteImage: Bool) async throws {
         let dto = FeedPostRequestDto(from: entity)
-        let result = await apiClient.updateFeed(feedId: feedId, dto: dto, imageData: imageData)
-        
+        let result = await apiClient.updateFeed(feedId: feedId, dto: dto, imageData: imageData, isDeleteImage: isDeleteImage)
+
         switch result {
         case .success:
             return

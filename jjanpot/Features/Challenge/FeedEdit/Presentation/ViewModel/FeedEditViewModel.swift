@@ -95,7 +95,7 @@ final class FeedEditViewModel: ObservableObject {
             do {
                 //  request entity 생성
                 guard let entity = requestEntity() else { return }
-                try await useCase.updateFeed(feedId: originFeedEntity.id, entity: entity, imageData: selectedImageData)
+                try await useCase.updateFeed(feedId: originFeedEntity.id, entity: entity, imageData: selectedImageData, isDeleteImage: (uploadedImageUrl == nil))
                 
                 isLoading = false
                 ToastManager.shared.show("수정 되었습니다")

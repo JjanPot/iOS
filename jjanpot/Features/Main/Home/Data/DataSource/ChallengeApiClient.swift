@@ -347,7 +347,12 @@ protocol ChallengeApiClientProtocol {
     func deleteFeed(feedId: Int) async -> Result<EmptyResponseDto, NetworkError>
     
     /// 피드 수정하기
-    func updateFeed(feedId: Int, dto: FeedPostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError>
+    /// - Parameters:
+    ///   - feedId: feed Id
+    ///   - dto: feed body
+    ///   - imageData: 첨부된 이미지
+    ///   - isDeleteImage: 기존 이미지 삭제 여부
+    func updateFeed(feedId: Int, dto: FeedPostRequestDto, imageData: Data?, isDeleteImage: Bool) async -> Result<EmptyResponseDto, NetworkError>
     
     /// 심사용 - 챌린지 즉시 시작
     func reviewMode_startChallenge(challengeId: Int) async -> Result<EmptyResponseDto, NetworkError>
@@ -394,8 +399,6 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     func submitInviteCodeInOnboarding(code: String) async -> Result<SubmitInviteCodeResponseDto, NetworkError>{
         await request(.submitInviteCodeInOnboarding(inviteCode: code))
     }
-
-    
     
     /// 챌린지 오버뷰 가져오기
     func fetchChallengeOverview(challengeId: Int) async -> Result<OverviewDto, NetworkError> {
@@ -453,8 +456,8 @@ final class ChallengeApiClient: ApiClient<ChallengeRouter>, ChallengeApiClientPr
     }
     
     /// 피드 수정하기
-    func updateFeed(feedId: Int, dto: FeedPostRequestDto, imageData: Data?) async -> Result<EmptyResponseDto, NetworkError> {
-        await upload(.updateFeed(feedId: feedId), body: dto, imageData: imageData)
+    func updateFeed(feedId: Int, dto: FeedPostRequestDto, imageData: Data?, isDeleteImage: Bool) async -> Result<EmptyResponseDto, NetworkError> {
+        await upload(.updateFeed(feedId: feedId), body: dto, imageData: imageData, additionalFormFields: ["deleteImage": isDeleteImage])
     }
     
     /// 심사용 - 챌린지 즉시 시작

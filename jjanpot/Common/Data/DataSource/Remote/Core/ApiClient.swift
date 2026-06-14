@@ -52,11 +52,12 @@ public class ApiClient<R: Router> {
         return handleResponse(result)
     }
 
-    /// Multipart 업로드 (JSON + 이미지)
+    /// Multipart 업로드 (JSON + 이미지 + 추가 필드)
     public func upload<T: Decodable, E: Encodable>(
         _ router: R,
         body: E,
-        imageData: Data?
+        imageData: Data?,
+        additionalFormFields: [String: Any]? = nil
     ) async -> Result<T, NetworkError> {
 
         let url = router.baseURL.appendingPathComponent(router.path)
@@ -80,6 +81,20 @@ public class ApiClient<R: Router> {
                 if let imageData = compressedImageData {
                     formData.append(imageData, withName: "image", fileName: "image.jpg", mimeType: "image/jpeg")
                 }
+
+                // 추가 필드들
+                if let additionalFields = additionalFormFields {
+                    for (key, value) in additionalFields {
+                        if let stringValue = value as? String {
+                            formData.append(stringValue.data(using: .utf8) ?? Data(), withName: key)
+                        } else if let boolValue = value as? Bool {
+                            formData.append(String(boolValue).data(using: .utf8) ?? Data(), withName: key)
+                        } else if let data = value as? Data {
+                            formData.append(data, withName: key)
+                        }
+                    }
+                }
+
             },
             to: url,
             method: router.method,

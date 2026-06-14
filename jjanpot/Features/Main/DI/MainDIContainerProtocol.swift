@@ -529,7 +529,7 @@ final class MockMainDIContainer: MainDIContainerProtocol {
     
 // MARK: - Mock UseCase
     struct MockFeedEditUseCase: FeedEditUseCaseProtocol{
-        func updateFeed(feedId: Int, entity: FeedPostRequestEntity, imageData: Data?) async throws {
+        func updateFeed(feedId: Int, entity: FeedPostRequestEntity, imageData: Data?, isDeleteImage: Bool) async throws {
             return
         }
         
