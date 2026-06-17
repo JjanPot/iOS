@@ -10,4 +10,6 @@ import Foundation
 
 protocol HomeUseCaseProtocol {
     func fetchChallengeData() async throws -> HomeEntity
+    func loadHistories() async throws -> [HistoryEntity]
+    func loadLatestCompletedChallengeId() -> Int?
 }

@@ -5,7 +5,8 @@
 //  Created by 임주희 on 3/18/26.
 //
 
-import Foundation
+@preconcurrency import Foundation
+@preconcurrency import FirebaseMessaging
 
 // MARK: LoginUseCase
 final class LoginUseCase: LoginUseCaseProtocol {
@@ -39,9 +40,82 @@ final class LoginUseCase: LoginUseCaseProtocol {
     func login(entity: LoginEntity){
         Logger.success("로그인 성공 \(entity)")
         AuthManager.shared.login(entity)
+        AuthManager.shared.updateIsReviewMode(entity.isReviewMode)
     }
     
+    // 임시 로그인 처리 (토큰 임시저장)
+    func tempLogin(entity: LoginEntity){
+        Logger.success("임시 로그인 성공 \(entity)")
+        AuthManager.shared.tempLogin(entity)
+        AuthManager.shared.updateIsReviewMode(entity.isReviewMode)
+    }
     
+    private func fetchFCMToken() async throws -> String? {
+        try await Messaging.messaging().token()
+    }
+
+    /// FCM 토큰 획득 (우선순위: AuthManager → Firebase API → Notification)
+    /// - Returns: FCM 토큰 또는 nil
+    func getFCMToken() async -> String? {
+        
+        // 1. AuthManager에서 이미 저장된 토큰 확인
+        if let token = AuthManager.shared.getFcmToken() {
+            Logger.success("✅ AuthManager에서 FCM 토큰 획득: \(token)")
+            return token
+        }
+
+        // 2. Firebase Messaging API에서 가져오기
+        if let token = try? await fetchFCMToken() {
+            Logger.success("✅ Firebase API에서 FCM 토큰 획득: \(token)")
+            return token
+        }
+        
+        // 3. notification 기다리기
+        Logger.info("🕐 FCM 토큰 대기 중...")
+        if let token = await waitForFCMToken(timeout: 3.0) {
+            Logger.success("✅ Notification에서 FCM 토큰 획득: \(token)")
+            return token
+        }
+
+        Logger.error("❌ FCM 토큰 획득 실패")
+        return nil
+    }
+
+    /// FCM 토큰을 기다렸다가 받으면 반환 (타임아웃 시 nil)
+    /// - Parameter timeout: 대기 시간 (초)
+    /// - Returns: FCM 토큰 또는 nil
+    func waitForFCMToken(timeout: TimeInterval) async -> String? {
+        Logger.debug("🕐 FCM 토큰 수신 대기 중...")
+
+        return await withCheckedContinuation { continuation in
+            var observer: NSObjectProtocol?
+
+            // FCM 토큰 notification 구독
+            observer = NotificationCenter.default.addObserver(
+                forName: Notification.Name("FCMToken"),
+                object: nil,
+                queue: .main
+            ) { [observer] notification in
+                if let token = notification.userInfo?["token"] as? String, !token.isEmpty {
+                    Logger.success("✅ FCM 토큰 수신 완료: \(token)")
+                    if let obs = observer {
+                        NotificationCenter.default.removeObserver(obs)
+                    }
+                    continuation.resume(returning: token)
+                }
+            }
+
+            // 타임아웃: 지정된 시간 동안 못받으면 nil 반환
+            DispatchQueue.main.asyncAfter(deadline: .now() + timeout) { [observer] in
+                Logger.error("⏱️  FCM 토큰 수신 타임아웃 (\(timeout)초)")
+                if let obs = observer {
+                    NotificationCenter.default.removeObserver(obs)
+                }
+                continuation.resume(returning: nil)
+            }
+        }
+    }
+
     // MARK: - Private Methods
 
     private func performSocialLogin(type: LoginType, socialLogin: SocialLoginProtocol) async throws -> LoginEntity {

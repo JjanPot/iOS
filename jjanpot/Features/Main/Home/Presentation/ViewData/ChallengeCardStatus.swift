@@ -15,3 +15,4 @@ enum ChallengeCardStatus {
     case inProgress(viewData: ChallengeInProgressViewData)
 }
 
+

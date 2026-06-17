@@ -92,6 +92,7 @@ struct LoginView: View {
                     .cornerRadius(8)
                 }
 
+                // 구글 로그인 버튼
                 Button {
                     viewModel.clickGoogleLoginButton()
                 } label: {
@@ -111,19 +112,42 @@ struct LoginView: View {
                     .padding(.horizontal, 16)
                 }
                 .roundedBorder(color: .black300, radius: 8)
-
+                
+                // 게스트 로그인
+                Button {
+                    onNavigateToMain()
+                } label: {
+                    Text("건너뛰기")
+                        .font(.pretendard(.regular, size: 14))
+                        .foregroundStyle(Color.black500)
+                        .underline()
+                }
+                .padding(.top, 10)
+                
+                
             }
             .padding(.vertical, 16)
             .padding(.horizontal, 20)
-
+            
             Spacer()
 
 
         }
+        .loading(viewModel.isLoading)
+        .task {
+            viewModel.requestAuthorization()
+        }
         .padding(.top, 20)
+        .onChange(of: viewModel.shouldNavigateToTerms) { shouldNavigate in
+            if shouldNavigate {
+                // 약관 동의화면으로
+                coordinator.navigateToTerms()
+            }
+        }
         .onChange(of: viewModel.shouldNavigateToSignup) { shouldNavigate in
             if shouldNavigate {
-                coordinator.navigateToTerms()
+                // 프로필 설정 화면으로 가야함
+                coordinator.navigateToProfileSetup()
             }
         }
         .onChange(of: viewModel.shouldNavigateToMain) { shouldNavigate in

@@ -7,5 +7,8 @@
 
 
 protocol MyPotRepositoryProtocol {
-    func logout(userId: Int) async throws
+    func isLoggedIn () -> Bool
+    func getMyChallengeStats() async throws -> ChallengeStatsEntity
+    func getUserInfo() async throws -> UserEntity
 }
+

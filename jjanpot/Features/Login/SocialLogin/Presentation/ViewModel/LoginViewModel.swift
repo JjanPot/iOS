@@ -19,7 +19,8 @@ final class LoginViewModel: ObservableObject {
 
     // MARK: - Output Properties
 
-    @Published var shouldNavigateToSignup = false
+    @Published var shouldNavigateToTerms = false // 약관 동의 화면으로
+    @Published var shouldNavigateToSignup = false //프로필 생성 화면으로
     @Published var shouldNavigateToMain = false
     @Published var isLoading = false
     
@@ -50,6 +51,30 @@ final class LoginViewModel: ObservableObject {
         }
     }
     
+    // 알림 권한 요청
+    func requestAuthorization() {
+        let center = UNUserNotificationCenter.current()
+        center.getNotificationSettings { settings in
+            // 1. 아직 결정되지 않았을 때만 팝업 요청
+            if settings.authorizationStatus == .notDetermined {
+                center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                    if granted {
+                        // 권한을 얻은 즉시 APNs에 등록 시도
+                        DispatchQueue.main.async {
+                            UIApplication.shared.registerForRemoteNotifications()
+                        }
+                    }
+                }
+            }
+            // 2. 이미 허용된 상태라면? 혹시 모르니 APNs 등록 한 번 더 시도 (안전함)
+            else if settings.authorizationStatus == .authorized {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+        }
+    }
+    
     // MARK: - Private Methods
     
     // 로그인 공통
@@ -59,19 +84,39 @@ final class LoginViewModel: ObservableObject {
         clearData()
 
         do {
+            // 로딩 중에 FCM 토큰 획득 (AuthManager → Firebase API → Notification 순서)
+            if let token = await useCase.getFCMToken() {
+                Logger.success("✅ FCM 토큰 획득: \(token)")
+            } else {
+                Logger.error("⏱️ FCM 토큰 못받음 (계속 진행)")
+            }
+
             let entity = try await loginAction()
             await MainActor.run {
                 isLoading = false
-                // 로그인 성공 처리 (토큰 + 사용자 정보 저장)
-                useCase.login(entity: entity)
-
+               
+                // 로그인 성공, 상태에 따라 화면 분기
                 // 신규 유저 → 회원가입 화면 (NavigationStack에 push)
                 // 기존 유저 → 메인 화면 (Root 변경)
-                if entity.isNewUser {
-                    Logger.success("신규 유저 로그인 성공 → 회원가입 화면으로")
+                switch entity.nextOnboardingStep {
+                case .agreement:
+                    Logger.success("신규 유저 로그인 성공 → 약관동의 화면으로")
+                    // 토큰 임시저장
+                    useCase.tempLogin(entity: entity)
+                    shouldNavigateToTerms = true
+                    
+                case .profile:
+                    Logger.success("신규 유저 로그인 성공 → 회원가입(프로필) 화면으로")
+                    // 토큰 임시저장
+                    useCase.tempLogin(entity: entity)
                     shouldNavigateToSignup = true
-                } else {
+                    
+                case .completed:
                     Logger.success("기존 유저 로그인 성공 → 메인 화면으로")
+                    
+                    // 로그인 성공 처리 (토큰 + 사용자 정보 저장)
+                    useCase.login(entity: entity)
+            
                     shouldNavigateToMain = true
                 }
             }

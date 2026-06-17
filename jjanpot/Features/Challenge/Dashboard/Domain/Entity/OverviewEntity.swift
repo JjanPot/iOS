@@ -23,6 +23,8 @@ struct OverviewEntity {
         let profileImageURL: String?
         let savedAmount: Int
         let isMe: Bool
+        let isLeader: Bool
+        let isBlocked: Bool
     }
 }
 extension OverviewEntity {
@@ -42,6 +44,8 @@ extension OverviewEntity.Member {
         self.profileImageURL = dto.profileImageURL
         self.savedAmount = dto.savedAmount
         self.isMe = dto.isMe
+        self.isBlocked = dto.isBlocked
+        self.isLeader = dto.role == .leader
     }
 }
 

@@ -48,25 +48,28 @@ final class AppDIContainer {
     }()
 
     lazy var mainDIContainer: MainDIContainerProtocol = {
-        MainDIContainer(challengeApiClient: challengeApiClient)
-    }()
-    
-    lazy var mypageDiContainer: MyPageDIContainerProtocol = {
-        MyPageDIContainer(authApiClient: authApiClient)
+        MainDIContainer(
+            authApiClient: authApiClient,
+            challengeApiClient: challengeApiClient
+        )
     }()
 }
 
 // MARK: - App Navigation
 extension AppDIContainer {
+    func makeRootCoordinator() -> RootCoordinator {
+        return RootCoordinator()
+    }
+
     func makeAppCoordinator() -> AppCoordinator {
-        return AppCoordinator()
+        return AppCoordinator(container: mainDIContainer)
     }
 }
 
 
 // MARK: - LaunchScreen Feature
 extension AppDIContainer {
-    func makeLaunchScreenView(appCoordinator: AppCoordinator) -> LaunchScreenView {
+    func makeLaunchScreenView(appCoordinator: RootCoordinatorProtocol) -> LaunchScreenView {
         return launchScreenDIContainer.makeLaunchScreenView(appCoordinator: appCoordinator)
     }
 }
@@ -74,7 +77,7 @@ extension AppDIContainer {
 
 // MARK: - Main Feature
 extension AppDIContainer {
-    func makeMainNavigationStack() -> MainNavigationStack {
-        return MainNavigationStack(container: mainDIContainer, myPageContainer: mypageDiContainer)
+    func makeMainNavigationStack(appCoordinator: AppCoordinator) -> MainNavigationStack {
+        return MainNavigationStack(container: mainDIContainer, appCoordinator: appCoordinator)
     }
 }

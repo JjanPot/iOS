@@ -10,40 +10,62 @@ import SwiftUI
 import Combine
 final class MyPotViewModel: ObservableObject {
     
-    
-    @Published var isLogouted: Bool = false
-    @Published var isLoading = false
-    @Published var toastMessage: String?
-    
-    
     private let useCase: MyPotUseCaseProtocol
     init(useCase: MyPotUseCaseProtocol) {
         self.useCase = useCase
     }
+    @Published var profileViewData: UserProfileViewData?
+    @Published var myStatsViewData: MyStatsViewData?
+    @Published var isLoading = false
+    @Published var toastMessage: String?
+    
     
     @MainActor
-    func logout(){
+    func getMyChallengeStats() {
         isLoading = true
-        isLogouted = false
         Task {
             do {
-                try await useCase.logout()
-                Logger.success("로그아웃 성공")
-                ToastManager.shared.show("로그아웃 되었습니다.")
-                isLogouted = true
-
-                // 로그아웃 성공 알림 전송
-                NotificationCenter.default.post(name: NSNotification.Name("userDidLogout"), object: nil)
+                let entity = try await useCase.getMyChallengeStats()
+                myStatsViewData = MyStatsViewData(from: entity)
             } catch {
-                Logger.error("로그아웃 실패 \(error.localizedDescription)")
+                if let networkError = error as? NetworkError {
+                    Logger.error("나의 챌린지 정보 가져오기 실패: \(networkError.description)")
+                    if networkError.isUserFacing {
+                        toastMessage = networkError.description
+                    }
+                } else {
+                    Logger.error("나의 챌린지 정보 가져오기 실패: \(error.localizedDescription)")
+                    //toastMessage = error.localizedDescription
+                }
             }
             isLoading = false
-
         }
-
-
     }
-    func signout(){
+    
+    @MainActor
+    func loadUserInfo(){
+        isLoading = true
         
+        // 로컬 정보 먼저 넣어두고
+        if let currentUser = AuthManager.shared.currentUser {
+            self.profileViewData = UserProfileViewData(from: currentUser)
+        }
+        
+        // 서버에서 가져와서 갈아끼기.
+        Task {
+            do {
+                let entity = try await useCase.getUserInfo()
+                self.profileViewData = UserProfileViewData(from: entity)
+            } catch {
+                self.profileViewData = nil
+                if let networkError = error as? NetworkError {
+                    Logger.error("내 정보가져오기: \(networkError.description)")
+                } else {
+                    Logger.error("내 정보가져오기: \(error)")
+                }
+            }
+            isLoading = false
+        }
     }
+    
 }

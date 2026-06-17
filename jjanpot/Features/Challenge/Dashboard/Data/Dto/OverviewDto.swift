@@ -16,6 +16,7 @@ struct OverviewDto: Codable {
     let totalSavedAmount: Int
     let goalAmount: Int
     
+    
     let members: [Member]
     
     enum CodingKeys: String, CodingKey {
@@ -30,12 +31,19 @@ struct OverviewDto: Codable {
         let profileImageURL: String?
         let savedAmount: Int
         let isMe: Bool
+        let isBlocked: Bool
+        let role: MemberRole
         
         enum CodingKeys: String, CodingKey {
             case userId
             case nickname
             case profileImageURL = "profileImageUrl"
-            case savedAmount, isMe
+            case savedAmount, isMe, isBlocked, role
         }
+    }
+    
+    enum MemberRole: String , Codable {
+        case leader = "LEADER"
+        case member = "MEMBER"
     }
 }

@@ -23,6 +23,12 @@ enum AppConstants {
         /// 마케팅 수신 활용
         static let marketingTemrs = "https://patch-carpenter-1ef.notion.site/32dcf10cd2e7800ab06ddd5b40e35110?source=copy_link"
         
+        /// 이용가이드
+        static let useGuide = "https://patch-carpenter-1ef.notion.site/JJANPOT-FAQ-32fcf10cd2e780cab8efe04e712cc180?source=copy_link"
+        
+        /// 의견남기기
+        static let contactUs = "https://tally.so/r/LZYNlG"
+        
     }
 
     // MARK: - App Info
@@ -40,4 +46,14 @@ enum AppConstants {
 //        static let animationDuration: TimeInterval = 0.3
 //        static let cornerRadius: CGFloat = 12
 //    }
+    
+    // MARK: - google admob SDK key
+    enum SDKKeys {
+        //  TODO: 앰플리튜드 키 옮기기
+        #if DEBUG
+        static let ad_banner = "ca-app-pub-3940256099942544/2435281174"
+        #else
+        static let ad_banner = "ca-app-pub-6540441490742026/5660827309"
+        #endif
+    }
 }

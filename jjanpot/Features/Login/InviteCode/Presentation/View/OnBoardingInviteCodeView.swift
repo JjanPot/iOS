@@ -57,6 +57,7 @@ struct OnBoardingInviteCodeView: View {
                 
                 MainButton(title: "다음") {
                     hideKeyboard()
+                    guard code.isNotEmpty else { return }
                     viewModel.checkInviteCode(code)
                 }
             }
@@ -64,6 +65,13 @@ struct OnBoardingInviteCodeView: View {
         }//Vstack
         .padding()
         .loading(viewModel.isLoading)
+        .onAppear {
+            // 앱 초기 실행 시 pending deep link 처리
+            if let inviteCode = DeepLinkHandler.shared.pendingDeepLink {
+                code = inviteCode
+                DeepLinkHandler.shared.pendingDeepLink = nil
+            }
+        }
         .onChange(of: viewModel.isSuccess) { isSuccess in
             if isSuccess {
                 coordinator.navigateToSignUpComplete()

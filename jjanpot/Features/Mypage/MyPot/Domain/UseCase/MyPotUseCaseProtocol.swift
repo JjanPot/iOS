@@ -7,7 +7,8 @@
 
 
 protocol MyPotUseCaseProtocol {
-    func logout() async throws
+    func getMyChallengeStats() async throws -> ChallengeStatsEntity
+    func getUserInfo() async throws -> UserEntity
 }
 struct MyPotUseCase: MyPotUseCaseProtocol {
     private let repository: MyPotRepositoryProtocol
@@ -15,18 +16,27 @@ struct MyPotUseCase: MyPotUseCaseProtocol {
         self.repository = repository
     }
     
-    
-    func logout() async throws {
-        guard let userId = getUserId() else {
-            Logger.error("user id 못가져옴")
-            throw NetworkError.requestFailed("userId is nil")
+    func getMyChallengeStats() async throws  -> ChallengeStatsEntity {
+        guard isLoggedIn() else {
+            return ChallengeStatsEntity(totalCount: 0,
+                                        successCount: 0,
+                                        failCount: 0,
+                                        successRate: 0
+            )
         }
-        try await repository.logout(userId: userId)
-        AuthManager.shared.logout()
+        
+        return try await repository.getMyChallengeStats()
     }
     
-    private func getUserId() -> Int? {
-        AuthManager.shared.currentUser?.userId
+    func getUserInfo() async throws -> UserEntity {
+        guard isLoggedIn() else {
+            throw NetworkError.cancelled
+        }
+        return try await repository.getUserInfo()
+    }
+    
+    private func isLoggedIn() -> Bool {
+        repository.isLoggedIn()
     }
 }
 

@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct HomeView: View {
+    @ObservedObject private var authManager = AuthManager.shared
     @StateObject var viewModel: HomeViewModel
-    @ObservedObject var coordinator: MainCoordinator
+    private let coordinator: MainNavigationCoordinatorProtocol
 
-    init(viewModel: HomeViewModel, coordinator: MainCoordinator) {
+    init(viewModel: HomeViewModel, coordinator: MainNavigationCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -24,44 +25,64 @@ struct HomeView: View {
             // 내용물
             ScrollView {
                 VStack(spacing: 20) {
-                    if let homeViewData = viewModel.homeViewData {
-                        HStack {
-                            // 메세지박스
-                            Text(homeViewData.teamMessage)
-                                .font(.pretendard(.medium, size: 20))
-                                .foregroundStyle(.black900)
-                                
-                            Spacer()
-                            
-                            Image("charater")
-                                .resizable()
-                                .frame(width: 76.73, height: 72)
-                        }
+                    HStack {
+                        // 메세지박스
+                        Text(viewModel.homeViewData?.teamMessage ?? "")
+                            .font(.pretendard(.medium, size: 20))
+                            .foregroundStyle(.black900)
                         
-                        // 챌린지 카드
+                        Spacer()
+                        
+                        Image("charater")
+                            .resizable()
+                            .frame(width: 76.73, height: 72)
+                    }
+                    
+                    // 챌린지 카드
+                    if let viewData = viewModel.homeViewData?.challengeCard {
                         ChallengeCardView(
-                            status: mapToChallengeCardStatus(homeViewData.challengeCard),
+                            status: mapToChallengeCardStatus(viewData),
                             onAction: handleChallengeCardAction
                         )
-                        
-                        // 챌린지 절약 현황
-                        if let summary = homeViewData.summary {
-                            ChallengeSummaryView(viewData: summary)
-                        }
+                    } else {
+                        ChallengeCardView(
+                            status: .none,
+                            onAction: handleChallengeCardAction
+                        )
                     }
+                    
+                    // 챌린지 절약 현황
+                    if let summary = viewModel.homeViewData?.summary {
+                        ChallengeSummaryView(viewData: summary)
+                    }
+                    
+                    // 배너 광고
+                    BannerAd()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 76)
+                        //.padding(.horizontal, 20)
+                    
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 50)
             }
         } // ~VStack
-        .onAppear {
+        .task {
+            viewModel.requestAuthorization()
             viewModel.loadHomeData()
+            viewModel.loadHistories()
+        }
+        .onChange(of: viewModel.showReportPopup) { showReportPopup in
+            if showReportPopup, let id = viewModel.completeChallengeId {
+                coordinator.showChallengeReportPopup(challengeId: id)
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .shouldRefreshMain), perform: { _ in
             viewModel.loadHomeData()
         })
         .loading(viewModel.isLoading)
         .toast(message: $viewModel.toastMessage)
+        
     }
 
     // MARK: - Private Methods
@@ -84,24 +105,36 @@ struct HomeView: View {
     private func handleChallengeCardAction(_ action: ChallengeCardAction) {
         switch action {
         case .createChallenge:
-            coordinator.push(.createChallenge)
-        case let .detail(id):
-            coordinator.push(.challengeDetail(id: id))
+            guard authManager.isLoggedIn else {
+                coordinator.showLoginPopup()
+                return
+            }
 
-        case .inputInviteCode:
-            PopupManager.shared.showInviteCodeInput()
+            coordinator.navigateToCreateChallenge()
+        case let .detail(id):
+            coordinator.navigateToChallengeDetail(id: id)
+
+        case .inputInviteCode: // 초대코드 입력
+            guard authManager.isLoggedIn else {
+                coordinator.showLoginPopup()
+                return
+            }
+
+            coordinator.showInviteCodeInputPopup()
 
         case let .copyInviteCode(code):
-            PopupManager.shared.showInviteCodeCopy(code: code)
+            guard let code else { return }
+            coordinator.showInviteCodeCopyPopup(inviteCode: code)
 
         case let .submitSavingsProof(id):
-            coordinator.push(.challengePost(id: id))
+            coordinator.navigateToFeedPost(id: id)
         }
     }
 }
 
 #Preview {
     let container = MockMainDIContainer()
-    let coordinator = container.makeMainCoordinator()
-    return container.makeHomeView(coordinator: coordinator)
+    let appCoordinator = AppCoordinator(container: container)
+    let mainCoordinator = MainCoordinator(appCoordinator: appCoordinator)
+    return container.makeHomeView(coordinator: mainCoordinator)
 }

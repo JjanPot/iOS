@@ -40,7 +40,7 @@ struct CurrentChallengeEntityMapper {
                                     weekNumber: ongoingDto.weekNumber,
                                     weekGoalAmount: ongoingDto.weekGoalAmount,
                                     teamWeekSavedAmount: ongoingDto.teamWeekSavedAmount,
-                                    personalWeekSavedAmount: 250000, //TODO: 임시 수정하기
+                                    personalWeekSavedAmount: ongoingDto.personalWeekSavedAmount,
                                     achievementRate: ongoingDto.achievementRate
             ))
         }

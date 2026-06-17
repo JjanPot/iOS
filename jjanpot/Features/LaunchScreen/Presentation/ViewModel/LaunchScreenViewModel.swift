@@ -10,14 +10,14 @@ import SwiftUI
 import Combine
 
 /// 스플래시 화면의 토큰 체크 로직만 담당
-/// 결과는 AppCoordinator에게 전달하여 화면 분기는 App 레벨에서 처리
+/// 결과는 RootCoordinator에게 전달하여 화면 분기는 App 레벨에서 처리
 @MainActor
 final class LaunchScreenViewModel: ObservableObject {
 
     private let useCase: LaunchScreenUseCaseProtocol
-    private weak var appCoordinator: AppCoordinator?
+    private weak var appCoordinator: RootCoordinatorProtocol?
 
-    init(useCase: LaunchScreenUseCaseProtocol, appCoordinator: AppCoordinator? = nil) {
+    init(useCase: LaunchScreenUseCaseProtocol, appCoordinator: RootCoordinatorProtocol? = nil) {
         self.useCase = useCase
         self.appCoordinator = appCoordinator
     }
@@ -34,12 +34,15 @@ final class LaunchScreenViewModel: ObservableObject {
                 appCoordinator?.handleTokenCheckResult(isValid: true)
 
             } catch {
-                // 토큰갱신, 유저정보 가져오기 실패 -> 로그아웃
-                Logger.error("토큰갱신, 유저정보 가져오기 실패 → 로그인 화면으로: \(error)")
-                
+                // 토큰갱신, 유저정보 가져오기 실패 → 로그인 화면으로
+                Logger.error("토큰갱신 실패 → 로그인 화면으로: \(error)")
+                if let networkError = error as? NetworkError {
+                    Logger.error("네트워크 에러: \(networkError.description)")
+                }
+
                 AuthManager.shared.logout()
 
-                // 결과를 AppCoordinator에게 전달
+                // 바로 로그인 화면으로 (FCM 토큰 대기는 로그인 시점에)
                 appCoordinator?.handleTokenCheckResult(isValid: false)
             }
         }

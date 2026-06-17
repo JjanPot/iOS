@@ -18,7 +18,7 @@ enum FocusedField {
 // 챌린지 만들기
 struct CreateChallengeView: View {
     @StateObject var viewModel: CreateChallengeViewModel
-    @ObservedObject var coordinator: MainCoordinator
+    private let coordinator: ChallengeCoordinatorProtocol
 
     @State var challengeName: String = ""
     @State var description: String = ""
@@ -33,7 +33,7 @@ struct CreateChallengeView: View {
 
     // 절약항목
     @State var selectedCategories: [SavingCategoryViewData] = []
-    @State var categoryAmounts: [SavingCategoryViewData: Int] = [:]
+    @State var selectedAmountByCategory: [SavingCategoryViewData: Int] = [:]
 
     // 목표 금액(팀)
     @State var teamTargetPrice: Double = 0
@@ -43,7 +43,7 @@ struct CreateChallengeView: View {
     // 포커스 상태 관리
     @FocusState private var focusedField: FocusedField?
 
-    init(viewModel: CreateChallengeViewModel, coordinator: MainCoordinator) {
+    init(viewModel: CreateChallengeViewModel, coordinator: ChallengeCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -100,7 +100,7 @@ struct CreateChallengeView: View {
         .toast(message: $viewModel.toastMessage)
         .onChange(of: viewModel.isSuccess) { isSuccess in
             if isSuccess {
-                coordinator.popToRoot()
+                coordinator.close()
             }
         }
         .toolbar {
@@ -153,7 +153,6 @@ struct CreateChallengeView: View {
                     challengeName = String(newValue.prefix(14))
                 }
             }
-            
         }
     }
     
@@ -168,8 +167,6 @@ struct CreateChallengeView: View {
             ZStack(alignment: .topLeading) {
                 // 1. 실제 입력창
                 TextEditor(text: $description)
-//                    .scrollContentBackground(.hidden)
-//                    .background(Color.red)
                     .font(.pretendard(.regular, size: 14))
                     .foregroundColor(Color.black900)
                     .focused($focusedField, equals: .challengeDescription)
@@ -227,7 +224,7 @@ struct CreateChallengeView: View {
     // 절약 항목
     private var savingCategory: some View {
         VStack(alignment: .leading, spacing: 16) {
-            TitleView(title: "절약 항목",
+            TitleView(title: "절약 카테고리",
                       description: "무엇을 절약할 건가요? (3개까지 선택 가능해요.)",
                       isNeccessary: true
             )
@@ -248,10 +245,16 @@ struct CreateChallengeView: View {
                     CategoryAmountSelector(
                         category: category,
                         selectedAmount: Binding(
-                            get: { categoryAmounts[category] },
-                            set: { categoryAmounts[category] = $0 }
+                            get: { selectedAmountByCategory[category] },
+                            set: { selectedAmountByCategory[category] = $0 }
                         )
                     )
+                }
+                .onChange(of: selectedCategories){ selected in
+                    // 선택한 카테고리에서 지우면, 선택된카테고리별기준금액 에서도 지우기
+                    selectedAmountByCategory = selectedAmountByCategory.filter { dic in
+                        selectedCategories.contains(dic.key)
+                    }
                 }
             }
         }
@@ -340,7 +343,7 @@ struct CreateChallengeView: View {
         }
         
         // 선택한 절약항목의, 기준 금액 선택 여부
-        guard selectedCategories.count == categoryAmounts.keys.count else {
+        guard selectedCategories.count == selectedAmountByCategory.keys.count else {
             viewModel.toastMessage = "절약 항목의 기준 금액을 선택해주세요."
             return false
         }
@@ -380,7 +383,7 @@ struct CreateChallengeView: View {
             memberCount: Int(memberCount),
             startDate: startDate,
             selectedCategories: selectedCategories,
-            categoryAmounts: categoryAmounts,
+            categoryAmounts: selectedAmountByCategory,
             teamTargetPrice: Int(teamTargetPrice),
             personalTargetPrice: Int(personalTargetPrice)
         )
@@ -388,8 +391,8 @@ struct CreateChallengeView: View {
 }
 
 
-#Preview {
-    let container = MockMainDIContainer()
-    let coordinator = container.makeMainCoordinator()
-    return container.makeCreateChallengeView(coordinator: coordinator)
-}
+//#Preview {
+//    let container = MockMainDIContainer()
+//    let coordinator = container.makeAppCoordinator()
+//    return container.makeCreateChallengeView(coordinator: coordinator)
+//}

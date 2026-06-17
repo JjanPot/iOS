@@ -17,7 +17,7 @@ struct ChallengeCardViewDataMapper {
             let viewData = ChallengeWaitingViewData(
                 challengeId: entity.challengeId,
                 teamName: entity.title,
-                targetSavingsAmount: formatWonRange(entity.goalAmount),
+                targetSavingsAmount: PriceFormatter.formatWon(entity.goalAmount),
                 period: period(start: entity.startDate, end: entity.endDate),
                 inviteCode: entity.inviteCode
             )
@@ -29,29 +29,12 @@ struct ChallengeCardViewDataMapper {
                 challengeId: entity.challengeId,
                 teamName: entity.title,
                 dday: dDayString(to: entity.endDate),
-                teamSavingsAmount: formatPrice(entity.teamWeekSavedAmount),
-                personalSavingsAmount: formatPrice(entity.personalWeekSavedAmount)
+                teamSavingsAmount: entity.teamWeekSavedAmount,
+                personalSavingsAmount: entity.personalWeekSavedAmount
             )
             return ChallengeCardStatus.inProgress(viewData: viewData)
         }
     }
-    
-    private func formatWonRange(_ value: Int) -> String {
-        if value < 10_000 {
-            return "\(value)원"
-        }
-        
-        let man = value / 10_000
-        let remainder = value % 10_000
-        
-        if remainder == 0 {
-            return "\(man)만원"
-        } else {
-            let thousand = remainder / 1_000
-            return "\(man)만\(thousand)천원"
-        }
-    }
-    
     
     // 시작일 - 종료일 (1주), ex: "26.07.15 - 26.07.21 (1주)"
     private func period(start :Date, end: Date) -> String {
@@ -72,14 +55,5 @@ struct ChallengeCardViewDataMapper {
         } else {
             return "D+\(-diff)"
         }
-    }
-    
-    private func formatPrice(_ value: Int) -> String {
-        let converted = value / 10
-        
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        
-        return (formatter.string(from: NSNumber(value: converted)) ?? "\(converted)") + "원"
     }
 }

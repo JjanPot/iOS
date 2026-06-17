@@ -29,7 +29,6 @@ struct ChallengeCardView: View {
         .background(Color.orange100)
         .rounded(radius: 12)
         .roundedBorder(color: .orange300, radius: 12)
-        .fixedSize(horizontal: true, vertical: false)
     }
 }
 
@@ -49,6 +48,6 @@ enum ChallengeCardAction {
 #Preview {
     ChallengeCardView(status: .none, onAction: {_ in})
     ChallengeCardView(status: .waiting(viewData: .init(challengeId: 1, teamName: "배달을 아껴요", targetSavingsAmount: "30만원", period: "26.07.15 - 16.07.21 (1주)", inviteCode: "171717")), onAction: {_ in})
-    ChallengeCardView(status: .inProgress(viewData: .init(challengeId: 1, teamName: "배달좀아껴요", dday: "D-3", teamSavingsAmount: "250,000원", personalSavingsAmount: "25,000원")), onAction: {_ in})
+    ChallengeCardView(status: .inProgress(viewData: .init(challengeId: 1, teamName: "배달좀아껴요", dday: "D-3", teamSavingsAmount: 250_000, personalSavingsAmount: 25_000)), onAction: {_ in})
 }
 

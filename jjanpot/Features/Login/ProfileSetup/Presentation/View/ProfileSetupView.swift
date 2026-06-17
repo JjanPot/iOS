@@ -39,7 +39,7 @@ struct ProfileSetupView: View {
                     
                     // 프로필 이미지, 닉네임
                     ProfileContentView(
-                        profileImage: $viewModel.profileImage,
+                        imageSource: $viewModel.imageSource,
                         nickname: $viewModel.nickname,
                         nicknameErrorMessage: $viewModel.nicknameErrorMessage,
                         onSubmit: {
@@ -102,7 +102,7 @@ struct ProfileSetupView: View {
             Task {
                 if let data = try? await newItem?.loadTransferable(type: Data.self),
                    let uiImage = UIImage(data: data) {
-                    viewModel.profileImage = Image(uiImage: uiImage)
+                    viewModel.updateLocalImage(uiImage)
                 }
             }
         }

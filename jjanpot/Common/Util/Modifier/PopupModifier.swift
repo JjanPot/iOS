@@ -83,4 +83,23 @@ extension View {
             }
         }
     }
+    
+    func popup(modal: Binding<Modal?>, dismissOnBackgroundTap: Bool = true) -> some View {
+        self.popup(
+            isPresented: Binding(
+                get: { modal.wrappedValue != nil },
+                set: { if !$0 { modal.wrappedValue = nil } }
+            ),
+            dismissOnBackgroundTap: dismissOnBackgroundTap
+        ) {
+            if let modalValue = modal.wrappedValue {
+                modalValue
+                    .buttons {
+                        MainButton(title: "확인", size: .large, colorType: .fill) {
+                            modal.wrappedValue = nil
+                        }
+                    }
+            }
+        }
+    }
 }

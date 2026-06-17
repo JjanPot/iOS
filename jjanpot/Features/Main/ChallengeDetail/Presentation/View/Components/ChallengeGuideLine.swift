@@ -69,12 +69,12 @@ struct ChallengeGuideLine: View {
                         
                         
                         VStack (alignment: .leading, spacing: .zero){
-                            Text("3. 기준보다 비싸다면")
+                            Text("3. 더 비싸게 소비했다면")
                                 .font(.pretendard(.light, size: 12))
                                 .foregroundStyle(.black900)
                             Text(
                             """
-                            절약 금액은 -4500원이에요.
+                            기준 금액과의 차액(-)이 절약 금액이에요.
                             예) 카페 4,500원 / 오션뷰 카페 9,000원 → 절약 -4,500원
                             """
                             )
@@ -143,7 +143,8 @@ struct ChallengeGuideLine: View {
                         .foregroundStyle(.black600)
                         .padding(.vertical, 18)
                 } content: {
-                    VStack(alignment: .leading, spacing: 30) {
+                    VStack(alignment: .leading, spacing: .zero
+                    ) {
                         VStack (alignment: .leading, spacing: 4){
                             DotText("팀 성공 여부와 상관없이 주간 인증 1회 이하 or 하루 3회 초과 인증하면 개인은 목표 달성에서 제외돼요. ")
                             DotText("팀원 전원이 개인 최소 금액을 충족해야 해요.")

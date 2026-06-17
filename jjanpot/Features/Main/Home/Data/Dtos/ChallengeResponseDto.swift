@@ -12,13 +12,14 @@ struct ChallengeResponseDto: Codable {
     let status: ChallengeStatus
     let waiting: WaitingChallengeDto?
     let ongoing: OngoingChallengeDto?
+    
+    enum ChallengeStatus: String, Codable {
+        case waiting = "WAITING"
+        case ongoing = "ONGOING"
+        case none = "NONE"
+    }
 }
 
-enum ChallengeStatus: String, Codable {
-    case waiting = "WAITING"
-    case ongoing = "ONGOING"
-    case none = "NONE"
-}
 
 // 대기중 챌린지 정보
 struct WaitingChallengeDto: Codable {

@@ -11,7 +11,7 @@ struct ChallengeDetailEntity {
     let challengeId: Int
     let title: String
     let description: String
-    let status: String
+    let status: ChallengeStatus
     
     let goalAmount: Int
     let minPersonalGoalAmount: Int
@@ -33,12 +33,14 @@ struct ChallengeDetailEntity {
 
 // MARK: - Mapper
 
+
+
 extension ChallengeDetailEntity {
     init(from dto: ChallengeDetailResponseDto) {
         self.challengeId = dto.challengeId
         self.title = dto.title
         self.description = dto.description
-        self.status = dto.status
+        self.status = ChallengeStatusMapper().map(from: dto.status)
         self.goalAmount = dto.goalAmount
         self.minPersonalGoalAmount = dto.minPersonalGoalAmount
         self.startDate = dto.startDate.toDate(.iso8601) ?? Date()

@@ -10,23 +10,24 @@ import SwiftUI
 // 챌린지 대시보드
 struct ChallengeDashboardView: View {
     @StateObject var viewModel: ChallengeDashboardViewModel
-    private let coordinator: MainCoordinator
-    
-    
-    init(viewModel: ChallengeDashboardViewModel, coordinator: MainCoordinator) {
+    private let coordinator: ChallengeCoordinatorProtocol
+
+    // 피드 메뉴(신고) 띄우기
+    @State var selectedFeedIdForMenu: Int?
+    // 내 피드 메뉴 띄우기
+    @State var selectedFeedIdForMyMenu: Int?
+
+    // 신고 완료 팝업
+    @State var isShowReportedPopup: Bool = false
+
+
+    init(viewModel: ChallengeDashboardViewModel, coordinator: ChallengeCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
     
     var body: some View {
         ZStack {
-            VStack {
-                Color.orange50
-                    .ignoresSafeArea(edges: .top)
-                    .frame(height: 300)
-                Color.clear
-            }
-            
             ScrollView {
                 VStack (alignment: .leading, spacing: .zero){
                     
@@ -38,10 +39,33 @@ struct ChallengeDashboardView: View {
                         }
                         .frame(height: 30)
                         
-                        
-                        ChallengeOverview(viewData: viewModel.viewData)
+                        DashboardOverview(viewData: viewModel.viewData, onSelectedMember: { selectedMember in
+                            guard !selectedMember.isMe else { return }
+                            coordinator.showReportUserSheet(onReportUser: {
+                                guard let challengeId =  viewModel.viewData?.challengeId
+                                else { return }
+                                // 사용자 신고하기 모달띄우기
+                                showReportUserModal(
+                                    authorId: selectedMember.userId,
+                                    challengeId: challengeId,
+                                    authorNickname: selectedMember.nickname
+                                )
+                                
+                            }, onBlockUser: {
+                                guard let challengeId =  viewModel.viewData?.challengeId else { return }
+                                
+                                // 사용자 차단하기 모달 띄우기
+                                showBlockModal(authorId: selectedMember.userId, challengeId: challengeId, authorNickname: selectedMember.nickname)
+                            })
+                        })
                     }
-                    .background(Color.orange50)
+                    .background(
+                        LinearGradient(
+                            colors: [.white, .orange50],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
                     
                     // MARK: 피드 //
                     VStack (alignment: .leading, spacing: 12){
@@ -55,17 +79,83 @@ struct ChallengeDashboardView: View {
                             Spacer()
                         }
                         .padding(.bottom, 12)
+                        .background(
+                            RoundedCorner(radius: 12, corners: [.topLeft, .topRight])
+                                .fill(Color.white)
+                                .shadow(color: Color.black.opacity(0.1),
+                                        radius: 5,
+                                        x: 0,
+                                        y: -2)
+                                .mask(
+                                    Rectangle()
+                                        .padding(.top, -20)
+                                )
+                        )
+                        //                        .border(.red)
                         
                         // 게시물 목록 //
                         switch viewModel.viewData {
-                        case let .inProgress(_, _, feeds):
+                        case let .inProgress(challengeId, _, feeds):
                             Group {
                                 ForEach(feeds) { feed in
                                     switch feed {
                                     case let .header(_, date):
                                         FeedHeaderView(title: date)
+                                        
                                     case let .item(_, feed):
-                                        FeedCardView(viewData: feed)
+                                        FeedCardView(viewData: feed,
+                                                     isMyMenuOpen: Binding(
+                                                        get: { selectedFeedIdForMyMenu == feed.feedId },
+                                                        set: { isOpen in
+                                                            if isOpen {
+                                                                selectedFeedIdForMyMenu = feed.feedId
+                                                            } else {
+                                                                closeMenu()
+                                                            }
+                                                        }),
+                                                     isMenuOpen: Binding(
+                                                        get: { selectedFeedIdForMenu == feed.feedId },
+                                                        set: { isOpen in
+                                                            if isOpen {
+                                                                selectFeedForMenu(id: feed.feedId)
+                                                            } else {
+                                                                closeMenu()
+                                                            }
+                                                        }),
+                                                     onClickLike: {
+                                            print(">>>>> 좋아요 클릭 \(feed.feedId)")
+                                            viewModel.updateLikes(feedId: feed.feedId)
+                                            
+                                        },
+                                                     onClickImage: {
+                                            guard let url = feed.imageUrl else {
+                                                return
+                                            }
+                                            coordinator.showPostImageDetail(imageUrl: url)
+                                        },
+                                                     onEdit: { // 수정하기
+                                            viewModel.editFeed(id: feed.feedId)
+                                        },
+                                                     onDelete: { // 삭제하기
+                                            showDeleteModal(feedId: feed.feedId)
+                                            
+                                        },
+                                                     onReport: {
+                                            // 게시글 신고하기 모달 띄우기
+                                            showReportFeedModal(feedId: feed.feedId)
+                                            
+                                        }, onReportUser: {
+                                            // 사용자 신고하기 모달 띄우기
+                                            showReportUserModal(
+                                                authorId: feed.authorId,
+                                                challengeId: challengeId,
+                                                authorNickname: feed.authorNickname
+                                            )
+                                            
+                                        }, onBlock: {
+                                            // 사용자 차단하기 모달 띄우기
+                                            showBlockModal(authorId: feed.authorId, challengeId: challengeId, authorNickname: feed.authorNickname)
+                                        })
                                         
                                     case .bottom:
                                         Spacer()
@@ -79,12 +169,21 @@ struct ChallengeDashboardView: View {
                         }
                         
                         Spacer()
-
+                        
                     }
                     .background(Color.white)
                     
                 }
             } // ScrollView
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 1)
+                    .onChanged { _ in
+                        closeMenu()
+                    }
+            )
+            .onTapGesture {
+                closeMenu()
+            }
             
         } //Zstack
         .loading(viewModel.isLoading)
@@ -92,10 +191,105 @@ struct ChallengeDashboardView: View {
         .task {
             viewModel.loadChallengeDashboard()
         }
+        .onChange(of: viewModel.editingFeedEntity) { editingFeedEntity in
+            guard let editingFeedEntity else { return }
+            guard let challengeId = viewModel.viewData?.challengeId else { return }
+            coordinator.showEditFeed(challengeId: challengeId, entity: editingFeedEntity)
+        }
+        // 네비게이션 후 상태 초기화
+        .onDisappear {
+            viewModel.editingFeedEntity = nil
+        }
+        .popup(isPresented: $isShowReportedPopup) {
+            Modal(title: "신고가 접수되었습니다.", content: "24시간 이내 운영자 검토 후 서비스 이용 제한 등의 조치가 이루어질 수 있어요.")
+                .buttons {
+                    
+                    ModalButton(title: "확인") {
+                        isShowReportedPopup = false
+                    }
+                }
+        }
+    }
+    
+    /// 메뉴 열기/닫기
+    func selectFeedForMenu(id: Int) {
+        selectedFeedIdForMenu = id
+    }
+
+    /// 메뉴 닫기
+    private func closeMenu() {
+        // 신고 메뉴 닫기
+        if selectedFeedIdForMenu != nil {
+            selectedFeedIdForMenu = nil
+        }
+        // 내 메뉴 닫기
+        if selectedFeedIdForMyMenu != nil {
+            selectedFeedIdForMyMenu = nil
+        }
+    }
+    
+    
+    // 게시글 신고하기 모달 띄우기
+    private func showReportFeedModal(feedId: Int){
+        coordinator.showModal(
+            title: "게시글을 신고할까요?",
+            content: "허위로 신고한 사용자에게는 불이익이 있을 수 있어요.",
+            confirmButtonTitle: "신고하기",
+            onConfirm: {
+                coordinator.showReportFeedPopup(feedId: feedId, confirmAction: {
+                    isShowReportedPopup = true
+                    // 새로고침
+                    viewModel.loadChallengeDashboard()
+                })
+            })
+    }
+    
+    
+    // 사용자 신고하기 모달띄우기
+    private func showReportUserModal(authorId: Int, challengeId: Int, authorNickname: String){
+        coordinator.showModal(
+            title: "\(authorNickname)님을 신고할까요?",
+            content: "허위로 신고한 사용자에게는 불이익이 있을 수 있어요.",
+            confirmButtonTitle: "신고하기",
+            onConfirm: {
+                // 차단 이유 선택지 띄우기
+                coordinator.showReportUserPopup(userId: authorId, challengeId: challengeId, confirmAction: {
+                    isShowReportedPopup = true
+                    // 새로고침
+                    viewModel.loadChallengeDashboard()
+                })
+            })
+    }
+    
+    
+    // 사용자 차단하기 모달 띄우기
+    private func showBlockModal(authorId: Int, challengeId: Int, authorNickname: String){
+        coordinator.showModal(
+            title: "\(authorNickname)님을 차단할까요?",
+            content: "\(authorNickname)님을 차단하면 챌린지 소식을 볼 수 없고, 2인 챌린지라면 챌린지가 즉시 종료돼요.",
+            confirmButtonTitle: "차단하기",
+            onConfirm: {
+                coordinator.closePopup()
+
+                // 유저 차단하기
+                viewModel.blockUser(userId: authorId, challengeId: challengeId)
+            })
+    }
+    
+    // <삭제하겠습니까?> 모달 띄우기
+    private func showDeleteModal(feedId: Int){
+        coordinator.showModal(
+            title: "게시글을 삭제할까요?",
+            content: "삭제한 게시글은 다른 사람이 볼 수 없어요.",
+            confirmButtonTitle: "삭제하기",
+            onConfirm: {
+                coordinator.closePopup()
+                viewModel.deleteFeed(feedId: feedId)
+            })
     }
 }
 
 #Preview {
     let di = MockMainDIContainer()
-    di.makeChallengeDashboardView(coordinator: di.makeMainCoordinator())
+    di.makeChallengeDashboardView(coordinator: di.makeChallengeCoordinator(appCoordinator: di.makeAppCoordinator()))
 }

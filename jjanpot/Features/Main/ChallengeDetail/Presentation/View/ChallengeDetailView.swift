@@ -9,10 +9,11 @@ import SwiftUI
 
 // 챌린지 상세 정보
 struct ChallengeDetailView: View {
+    @ObservedObject private var authManager = AuthManager.shared
     @StateObject var viewModel: ChallengeDetailViewModel
-    private let coordinator: MainCoordinator
-    
-    init(viewModel: ChallengeDetailViewModel, coordinator: MainCoordinator) {
+    private let coordinator: ChallengeCoordinatorProtocol
+
+    init(viewModel: ChallengeDetailViewModel, coordinator: ChallengeCoordinatorProtocol) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.coordinator = coordinator
     }
@@ -22,24 +23,43 @@ struct ChallengeDetailView: View {
             VStack(alignment: .leading, spacing: 12) {
 
                 // 챌린지 기본 정보
-                basicInfoView
+                ChallengeBasicInfoView(viewData: viewModel.viewData?.basicInfo,
+                                       memberViewDatas: viewModel.memberViewDatas)
                 
                 // 챌린지 설명
                 description
                 
+                // 팀원 소개
+                members
+                
                 // 챌린지 가이드 라인
                 ChallengeGuideLine()
                 
-                if viewModel.viewData?.hasCancelButton ?? false {
+                // 챌린지 시작 버튼 - 대기중 && 심사용 계정
+                if viewModel.viewData?.status == .waiting
+                    && authManager.getIsReviewMode() {
+                    MainButton(title: "시작하기") {
+                        viewModel.startChallenge( )
+                    }
+                }
+                
+                // 챌린지 취소 버튼 - 대기중일때만 노출
+                if (viewModel.viewData?.hasCancelButton ?? false) {
                     Button {
                         viewModel.isShowCancelAlert = true
                     } label: {
-                        Text("취소하기")
-                            .font(.pretendard(.medium, size: 14))
-                            .foregroundStyle(Color.orange500)
+                        MainButton(title: "취소하기",
+                                   isDisabled: true) {}
                     }
                 }
-
+                
+                // 챌린지 종료 버튼 - 진행중 && 심사용 계정
+                if viewModel.viewData?.status == .inProgress
+                    && authManager.getIsReviewMode() {
+                    MainButton(title: "종료하기"){
+                        viewModel.finishChallenge()
+                    }
+                }
             }
             .padding(.horizontal, 20)
         }
@@ -63,38 +83,9 @@ struct ChallengeDetailView: View {
         }
         .onChange(of: viewModel.isCancelled) { isCancelled in
             if isCancelled {
-                coordinator.pop()
+                coordinator.close()
             }
         }
-    }
-    
-    
-    // 챌린지 기본정보 뷰
-    var basicInfoView: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(viewModel.viewData?.teamName ?? "")
-                    .font(.pretendard(.semiBold, size: 24))
-                    .foregroundStyle(.black900)
-                
-                Text(viewModel.viewData?.goals ?? "")
-                    .font(.pretendard(.medium, size: 14))
-                    .foregroundStyle(.black500)
-            }
-            
-            VStack(alignment: .leading, spacing: 14) {
-                detailView(title: "카테고리", content: viewModel.viewData?.category ?? "")
-                detailView(title: "목표금액", content: viewModel.viewData?.teamTargetAmount ?? "")
-                detailView(title: "개인금액", content: viewModel.viewData?.personTargetAmound ?? "")
-                detailView(title: "팀 유형", content: viewModel.viewData?.relationshipType ?? "")
-                detailView(title: "기간", content: viewModel.viewData?.during ?? "")
-                detailView(title: "팀 인원", content: viewModel.viewData?.memberCount ?? "")
-            }
-        }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white)
-        .rounded(radius: 12)
     }
     
     var description: some View {
@@ -114,24 +105,30 @@ struct ChallengeDetailView: View {
         .rounded(radius: 12)
     }
     
-
-    private func detailView(title: String, content: String) -> some View {
-        HStack(alignment: .center, spacing: 8){
-            Text(title)
-                .font(.pretendard(.medium, size: 14))
-                .foregroundStyle(Color.black500)
-                .frame(width: 55, alignment: .leading)
+    // 팀원 소개
+    var members: some View {
+        VStack(alignment: .leading, spacing: 10) {
             
-            Text(content)
-                .font(.pretendard(.medium, size: 14))
-                .foregroundStyle(Color.black900)
-        }
-    }
-}
+            Text("팀원 소개")
+                .font(.pretendard(.medium, size: 16))
+                .foregroundStyle(.black900)
+            
+            SimpleMemberPagerView(members: viewModel.memberViewDatas) { _ in }
 
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white)
+        .rounded(radius: 12)
+        
+    }
+
+}
+ 
 #Preview {
     let di = MockMainDIContainer()
-    di.makeChallengeDetailView(challengeId: 1, coordinator: di.makeMainCoordinator())
+    let coordinator =  di.makeChallengeCoordinator(appCoordinator: di.makeAppCoordinator())
+    di.makeChallengeDetailView(challengeId: 1, coordinator: coordinator)
 }
 
 

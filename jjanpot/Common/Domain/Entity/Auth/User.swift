@@ -9,12 +9,19 @@
 import Foundation
 
 /// 사용자 정보 Entity
-struct UserEntity: Codable {
+struct UserEntity {
     let userId: Int
     let nickname: String
-    
-    init(userId: Int, nickname: String) {
-        self.userId = userId
-        self.nickname = nickname
+    let imageUrl: String?
+    let birthDate: Date?
+}
+
+extension UserEntity {
+    init(from dto: ProfileDto) {
+        self.userId = dto.userId
+        self.nickname = dto.nickname
+        self.imageUrl = dto.profileUrl
+        // "2000-01-15",
+        self.birthDate = dto.birthDate?.toDate(.dateOnly)
     }
 }

@@ -8,12 +8,15 @@
 
 import SwiftUI
 import Combine
+import UIKit
 
 final class ProfileSetupViewModel: ObservableObject {
     @Published var nickname: String = ""
     @Published var nicknameErrorMessage: String? = nil
     @Published var birthDate: Date? = nil
-    @Published var profileImage: Image? = nil
+    
+    // 여기서는 .local만 쓰임
+    @Published var imageSource: ProfileImageSource?
     
     @Published var isLoading = false
     @Published var toastMessage: String?
@@ -33,26 +36,31 @@ final class ProfileSetupViewModel: ObservableObject {
         
         let date = birthDate?.toString(.dateOnly)
         
+        var profileImage: UIImage?
+        if case let .local(uiImage) = imageSource {
+            profileImage = uiImage
+        }
+        
         Task {
             do {
-                // TODO: 이미지 업로드 구현하기
-                try await useCase.setProfile(nickname: nickname, birthDate: date, imageUrl: nil)
+                try await useCase.setProfile(nickname: nickname, birthDate: date, image: profileImage)
                 isSuccess = true
                 ToastManager.shared.show("등록되었습니다.")
             } catch {
                 Logger.error("프로필 설정 실패: \(error.localizedDescription)")
                 if let networkError = error as? NetworkError {
-                    toastMessage = networkError.description
-                } else {
-                    if let networkError = error as? NetworkError {
+                    if networkError.isUserFacing {
                         toastMessage = networkError.description
-                    } else {
-                        toastMessage = "프로필 설정 실패"
                     }
+                } else {
+                    toastMessage = "프로필 설정 실패"
                 }
             }
             isLoading = false
         }
-        
+    }
+    
+    func updateLocalImage(_ uiImage:  UIImage){
+        imageSource = .local(uiImage)
     }
 }

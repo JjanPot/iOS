@@ -8,6 +8,10 @@
 import Foundation
 
 protocol ChallengeDashboardRepositoryProtocol {
+    /// 로그인 여부 확인
+    func isLoggedIn () -> Bool
+    
+    
     /// 챌린지 정보 가져오기 (홈화면용)
     func fetchCurrentChallenge() async throws -> CurrentChallengeEntity
     
@@ -16,4 +20,21 @@ protocol ChallengeDashboardRepositoryProtocol {
     
     /// 챌린지 피드 가져오기
     func fetchFeeds(challengeId: Int) async throws -> [FeedEntity]
+    
+    /// 게시글 신고
+    func reportFeed(feedId: Int, reason: String) async throws
+    
+    /// 사용자 신고
+    func reportUser(userId: Int, challengeId: Int, reason: String) async throws
+    
+    /// 사용자 차단
+    func blockUser(userId: Int, challengeId: Int) async throws
+    
+    
+    /// 피드 삭제하기
+    func deleteFeed(feedId: Int) async throws
+    
+    
+    /// 피드 좋아요 기능
+    func updateLikes(feedId: Int) async throws -> LikesEntity
 }

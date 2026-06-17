@@ -15,7 +15,7 @@ struct ChallengeInProgressViewData {
     let dday: String
      
     // 팀절약금액 ("250,000원")
-    let teamSavingsAmount: String
-    // 개인절약금액 ("25,000원"
-    let personalSavingsAmount: String
+    let teamSavingsAmount: Int
+    // 개인절약금액 ("25,000원")
+    let personalSavingsAmount: Int
 }

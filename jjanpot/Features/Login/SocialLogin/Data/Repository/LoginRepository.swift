@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import FirebaseCore
+import FirebaseMessaging
 
 struct LoginRepository: LoginRepositoryProtocol {
     
@@ -38,8 +40,17 @@ struct LoginRepository: LoginRepositoryProtocol {
     func getUUID() -> String {
         return UIDevice.current.identifierForVendor!.uuidString
     }
+    
+
     func getFcmToken() async -> String? {
-        AuthManager.shared.getFcmToken()
+        if let token = AuthManager.shared.getFcmToken() {
+            return token
+        }
+        return try? await fetchFCMToken()
+    }
+    
+    private func fetchFCMToken() async throws -> String? {
+        try await Messaging.messaging().token()
     }
     
 }

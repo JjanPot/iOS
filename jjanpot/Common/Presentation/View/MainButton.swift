@@ -86,7 +86,7 @@ struct MainButtonStyle {
             // Primary - Disabled
             return MainButtonStyle(
                 backgroundColor: .black100,
-                foregroundColor: .white,
+                foregroundColor: .black400,
                 borderColor: .clear
             )
         case (.fill, false, true):
@@ -123,7 +123,7 @@ struct MainButtonStyle {
             // Secondary - Normal
             return MainButtonStyle(
                 backgroundColor: .white,
-                foregroundColor: .black500,
+                foregroundColor: .black900,
                 borderColor: .orange500
             )
         }

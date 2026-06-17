@@ -14,6 +14,10 @@ struct ChallengeDashboardRepository: ChallengeDashboardRepositoryProtocol {
         self.apiClient = challengeApiClient
     }
     
+    func isLoggedIn () -> Bool {
+        AuthManager.shared.isLoggedIn
+    }
+    
     /// 챌린지 정보 가져오기 (홈화면용)
     func fetchCurrentChallenge() async throws -> CurrentChallengeEntity {
          let result = await apiClient.fetchChallenges()
@@ -44,6 +48,66 @@ struct ChallengeDashboardRepository: ChallengeDashboardRepositoryProtocol {
         switch result {
         case .success(let dtos):
             return dtos.map{dto in FeedEntity(from: dto)}
+            
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    // 게시글 신고
+    func reportFeed(feedId: Int, reason: String) async throws {
+        let result = await apiClient.reportFeed(feedId: feedId, reason: reason)
+        switch result {
+        case .success(let dto):
+            return
+            
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    // 사용자 신고
+    func reportUser(userId: Int, challengeId: Int, reason: String) async throws {
+        let result = await apiClient.reportUser(userId: userId, challengeId: challengeId, reason: reason)
+        switch result {
+        case .success(let dto):
+            return
+            
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    // 사용자 차단
+    func blockUser(userId: Int, challengeId: Int) async throws {
+        let result = await apiClient.blockUser(userId: userId, challengeId: challengeId)
+        switch result {
+        case .success(let dto):
+            return
+            
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    // 피드 삭제하기
+    func deleteFeed(feedId: Int) async throws {
+        let result = await apiClient.deleteFeed(feedId: feedId)
+        switch result {
+        case .success(_):
+            return
+            
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    // 좋아요
+    func updateLikes(feedId: Int) async throws -> LikesEntity {
+        let result = await apiClient.likes(feedId: feedId)
+        switch result {
+        case .success(let dto):
+            return LikesEntity(from: dto)
             
         case .failure(let error):
             throw error

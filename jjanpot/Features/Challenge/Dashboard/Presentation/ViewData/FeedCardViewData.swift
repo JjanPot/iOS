@@ -8,11 +8,41 @@
 import Foundation
 
 struct FeedCardViewData {
+    let feedId: Int
+    
+    
+    // feed 작성자 유저 id
+    let authorId: Int
+    let authorNickname: String
+    
     let category: String
-    let title: String
     let content: String
     let price: String
+    
     let likeCount: Int
+    let isLiked: Bool
+    
     let date: String
     let imageUrl: String?
+    
+    let isMine: Bool
+    
 }
+extension FeedCardViewData {
+    func withUpdatedLikeCount(_ count: Int, isLiked: Bool) -> FeedCardViewData {
+        FeedCardViewData(
+            feedId: self.feedId,
+            authorId: self.authorId,
+            authorNickname: self.authorNickname,
+            category: self.category,
+            content: self.content,
+            price: self.price,
+            likeCount: count,
+            isLiked: isLiked,
+            date: self.date,
+            imageUrl: self.imageUrl,
+            isMine: self.isMine
+        )
+    }
+}
+

@@ -2,83 +2,84 @@
 //  MainCoordinator.swift
 //  jjanpot
 //
-//  Created by 임주희 on 3/25/26.
+//  Created by 임주희 on 4/14/26.
 //
 
 import SwiftUI
-import Combine
 
-enum MainDestination: Route {
-    case createChallenge
-    case challengeDetail(id: Int)
-    case challengePost(id: Int)
+final class MainCoordinator: MainNavigationCoordinatorProtocol {
+    private let appCoordinator: AppCoordinator
 
-    var id: String {
-        switch self {
-        case .createChallenge:
-            return "createChallenge"
-        case .challengeDetail:
-            return "challengeDetail"
-            
-        case .challengePost:
-            return "challengePost"
-        }
+    init(appCoordinator: AppCoordinator) {
+        self.appCoordinator = appCoordinator
     }
 
-    var analyticsName: String {
-        switch self {
-        case .createChallenge:
-            return "main_create_challenge"
-        case .challengeDetail:
-            return "challenge_detail"
-        case .challengePost:
-            return "challengePost"
-        }
+    func navigateToCreateChallenge() {
+        appCoordinator.push(.createChallenge)
     }
 
-    var hidesTabBar: Bool {
-        switch self {
-        case .createChallenge:
-            return true
-        case .challengeDetail:
-            return false
-        case .challengePost:
-            return false
-        }
-    }
-}
-
-@MainActor
-final class MainCoordinator: ObservableObject {
-    private let container: MainDIContainerProtocol
-    @Published var path = NavigationPath()
-
-    init(container: MainDIContainerProtocol) {
-        self.container = container
+    func navigateToChallengeDetail(id: Int) {
+        appCoordinator.push(.challengeDetail(id: id))
     }
 
-    // MARK: - Navigation Methods
-
-
-    /// 특정 화면으로 이동
-    func push(_ destination: MainDestination) {
-        path.append(destination)
+    func navigateToFeedPost(id: Int) {
+        appCoordinator.push(.feedPost(id: id))
     }
 
-    /// 이전 화면으로 돌아가기
-    func pop() {
-        guard !path.isEmpty else { return }
-        path.removeLast()
+    func navigateToChallengeReport(id: Int) {
+        appCoordinator.push(.challengeReport(id: id))
     }
 
-    /// 특정 개수만큼 뒤로 가기
-    func pop(count: Int) {
-        guard path.count >= count else { return }
-        path.removeLast(count)
+    func navigateToFeedEditFeed(challengeId: Int, entity: FeedEntity) {
+        appCoordinator.push(.feedEditFeed(challengeId: challengeId, entity: entity))
     }
 
-    /// 네비게이션 스택 초기화 (루트로 이동)
-    func popToRoot() {
-        path = NavigationPath()
+    func navigateToSettings() {
+        appCoordinator.push(.settings)
+    }
+
+    func navigateToAlarmSettings() {
+        appCoordinator.push(.alarmSettings)
+    }
+
+    func navigateToChallengeHistory() {
+        appCoordinator.push(.challengeHistory)
+    }
+
+    func showLoginPopup() {
+        appCoordinator.showPopup(.login)
+        
+    }
+
+    func showInviteCodeInputPopup() {
+        appCoordinator.showPopup(.invite_code_input(inviteCode: nil))
+    }
+
+    func showInviteCodeCopyPopup(inviteCode: String) {
+        appCoordinator.showPopup(.invite_code_copy(inviteCode: inviteCode))
+    }
+
+    func showReportFeedPopup(feedId: Int) {
+        appCoordinator.showPopup(.reportFeedReason(feedId: feedId, confirmAction: nil))
+    }
+
+    func showReportUserPopup(userId: Int, challengeId: Int) {
+        appCoordinator.showPopup(.reportUserReason(userId: userId, challengeId: challengeId, confirmAction: nil))
+    }
+
+    func showChallengeReportPopup(challengeId: Int) {
+        appCoordinator.showPopup(.reportPopup(challengeId: challengeId))
+    }
+
+    func showReportUserSheet(onReportUser: (() -> Void)?, onBlockUser: (() -> Void)?) {
+        appCoordinator.sheet( .reportUser(onReportUser: onReportUser, onBlockUser: onBlockUser))
+    }
+
+    func openFullScreenWebView(url: String) {
+        appCoordinator.fullScreen(url: url)
+    }
+
+    func closeScreen() {
+        appCoordinator.pop()
     }
 }

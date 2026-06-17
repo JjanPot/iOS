@@ -24,7 +24,23 @@ public enum AuthRouter {
     // 프로필 설정  birthDate "2000-01-15"
     case setProfile(nickname: String, birthDate: String?, imageUrl: String?)
     
+    case presignedUrl(directory: String, contentType: String)
+    
+    // 프로필 가져오기
+    case getProfile
+    
+    // 프로필 수정하기  birthDate "2000-01-15"
+    case editProfile(nickname: String, birthDate: String?, imageUrl: String?)
+    
+    // MARK : mypage
+    case getNotificationSettings
+    case setNotificationSettings(setting: NotificationDto)
+    
+    /// 로그아웃
     case logout(userId: Int)
+    
+    /// 탈퇴하기
+    case withdraw
 }
 
 extension AuthRouter: Router {
@@ -48,16 +64,61 @@ extension AuthRouter: Router {
         case .agreement:
             return "/api/users/v1/onboarding/agreement"
             
+            
+        case .presignedUrl:
+            return "/api/images/v1/presigned-url"
+            // 프로필 설정
         case .setProfile:
             return "/api/users/v1/onboarding/profile"
+       
+            // 프로필 가져오기
+        case .getProfile:
+            return "/api/users/v1/profile"
+            
+            // 프로필 수정
+        case .editProfile:
+            return "/api/users/v1/profile"
             
         case .logout:
             return "/api/auth/v1/logout"
+            
+            
+        case .withdraw:
+            return "/api/users/v1/withdraw"
+            
+            
+        case .getNotificationSettings:
+            return "/api/users/v1/notifications"
+        case .setNotificationSettings:
+            return "/api/users/v1/notifications"
         }
     }
     
     public var method: HTTPMethod {
-        return .post
+        switch self {
+        case .kakaoLogin,
+                .appleLogin,
+                .googleLogin,
+                .refresh,
+                .agreement,
+                .setProfile,
+                .logout:
+            return .post
+            
+        case .getProfile,
+                .getNotificationSettings,
+                .presignedUrl:
+                return .get
+            
+        case .setNotificationSettings:
+            return .patch
+            
+        case .withdraw:
+            return .delete
+            
+        case .editProfile:
+            return .put
+        }
     }
     
     public var parameters: Parameters? {
@@ -101,6 +162,14 @@ extension AuthRouter: Router {
             ]
             return params
             
+            
+        case let .presignedUrl(directory, contentType):
+            let params: Parameters = [
+                "directory" : directory,
+                "contentType" : contentType,
+            ]
+            return params
+            
         case let .setProfile(nickname, birthDate, imageUrl):
             var params: Parameters = [
                 "nickname" : nickname,
@@ -113,19 +182,56 @@ extension AuthRouter: Router {
             }
             return params
             
+        case let .editProfile(nickname, birthDate, imageUrl):
+            var params: Parameters = [
+                "nickname" : nickname,
+            ]
+            if let birthDate {
+                params["birthDate"] = birthDate
+            }
+            if let imageUrl {
+                params["profileImageUrl"] = imageUrl
+            }
+            return params
+            
+        
+            
         case let .logout(userId):
             let params: Parameters = [
                 "userId" : userId,
             ]
             return params
+            
+        case .getNotificationSettings: return nil
+        case let .setNotificationSettings(dto):
+            let params: Parameters = [
+                "dailyEnabled" : dto.dailyEnabled,
+                "weeklyEnabled" : dto.weeklyEnabled,
+                "marketingConsent" : dto.marketingConsent,
+            ]
+            return params
+            
+        case .getProfile,
+                .withdraw
+            : return nil
         }
     }
     
     public var headers: HTTPHeaders? {
-        return [
-            "Accept" : "application/json",
-            "Content-Type" : "application/json",
-        ]
+        switch self {
+        case .agreement, .setProfile, .presignedUrl:
+            var params: HTTPHeaders = [
+                "Accept" : "application/json",
+                "Content-Type" : "application/json",
+            ]
+            // 가입 전, 임시 토큰
+            if let token = AuthManager.shared.getTempAccessToken() {
+                params.add(name: "Authorization", value: "Bearer \(token)")
+            }
+            return params
+            
+        default: return nil
+        }
     }
 
     public var body: Encodable? {
@@ -155,8 +261,27 @@ public protocol AuthApiClientProtocol {
     /// 프로필 설정
     func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async -> Result<SetProfileDto, NetworkError>
     
+    /// 프로필 가져오기
+    func getProfile() async -> Result<ProfileDto, NetworkError>
+    
+    /// 프로필 수정하기
+    func editProfile(nickname: String, birthDate: String?, imageUrl: String?) async -> Result<ProfileDto, NetworkError>
+    
+    /// presignedUrl 가져오기
+    func presignedUrl(directory: String, contentType: String) async -> Result<PresignedURLDto, NetworkError>
+    
     /// 로그아웃
     func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError>
+    
+    /// 회원탈퇴
+    func withdraw() async -> Result<EmptyResponseDto, NetworkError>
+    
+    
+    /// 알림 설정 받기
+    func getNotificationSettings() async -> Result<NotificationDto, NetworkError>
+    
+    /// 알림 설정
+    func setNotificationSettings(setting: NotificationDto) async -> Result<EmptyResponseDto, NetworkError>
 }
 
 
@@ -189,10 +314,44 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
         await request(.setProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl))
     }
     
+    /// 프로필 가져오기
+    public func getProfile() async -> Result<ProfileDto, NetworkError> {
+        await request(.getProfile)
+    }
+    
+    /// 프로필 수정하기
+    public func editProfile(nickname: String, birthDate: String?, imageUrl: String?) async -> Result<ProfileDto, NetworkError> {
+        await request(.editProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl))
+    }
+    
+    
+    /// presignedUrl 가져오기
+    public func presignedUrl(directory: String, contentType: String) async -> Result<PresignedURLDto, NetworkError> {
+        await request(.presignedUrl(directory: directory, contentType: contentType))
+    }
+    
     /// 로그아웃
     public func logout(userId: Int) async -> Result<EmptyResponseDto, NetworkError> {
         await request(.logout(userId: userId))
     }
+    
+    /// 회원탈퇴
+    public func withdraw() async -> Result<EmptyResponseDto, NetworkError> {
+        await request(.withdraw)
+    }
+    
+    
+    /// 알림 설정 받기
+    public func getNotificationSettings() async -> Result<NotificationDto, NetworkError> {
+        await request(.getNotificationSettings)
+    }
+    /// 알림 설정
+    public func setNotificationSettings(setting: NotificationDto) async -> Result<EmptyResponseDto, NetworkError> {
+        await request(.setNotificationSettings(setting: setting))
+    }
 }
+
+
+
 
 

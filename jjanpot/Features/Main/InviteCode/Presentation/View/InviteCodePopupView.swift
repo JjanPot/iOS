@@ -11,45 +11,46 @@ import SwiftUI
 
 struct InviteCodePopupView: View {
     
-    enum Viewer {
-        case leader
-        case member
+    enum InvireViewType {
+        case viewer(code: String) // 멤버들에게 공유할 코드
+        case inputForm(code: String?) //딥링크로 받아온 코드 (입력할거임)
         
         var title: String {
             switch self {
-            case .leader: "팀원을 초대하고 챌린지를 같이해요"
-            case .member: "팀장에게 받은 코드를 입력하세요"
+            case .viewer: "팀원을 초대하고 챌린지를 같이해요"
+            case .inputForm: "팀장에게 받은 코드를 입력하세요"
             }
         }
         
         var subTitle: String {
             switch self {
-            case .leader: "초대 코드를 복사하고 팀원을 초대해 보세요."
-            case .member: "초대 코드를 입려하고 함께 절약을 시작해요."
+            case .viewer: "초대 코드를 복사하고 팀원을 초대해 보세요."
+            case .inputForm: "초대 코드를 입려하고 함께 절약을 시작해요."
             }
         }
     }
     
     @StateObject var viewModel: InviteCodeViewModel
-    let inviteCode: String?
     let onCloseAction: () -> Void
     
-    init(viewModel: InviteCodeViewModel, inviteCode: String?, onCloseAction: @escaping () -> Void) {
+    init(viewModel: InviteCodeViewModel, viewType: InvireViewType, onCloseAction: @escaping () -> Void) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.inviteCode = inviteCode
         self.onCloseAction = onCloseAction
+        self.viewType = viewType
         
-        if let inviteCode, inviteCode.isNotEmpty {
-            viewer = .leader
+        if case .inputForm(let code) = viewType, let code {
+            // 딥링크로 코드 받아옴.
+            _inputCode = State(initialValue: code)
         } else {
-            viewer = .member
+            _inputCode = State(initialValue: "")
         }
     }
     
     @State var inputCode: String = ""
     @State var isError: Bool = false
+    @State var showShareSheet = false
     @FocusState private var isFocused: Bool
-    private let viewer: Viewer
+    private let viewType: InvireViewType
     
     var body: some View {
         VStack(alignment: .center, spacing: 42){
@@ -60,38 +61,46 @@ struct InviteCodePopupView: View {
                     .clipShape(Capsule())
                 
                 VStack(alignment: .center, spacing: 3){
-                    Text(viewer.title)
+                    Text(viewType.title)
                         .font(.pretendard(.semiBold, size: 20))
                         .foregroundStyle(Color.black900)
-                    Text(viewer.subTitle)
+                    Text(viewType.subTitle)
                         .font(.pretendard(.semiBold, size: 16))
                         .foregroundStyle(Color.black400)
                 }
                 
                 Image("charater2")
-                    
+                
                 VStack(alignment: .center, spacing: 2) {
-                    // 초대코드 있음 -> 복사뷰
-                    if let inviteCode {
+                    // 초대코드 복사뷰
+                    if case let .viewer(inviteCode)  = viewType {
                         Text("내 초대 코드")
                             .font(.pretendard(.medium, size: 17))
-                
+                        
+                        // 공유버튼 (초대코드 + 쉐어이미지)
                         Button {
-                            // 초대코드 클립보드에 복사
-                            UIPasteboard.general.string = inviteCode
-                            ToastManager.shared.show("초대 코드가 복사되었습니다.")
+                            // 공유시트 띄우기
+                            viewModel.isLoading = true
+                            showShareSheet = true
+                            
                         } label: {
                             HStack(alignment: .center, spacing: 7) {
+                                // 초대코드
                                 Text(inviteCode)
                                     .font(.pretendard(.semiBold, size: 26))
                                     .foregroundStyle(Color.black)
-                                Image("icon_copy")
-                                    .resizable()
-                                    .frame(width: 12, height: 12)
+                                
+                                // 공유 버튼 이미지
+                                Image(systemName: "square.and.arrow.up")
+                                    .foregroundStyle(Color.black400)
+                                    .offset(y: -1)
                             }
                         }
-                    } else {
-                        // 초대코드 없음 -> 입력뷰
+                        .padding(.leading, 20)
+                        
+                        // 초대코드 입력뷰
+                    } else  if case .inputForm = viewType {
+                        
                         Text("받은 초대 코드")
                             .font(.pretendard(.medium, size: 17))
                         
@@ -120,7 +129,7 @@ struct InviteCodePopupView: View {
                 // 키보드 내리기
                 isFocused = false
                 
-                if viewer == .leader || inputCode.isEmpty {
+                if viewType == .viewer(code: "") || inputCode.isEmpty {
                     onCloseAction()
                 } else {
                     // 입력 코드 확인하기 -> 맞으면 자동으로 닫기
@@ -137,14 +146,42 @@ struct InviteCodePopupView: View {
                 onCloseAction()
             }
         }
-        
-        
+        .sheet(isPresented: $showShareSheet, onDismiss: {
+            viewModel.isLoading = false
+        }) {
+            if case let .viewer(inviteCode)  = viewType {
+                let url = "https://jjanpot.shop/invite?code=\(inviteCode)"
+                let message = """
+                    짠팟에서 챌린지 같이 해요! 아래 링크를 눌러 우리 팀에 바로 들어와요.
+                    
+                    (팀에 못 들어간 경우 로그인 후에 팀 코드 [\(inviteCode)] 를 직접 입력해 주세요!)
+
+                    
+                    👉 초대 링크: \(url)
+                    """
+                
+                ShareSheet(items: [message], title: "짠팟 | 초대링크 공유", showImagePreview: false)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+            }
+        }
     }
 }
 
 #Preview {
-    MockMainDIContainer().makeInviteCodePopupView(inviteCode: nil, onCloseAction: {})
+    MockMainDIContainer().makeInviteCodePopupView(invireViewType: .viewer(code: "aaabbb"), onCloseAction: {})
         .padding(20)
         .border(.red)
 }
 
+
+
+extension InviteCodePopupView.InvireViewType: Equatable {
+    static func == (lhs: InviteCodePopupView.InvireViewType, rhs: InviteCodePopupView.InvireViewType) -> Bool {
+        switch (lhs, rhs) {
+        case (.viewer, .viewer): return true
+        case (.inputForm, .inputForm): return true
+        default: return false
+        }
+    }
+}

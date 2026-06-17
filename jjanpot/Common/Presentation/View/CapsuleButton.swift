@@ -83,14 +83,14 @@ enum CapsuleButtonSize {
     var width: CGFloat? {
         switch self {
         case .middle:
-            return 150
+            return nil
         }
     }
 
     var maxWidth: CGFloat? {
         switch self {
         case .middle:
-            return 150
+            return .infinity
         }
     }
 }

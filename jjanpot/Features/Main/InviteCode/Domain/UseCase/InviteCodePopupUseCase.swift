@@ -9,7 +9,7 @@
 import Foundation
 
 protocol InviteCodePopupUseCaseProtocol {
-    func submitInviteCode(code: String) async throws
+    func submitInviteCode(code: String, isOnboarding: Bool) async throws
 }
 struct InviteCodePopupUseCase: InviteCodePopupUseCaseProtocol {
     private let repository: InviteCodePopupRepositoryProtocol
@@ -18,8 +18,12 @@ struct InviteCodePopupUseCase: InviteCodePopupUseCaseProtocol {
     }
     
     
-    func submitInviteCode(code: String) async throws {
-        try await repository.submitInviteCode(code: code)
+    func submitInviteCode(code: String, isOnboarding: Bool) async throws {
+        if isOnboarding {
+            try await repository.submitInviteCodeOnBoarding(code: code)
+        } else {
+            try await repository.submitInviteCode(code: code)
+        }
     }
     
 }

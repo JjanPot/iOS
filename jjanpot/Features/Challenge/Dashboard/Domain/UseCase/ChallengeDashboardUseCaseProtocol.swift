@@ -8,15 +8,39 @@
 
 protocol ChallengeDashboardUseCaseProtocol {
     func getChallengeDashboardData() async throws -> ChallengeDashboardEntity
+    
+    /// 게시글 신고
+    func reportFeed(feedId: Int, reason: String) async throws
+    
+    /// 사용자 신고
+    func reportUser(userId: Int, challengeId: Int, reason: String) async throws
+    
+    /// 사용자 차단
+    func blockUser(userId: Int, challengeId: Int) async throws
+    
+    
+    /// 피드 삭제하기
+    func deleteFeed(feedId: Int) async throws
+    
+    /// 피드 좋아요
+    func updateLikes(feedId: Int) async throws -> LikesEntity
 }
+
+// MARK: - ChallengeDashboardUseCase
+
 struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
     private let repository: ChallengeDashboardRepositoryProtocol
     init(repository: ChallengeDashboardRepositoryProtocol) {
         self.repository = repository
     }
     
+    
     /// 챌린지 정보 가져오기
     func getChallengeDashboardData() async throws -> ChallengeDashboardEntity {
+        guard isLoggedIn() else {
+            return .none
+        }
+        
         // 1. 유저의 챌린지 가져오기
         let challengeEntity = try await getChallengeData()
         
@@ -49,5 +73,39 @@ struct ChallengeDashboardUseCase: ChallengeDashboardUseCaseProtocol {
     /// 진행중인 챌린지 피드 가져오기
     private func getFeeds(challengeId: Int) async throws -> [FeedEntity] {
         try await repository.fetchFeeds(challengeId: challengeId)
+    }
+    
+    
+    /// 게시글 신고
+    func reportFeed(feedId: Int, reason: String) async throws {
+        try await repository.reportFeed(feedId: feedId, reason: reason)
+    }
+    
+    /// 사용자 신고
+    func reportUser(userId: Int, challengeId: Int, reason: String) async throws {
+        try await repository.reportUser(userId: userId, challengeId: challengeId, reason: reason)
+    }
+    
+    /// 사용자 차단
+    func blockUser(userId: Int, challengeId: Int) async throws {
+        try await repository.blockUser(userId: userId, challengeId: challengeId)
+    }
+    
+    // 피드 삭제하기
+    func deleteFeed(feedId: Int) async throws {
+        try await repository.deleteFeed(feedId: feedId)
+    }
+    
+    // 피드 좋아요
+    func updateLikes(feedId: Int) async throws -> LikesEntity {
+        try await repository.updateLikes(feedId: feedId)
+    }
+    
+    
+    
+    //MARK: private Methods..
+    
+    private func isLoggedIn() -> Bool {
+        repository.isLoggedIn()
     }
 }

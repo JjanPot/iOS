@@ -9,18 +9,23 @@ import Foundation
 
 struct FeedResponseDto: Codable {
     let certificationId: Int
+    let userId: Int
     let spendType, categoryName, userNickname: String
     let memo: String?
     let savedAmount: Int
     let imageURL: String?
     /// "2027-08-15T09:35:00"
     let createdAt: String
+    
     let likeCount: Int
+    let isLiked: Bool
+    
+    let isMe: Bool
 
     enum CodingKeys: String, CodingKey {
-        case certificationId
+        case certificationId, userId
         case spendType, categoryName, userNickname, memo, savedAmount
         case imageURL = "imageUrl"
-        case createdAt, likeCount
+        case createdAt, likeCount, isMe, isLiked
     }
 }

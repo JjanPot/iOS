@@ -16,6 +16,10 @@ struct HomeRepository: HomeRepositoryProtocol {
         self.apiClient = apiClient
     }
     
+    func isLoggedIn () -> Bool {
+        AuthManager.shared.isLoggedIn
+    }
+    
     /// 홈화면에서 챌린지 정보 가져오기
     func fetchCurrentChallenge() async throws -> CurrentChallengeEntity {
          let result = await apiClient.fetchChallenges()
@@ -40,45 +44,25 @@ struct HomeRepository: HomeRepositoryProtocol {
             throw error
         }
     }
-}
-
-struct ChallengeSummaryEntity {
-    let team: Team
-    let personal: Personal
     
-
-    struct Team {
-        
-        let avgCertificationCount: Double
-        // 참여율
-        let participationRate: Int
-        // 연속활동
-        let consecutiveDays: Int
+    // 완료목록 가져오기
+    func loadHistories() async throws -> [HistoryEntity] {
+        let result = await apiClient.getChallengeHistory()
+        switch result {
+        case .success(let dtos):
+            let entities = dtos.map { HistoryEntity(from: $0) }
+            let sorted = entities.sorted { $0.endDate > $1.endDate }
+            return sorted
+            
+        case .failure(let error):
+            throw error
+        }
     }
     
-    struct Personal {
-        // 인증횟수
-        let certificationCount: Int
-        // 참여율
-        let participationRate: Int
-        // 연속활동
-        let consecutiveDays: Int
+    func loadLatestCompletedChallengeId() -> Int? {
+        AppConfig.shared.latestCompletedChallengeId
     }
 }
 
-struct ChallengeSummaryEntityMapper {
-    func map(from dto: ChallengeSummaryDto) -> ChallengeSummaryEntity {
-        ChallengeSummaryEntity(
-            team: ChallengeSummaryEntity.Team(
-                avgCertificationCount: dto.team.avgCertificationCount,
-                participationRate: dto.team.participationRate,
-                consecutiveDays: dto.team.consecutiveDays
-            ),
-            personal: ChallengeSummaryEntity.Personal(
-                certificationCount: dto.personal.certificationCount,
-                participationRate: dto.personal.participationRate,
-                consecutiveDays: dto.personal.consecutiveDays
-            )
-        )
-    }
-}
+
+

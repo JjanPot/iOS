@@ -15,4 +15,14 @@ struct MemberCardViewData {
     let imageUrl: String?
     let color: Color
     let amount: Int
+    
+    let isMe: Bool
+    let isLeader: Bool
+    let isBlocked: Bool
+}
+
+extension MemberCardViewData: Identifiable, Hashable {
+    var id: Int {
+        userId
+    }
 }

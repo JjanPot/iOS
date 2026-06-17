@@ -33,4 +33,14 @@ struct InviteCodePopupRepository: InviteCodePopupRepositoryProtocol {
             throw error
         }
     }
+    
+    func submitInviteCodeOnBoarding(code: String) async throws {
+        let result = await challengeApiClient.submitInviteCodeInOnboarding(code: code)
+        switch result {
+        case .success(_):
+            return
+        case .failure(let error):
+            throw error
+        }
+    }
 }

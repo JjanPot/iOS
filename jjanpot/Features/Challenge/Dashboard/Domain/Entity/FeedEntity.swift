@@ -9,20 +9,30 @@ import Foundation
 
 struct FeedEntity {
     let certificationId: Int
-    let spendType: String
+    let spendType: SpendType
     let categoryName: String
+    let userId: Int
     let userNickname: String
     let memo: String?
     let savedAmount: Int
     let imageURL: String?
     let createdAt: Date
     let likeCount: Int
+    let isLiked: Bool
+    let isMe: Bool
+    
+    
+    enum SpendType {
+        case expense // 지출
+        case noExpense // 무지출
+    }
 }
 extension FeedEntity {
     init(from dto: FeedResponseDto) {
         self.certificationId = dto.certificationId
-        self.spendType = dto.spendType
+        self.spendType = dto.spendType == "무지출" ? .noExpense : .expense
         self.categoryName = dto.categoryName
+        self.userId = dto.userId
         self.userNickname = dto.userNickname
         self.memo = dto.memo
         self.savedAmount = dto.savedAmount
@@ -30,5 +40,13 @@ extension FeedEntity {
         /// "2027-08-15T09:35:00"
         self.createdAt = dto.createdAt.toDate(.iso8601) ?? Date()
         self.likeCount = dto.likeCount
+        self.isLiked = dto.isLiked
+        self.isMe = dto.isMe
+    }
+}
+extension FeedEntity: Identifiable, Equatable, Hashable {
+    /// feed id
+    var id: Int {
+        certificationId
     }
 }

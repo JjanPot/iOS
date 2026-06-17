@@ -31,7 +31,7 @@ struct ChallengeInProgressView : View {
                         .font(.pretendard(.medium, size: 14))
                         .foregroundStyle(Color.black500)
                     Spacer()
-                    Text(viewData.teamSavingsAmount)
+                    Text("\(viewData.teamSavingsAmount)원")
                         .font(.pretendard(.medium, size: 14))
                         .foregroundStyle(Color.orange600)
                 }
@@ -40,7 +40,7 @@ struct ChallengeInProgressView : View {
                         .font(.pretendard(.medium, size: 14))
                         .foregroundStyle(Color.black500)
                     Spacer()
-                    Text(viewData.personalSavingsAmount)
+                    Text("\(viewData.personalSavingsAmount)원")
                         .font(.pretendard(.medium, size: 14))
                         .foregroundStyle(Color.black900)
                     

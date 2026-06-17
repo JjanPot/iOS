@@ -19,10 +19,19 @@ final class AuthManager: ObservableObject {
     @Keychain(key: "accessToken") private var accessToken: String?
     @Keychain(key: "refreshToken") private var refreshToken: String?
     
+    // 토큰 임시 저장 (약관동의용)
+    @Keychain(key: "tempAccessToken") private var tempAccessToken: String?
+    @Keychain(key: "tempRefreshToken") private var tempRefreshToken: String?
+    
+    // 리뷰 심사용
+    @KeychainCodable(key: "reviewMode")
+    private var isReviewMode: Bool?
+    
     // MARK: - Storage (UserDefault)
 
     @UserDefault(key: "fcmToken", defaultValue: nil)
     private var fcmToken: String?
+    
     
     // MARK: - Published Properties
 
@@ -50,18 +59,10 @@ final class AuthManager: ObservableObject {
         // 2. 상태 업데이트 (메모리에만)
         currentUser = entity.user
         isLoggedIn = true
-
+        
         Logger.success("로그인 성공: \(entity.user.nickname) (userId: \(entity.user.userId))")
-
     }
     
-    
-    /// 토큰갱신
-    func refreshToken(accessToken: String, refreshToken: String){
-        self.accessToken = accessToken
-        self.refreshToken = refreshToken
-    }
-
     /// 로그아웃
     func logout() {
         // 1. 토큰 삭제 (Keychain)
@@ -71,30 +72,74 @@ final class AuthManager: ObservableObject {
         // 2. 상태 업데이트 (메모리)
         currentUser = nil
         isLoggedIn = false
-
+        
+        updateIsReviewMode(nil)
         Logger.success("로그아웃 완료")
     }
+    
+    /// 임시 로그인 성공 시 호출 (토큰만 Keychain에 저장, 유저 정보는 메모리에만)
+    func tempLogin(_ entity: LoginEntity) {
+        // 1. 토큰 저장 (Keychain)
+        self.tempAccessToken = entity.accessToken
+        self.tempRefreshToken = entity.refreshToken
+        
+        // 2. 상태 업데이트 (메모리에만)
+        currentUser = entity.user
+        isLoggedIn = true
+
+        Logger.success("임시 로그인 성공: \(entity.user.nickname) (userId: \(entity.user.userId))")
+    }
+    
+    // 임시 로그인 정보 삭제
+    func clearTempLogin(){
+        self.tempAccessToken = nil
+        self.tempRefreshToken = nil
+    }
+    
+    
+    // MARK: - getter setter
 
     /// Access Token 가져오기 (API 호출 시 사용)
     func getAccessToken() -> String? {
         return accessToken
     }
-
+    
     /// Refresh Token 가져오기
     func getRefreshToken() -> String? {
         return refreshToken
     }
     
+    func getTempAccessToken() -> String? {
+        return tempAccessToken
+    }
+    func getTempRefreshToken() -> String? {
+        return tempRefreshToken
+    }
+
     func getFcmToken() -> String? {
         return fcmToken
     }
+    
+    func getIsReviewMode() -> Bool {
+        return isReviewMode ?? false
+    }
 
+    // MARK: - update
+    
+    /// 토큰갱신
+    func refreshToken(accessToken: String, refreshToken: String){
+        self.accessToken = accessToken
+        self.refreshToken = refreshToken
+    }
+    
     /// 닉네임 업데이트
     func updateNickname(_ nickname: String) {
         guard let user = currentUser else { return }
         let updatedUser = UserEntity(
             userId: user.userId,
-            nickname: nickname
+            nickname: nickname, //얘만 업데이트
+            imageUrl: user.imageUrl,
+            birthDate: user.birthDate
         )
         updateUser(updatedUser)
     }
@@ -109,7 +154,13 @@ final class AuthManager: ObservableObject {
         fcmToken = token
         Logger.success("fcm token 업데이트 \(token ?? "-missing token-")")
     }
-
+    
+    func updateIsReviewMode(_ isReviewMode: Bool?){
+        Logger.debug("update isReviewMode \(isReviewMode)")
+        self.isReviewMode = isReviewMode
+    }
+    
+    
     // MARK: - Private Methods
 
     /// 앱 시작 시 저장된 로그인 상태 복원 (토큰만 확인)
