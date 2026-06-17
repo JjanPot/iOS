@@ -151,12 +151,12 @@ struct InviteCodePopupView: View {
             if case let .viewer(inviteCode)  = viewType {
                 let url = "https://jjanpot.shop/invite?code=\(inviteCode)"
                 let message = """
-                    짠팟에서 챌린지 같이 해요! 아래 링크를 눌러 우리 팀에 바로 들어와요. 
+                    짠팟에서 챌린지 같이 해요! 아래 링크를 눌러 우리 팀에 바로 들어와요.
+                    
+                    (팀에 못 들어간 경우 로그인 후에 팀 코드 [\(inviteCode)] 를 직접 입력해 주세요!)
 
                     
-                    ▶ 초대 링크: \(url)
-                    
-                    (링크가 안 열릴 경우 로그인 후에 팀 코드 [CODE] 를 직접 입력해 주세요!)
+                    👉 초대 링크: \(url)
                     """
                 
                 ShareSheet(items: [message], title: "짠팟 | 초대링크 공유", showImagePreview: false)
