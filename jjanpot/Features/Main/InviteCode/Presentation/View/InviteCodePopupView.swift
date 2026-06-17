@@ -77,25 +77,26 @@ struct InviteCodePopupView: View {
                         Text("내 초대 코드")
                             .font(.pretendard(.medium, size: 17))
                         
+                        // 공유버튼 (초대코드 + 쉐어이미지)
                         Button {
-                            // 초대코드 클립보드에 복사
-                            //UIPasteboard.general.string = inviteCode
-                            //ToastManager.shared.show("초대 코드가 복사되었습니다.")
-                            
-                            // TODO: 공유시트 띄우기
+                            // 공유시트 띄우기
                             viewModel.isLoading = true
                             showShareSheet = true
                             
                         } label: {
                             HStack(alignment: .center, spacing: 7) {
+                                // 초대코드
                                 Text(inviteCode)
                                     .font(.pretendard(.semiBold, size: 26))
                                     .foregroundStyle(Color.black)
-                                Image("icon_copy")
-                                    .resizable()
-                                    .frame(width: 12, height: 12)
+                                
+                                // 공유 버튼 이미지
+                                Image(systemName: "square.and.arrow.up")
+                                    .foregroundStyle(Color.black400)
+                                    .offset(y: -1)
                             }
                         }
+                        .padding(.leading, 20)
                         
                         // 초대코드 입력뷰
                     } else  if case .inputForm = viewType {
