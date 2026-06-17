@@ -99,7 +99,6 @@ struct FeedCardView: View {
                     }
                     .frame(minWidth: 50, alignment: .leading)
                 }
-                .disabled(viewData.isMine)
                 
                 Spacer()
 
