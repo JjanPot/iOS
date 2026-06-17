@@ -289,7 +289,6 @@ struct FeedEditView: View {
                         .padding(4)
                 }
             }
-            
         }
     }
     
