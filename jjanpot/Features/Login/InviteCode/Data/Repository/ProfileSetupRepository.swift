@@ -79,9 +79,9 @@ struct ProfileSetupRepository: ProfileSetupRepositoryProtocol {
             )
             let loginEntity = LoginEntity(
                 user: newUser,
-                isNewUser: false,
                 accessToken: tempAccessToken,
                 refreshToken: tempRefreshToken,
+                nextOnboardingStep: .completed,
                 isReviewMode: false // 여기서 이 값은 AuthManager.login()통해서는 저장 안됨.
             )
             AuthManager.shared.login(loginEntity)

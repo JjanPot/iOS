@@ -138,9 +138,16 @@ struct LoginView: View {
             viewModel.requestAuthorization()
         }
         .padding(.top, 20)
+        .onChange(of: viewModel.shouldNavigateToTerms) { shouldNavigate in
+            if shouldNavigate {
+                // 약관 동의화면으로
+                coordinator.navigateToTerms()
+            }
+        }
         .onChange(of: viewModel.shouldNavigateToSignup) { shouldNavigate in
             if shouldNavigate {
-                coordinator.navigateToTerms()
+                // 프로필 설정 화면으로 가야함
+                coordinator.navigateToProfileSetup()
             }
         }
         .onChange(of: viewModel.shouldNavigateToMain) { shouldNavigate in

@@ -19,7 +19,8 @@ final class LoginViewModel: ObservableObject {
 
     // MARK: - Output Properties
 
-    @Published var shouldNavigateToSignup = false
+    @Published var shouldNavigateToTerms = false // 약관 동의 화면으로
+    @Published var shouldNavigateToSignup = false //프로필 생성 화면으로
     @Published var shouldNavigateToMain = false
     @Published var isLoading = false
     
@@ -94,20 +95,28 @@ final class LoginViewModel: ObservableObject {
             await MainActor.run {
                 isLoading = false
                
+                // 로그인 성공, 상태에 따라 화면 분기
                 // 신규 유저 → 회원가입 화면 (NavigationStack에 push)
                 // 기존 유저 → 메인 화면 (Root 변경)
-                if entity.isNewUser {
-                    Logger.success("신규 유저 로그인 성공 → 회원가입 화면으로")
+                switch entity.nextOnboardingStep {
+                case .agreement:
+                    Logger.success("신규 유저 로그인 성공 → 약관동의 화면으로")
                     // 토큰 임시저장
                     useCase.tempLogin(entity: entity)
+                    shouldNavigateToTerms = true
                     
+                case .profile:
+                    Logger.success("신규 유저 로그인 성공 → 회원가입(프로필) 화면으로")
+                    // 토큰 임시저장
+                    useCase.tempLogin(entity: entity)
                     shouldNavigateToSignup = true
-                } else {
+                    
+                case .completed:
                     Logger.success("기존 유저 로그인 성공 → 메인 화면으로")
                     
                     // 로그인 성공 처리 (토큰 + 사용자 정보 저장)
                     useCase.login(entity: entity)
-                    
+            
                     shouldNavigateToMain = true
                 }
             }

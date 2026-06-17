@@ -96,6 +96,8 @@ final class LoginCoordinator: ObservableObject {
     func navigateToSignUpComplete() {
         path.append(LoginDestination.signUpComplete)
     }
+    
+    // 초대코드 입력 (in onboarding)
     func navigateToInviteCode() {
         path.append(LoginDestination.inviteCode)
     }
