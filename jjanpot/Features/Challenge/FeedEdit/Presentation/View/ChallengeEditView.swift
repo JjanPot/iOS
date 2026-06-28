@@ -12,7 +12,8 @@ import Kingfisher
 
 
 /// 인증 수정 뷰
-struct FeedEditView: View {
+struct
+FeedEditView: View {
     @StateObject var viewModel: FeedEditViewModel
     private let coordinator: ChallengeCoordinatorProtocol
     init(viewModel: FeedEditViewModel, coordinator: ChallengeCoordinatorProtocol) {

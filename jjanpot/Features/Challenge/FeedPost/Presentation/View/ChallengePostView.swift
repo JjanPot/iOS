@@ -36,7 +36,15 @@ struct FeedPostView: View {
     @State private var selectedDate: Date = Date()
     
     @State private var selectedPhotoItem: PhotosPickerItem?
+    
+    // 카메라&앨범미리보기 sheet열기
+    @State private var isShowingPhotoSheet = false
+    // 앨범열기
     @State private var isShowingPhotoPicker = false
+    // 카메라 열기
+    @State private var isShowingCamera = false
+    
+    
     @State private var selectedImage: (data: Data, image: Image)? = nil
     // 앨범 접근 권한 재요청
     @State private var showPermissionAlert = false
@@ -55,8 +63,16 @@ struct FeedPostView: View {
                         selected: $viewModel.selectedCategory,
                         categories: viewModel.categoryViewData)
                     
-                    // 금액
+                    // 금액 (지출금액 / 절약금액)
                     priceTextField
+                    
+                    // 절약 금액 (계산된 금액)
+                    if let amount = viewModel.selectedCategory?.amount,
+                       let priceInt = Int(price), selectedTab == .expense {
+                        
+                        Text("절약금액: \(amount - priceInt)")
+                    }
+                    
                     
                     // 메모
                     memoTextField
@@ -111,7 +127,7 @@ struct FeedPostView: View {
                 .foregroundStyle(.orange500)
             }
         }
-        // 사진 선택
+        // 날짜 선택
         .sheet(isPresented: $isShowingPicker) {
             VStack(spacing: 10) {
                         DatePicker(
@@ -128,6 +144,22 @@ struct FeedPostView: View {
                     }
                     .presentationDetents([.large])
                 }
+        // 사진 선택
+        .sheet(isPresented: $isShowingPhotoSheet){
+            PhotoSheetPickerSheet(openCamera: {
+                isShowingPhotoSheet = false
+                isShowingCamera = true
+            }, onTapPhoto: { image in
+                // 선택된 이미지 저장
+                let imageData = image.jpegData(compressionQuality: 0.8) ?? Data()
+                selectedImage = (imageData, Image(uiImage: image))
+                isShowingPhotoSheet = false
+            }, openGallery: {
+                isShowingPhotoSheet = false
+                isShowingPhotoPicker = true
+            })
+            .presentationDetents([ .height(220)])
+        }
         .photosPicker(isPresented: $isShowingPhotoPicker, selection: $selectedPhotoItem, matching: .images)
         .onChange(of: selectedPhotoItem) { newItem in
             Task {
@@ -287,7 +319,7 @@ struct FeedPostView: View {
 
         switch status {
         case .authorized, .limited:
-            isShowingPhotoPicker = true
+            isShowingPhotoSheet = true
         case .notDetermined:
             PHPhotoLibrary.requestAuthorization(for: .readWrite) { newStatus in
                 DispatchQueue.main.async {
@@ -309,8 +341,10 @@ struct FeedPostView: View {
     }
     
 }
-//
-//#Preview {
-//    let di = MockMainDIContainer()
-//    di.makeFeedPostView(challengeId: 1, coordinator: di.makeAppCoordinator())
-//}
+
+#Preview {
+    let di = MockMainDIContainer()
+    let coordinator = di.makeChallengeCoordinator(appCoordinator: di.makeAppCoordinator())
+    di.makeFeedPostView(challengeId: 1, coordinator: coordinator)
+    
+}
