@@ -52,8 +52,22 @@ struct ProfileContentView: View {
                 }
                 .frame(width: 66, height: 66)
                 .clipShape(Circle())
-                
-                    
+                .overlay(alignment: .topTrailing) {
+                    if imageSource != nil {
+                        Button {
+                            // 사진 삭제
+                            imageSource = nil
+                            
+                        } label: {
+                            Image(systemName: "x.circle.fill")
+                                .foregroundStyle(Color.orange500)
+                                .background(Color.white)
+                                .clipShape(Circle())
+                                .padding(4)
+                        }
+                        .offset(x: 8, y: -4)
+                    }
+                }
                 
                 VStack(alignment: .leading, spacing: 7) {
                     Text("프로필 이미지를 등록해주세요.")
