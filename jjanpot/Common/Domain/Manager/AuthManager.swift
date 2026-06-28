@@ -174,4 +174,8 @@ final class AuthManager: ObservableObject {
             Logger.info("저장된 토큰 없음 → 로그인 필요")
         }
     }
+    
+    func test(){
+        accessToken = "qwer"
+    }
 }

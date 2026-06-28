@@ -8,10 +8,16 @@
 import Foundation
 import UIKit
 
+// 프로필 수정
+enum ProfileImageUpdateAction {
+    case keep              // 기존 이미지 유지
+    case upload(Data)   // 새 이미지 업로드
+    case delete            // 기존 이미지 삭제
+}
 
 protocol ProfileEditUseCaseProtocol {
     func getUserInfo() async throws -> UserEntity
-    func setProfile(nickname: String, birthDate: String?, image: UIImage?) async throws -> UserEntity
+    func setProfile(nickname: String, birthDate: Date?, profileImageAction: ProfileImageUpdateAction) async throws -> UserEntity
 }
 
 struct ProfileEditUseCase: ProfileEditUseCaseProtocol {
@@ -31,21 +37,39 @@ struct ProfileEditUseCase: ProfileEditUseCaseProtocol {
         repository.isLoggedIn()
     }
     
-    func setProfile(nickname: String, birthDate: String?, image: UIImage?) async throws -> UserEntity {
+    
+    /// 프로필 설정
+    /// - Parameters:
+    ///   - nickname: 닉네임
+    ///   - birthDate: 생년월일 "yyyy-MM-dd"
+    ///   - image: ui이미지가 있으면 로컬 이미지 업로드
+    func setProfile(nickname: String, birthDate: Date?, profileImageAction: ProfileImageUpdateAction) async throws -> UserEntity {
         
-        // 이미지 업로드
-        let imageUrl: String? = try await uplpadImage(image: image, directory: "profile/", contentType: "image/jpeg")
+        // 생년월일 "yyyy-MM-dd"
+        let date = birthDate?.toString(.dateOnly)
         
-        // 프로필 등록
-        return try await repository.setProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl)
+        switch profileImageAction {
+        case .keep: // 유지
+            print(">>>>> 11 이미지 유지")
+            return try await repository.setProfile(nickname: nickname, birthDate: date, imageUrl: nil, shouldDeleteProfileImage: false)
+            
+        case let .upload(image): // 이미지 업로드
+            print(">>>>> 22 이미지 업로드")
+            let imageUrl: String? = try await uplpadImage(imageData: image, directory: "profile/", contentType: "image/jpeg")
+            return try await repository.setProfile(nickname: nickname, birthDate: date, imageUrl: imageUrl, shouldDeleteProfileImage: false)
+            
+        case .delete: // 기존 이미지 삭제
+            print(">>>>> 33 기존 이미지 삭제")
+            return try await repository.setProfile(nickname: nickname, birthDate: date, imageUrl: nil, shouldDeleteProfileImage: true)
+        }
     }
     
-    private func uplpadImage(image: UIImage?, directory: String, contentType: String) async throws  -> String? {
-        guard let image else { return nil }
-        // 이미지를 JPEG 데이터로 변환
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-            throw FileManagerError.imageConversionFailed
-        }
+    private func uplpadImage(imageData: Data?, directory: String, contentType: String) async throws  -> String? {
+        guard let imageData else { return nil }
+//        // 이미지를 JPEG 데이터로 변환
+//        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+//            throw FileManagerError.imageConversionFailed
+//        }
         
         // presignedUrl 받기
         let entity = try await repository.getPresignedUrl(directory: directory, contentType: contentType)

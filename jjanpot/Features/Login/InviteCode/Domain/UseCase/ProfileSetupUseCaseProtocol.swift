@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol ProfileSetupUseCaseProtocol {
-    func setProfile(nickname: String, birthDate: String?, image: UIImage?) async throws
+    func setProfile(nickname: String, birthDate: String?, imageData: Data?) async throws
 }
 struct ProfileSetupUseCase: ProfileSetupUseCaseProtocol {
     private let repository: ProfileSetupRepositoryProtocol
@@ -18,10 +18,10 @@ struct ProfileSetupUseCase: ProfileSetupUseCaseProtocol {
     }
     
     
-    func setProfile(nickname: String, birthDate: String?, image: UIImage?) async throws {
+    func setProfile(nickname: String, birthDate: String?, imageData: Data?) async throws {
         
         // 이미지 업로드
-        let imageUrl: String? = try await uplpadImage(image: image, directory: "profile/", contentType: "image/jpeg")
+        let imageUrl: String? = try await uplpadImage(imageData: imageData, directory: "profile/", contentType: "image/jpeg")
         
         // 프로필 등록
         let user = try await repository.setProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl)
@@ -31,12 +31,12 @@ struct ProfileSetupUseCase: ProfileSetupUseCaseProtocol {
     }
     
     
-    private func uplpadImage(image: UIImage?, directory: String, contentType: String) async throws  -> String? {
-        guard let image else { return nil }
+    private func uplpadImage(imageData: Data?, directory: String, contentType: String) async throws  -> String? {
+        guard let imageData else { return nil }
         // 이미지를 JPEG 데이터로 변환
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-            throw FileManagerError.imageConversionFailed
-        }
+//        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+//            throw FileManagerError.imageConversionFailed
+//        }
 
         do {
             // presignedUrl 받기

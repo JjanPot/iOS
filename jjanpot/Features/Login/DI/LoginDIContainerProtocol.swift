@@ -231,7 +231,7 @@ struct MockTermsUseCase: TermsUseCaseProtocol {
     }
 }
 struct MockProfileSetupUseCase: ProfileSetupUseCaseProtocol {
-    func setProfile(nickname: String, birthDate: String?, image: UIImage?) async throws {
+    func setProfile(nickname: String, birthDate: String?, imageData: Data?) async throws {
         throw NetworkError.dataNil
     }
     

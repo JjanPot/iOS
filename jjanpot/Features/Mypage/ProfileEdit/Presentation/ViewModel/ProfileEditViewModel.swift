@@ -20,6 +20,9 @@ final class ProfileEditViewModel: ObservableObject {
     @Published var toastMessage: String?
     @Published var isSuccess: Bool = false
     
+    // 기존이미지(url)
+    private var oldImageUrl: String?
+    
     private let useCase: ProfileEditUseCaseProtocol
     init(useCase: ProfileEditUseCaseProtocol) {
         self.useCase = useCase
@@ -45,9 +48,13 @@ final class ProfileEditViewModel: ObservableObject {
                 let entity = try await useCase.getUserInfo()
                 self.nickname = entity.nickname
                 self.birthDate = entity.birthDate
-                self.imageSource = if let url = entity.imageUrl {
-                    .network(url)
-                } else { nil }
+                
+                if let url = entity.imageUrl {
+                    self.oldImageUrl = url
+                    self.imageSource = .network(url)
+                } else {
+                    self.imageSource = nil
+                }
                 
             } catch {
                 self.nickname = ""
@@ -71,16 +78,22 @@ final class ProfileEditViewModel: ObservableObject {
         isLoading = true
         isSuccess = false
         
-        let date = birthDate?.toString(.dateOnly)
+        var profileImageAction: ProfileImageUpdateAction = .keep
         
-        var profileImage: UIImage?
-        if case let .local(uiImage) = imageSource {
-            profileImage = uiImage
+        // 업로드 이미지 있음
+        if case let .local(_, imageData) = imageSource {
+            profileImageAction = .upload(imageData)
+        }
+        
+        // 기존 프로필 삭제
+        if !oldImageUrl.isEmptyOrNil && imageSource == nil {
+            print(">>>>> 기존 프로필 삭제")
+            profileImageAction = .delete
         }
         
         Task {
             do {
-                let _ = try await useCase.setProfile(nickname: nickname, birthDate: date, image: profileImage)
+                let _ = try await useCase.setProfile(nickname: nickname, birthDate: birthDate, profileImageAction: profileImageAction)
                 isSuccess = true
                 ToastManager.shared.show("수정 되었습니다.")
             } catch {
@@ -97,7 +110,8 @@ final class ProfileEditViewModel: ObservableObject {
         }
     }
     
-    func updateLocalImage(_ uiImage:  UIImage){
-        imageSource = .local(uiImage)
+    func updateLocalImage(_ imageData: Data){
+        guard let uiImage = UIImage(data: imageData) else { return }
+        imageSource = .local(uiImage, imageData)
     }
 }

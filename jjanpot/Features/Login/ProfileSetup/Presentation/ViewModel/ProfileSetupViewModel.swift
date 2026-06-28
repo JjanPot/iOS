@@ -36,14 +36,14 @@ final class ProfileSetupViewModel: ObservableObject {
         
         let date = birthDate?.toString(.dateOnly)
         
-        var profileImage: UIImage?
-        if case let .local(uiImage) = imageSource {
-            profileImage = uiImage
+        var imageData: Data?
+        if case let .local(_, data) = imageSource {
+            imageData = data
         }
         
         Task {
             do {
-                try await useCase.setProfile(nickname: nickname, birthDate: date, image: profileImage)
+                try await useCase.setProfile(nickname: nickname, birthDate: date, imageData: imageData)
                 isSuccess = true
                 ToastManager.shared.show("등록되었습니다.")
             } catch {
@@ -60,7 +60,8 @@ final class ProfileSetupViewModel: ObservableObject {
         }
     }
     
-    func updateLocalImage(_ uiImage:  UIImage){
-        imageSource = .local(uiImage)
+    func updateLocalImage(_ imageData: Data){
+        guard let uiImage = UIImage(data: imageData) else { return }
+        imageSource = .local(uiImage, imageData)
     }
 }

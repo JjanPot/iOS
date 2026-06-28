@@ -15,8 +15,8 @@ struct ProfileEditRepository: ProfileEditRepositoryProtocol {
         self.authApiClient = authApiClient
     }
 
-    func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async throws -> UserEntity {
-        let result = await authApiClient.editProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl)
+    func setProfile(nickname: String, birthDate: String?, imageUrl: String?, shouldDeleteProfileImage: Bool) async throws -> UserEntity {
+        let result = await authApiClient.editProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl, shouldDeleteProfileImage: shouldDeleteProfileImage)
         switch result {
         case let .success(dto):
             return UserEntity(from: dto)

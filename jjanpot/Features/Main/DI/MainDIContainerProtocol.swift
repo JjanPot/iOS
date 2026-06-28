@@ -649,14 +649,13 @@ final class MockMainDIContainer: MainDIContainerProtocol {
         return ProfileEditView(viewModel: vm, coordinator: coordinator)
     }
     struct MockProfileEditUseCase: ProfileEditUseCaseProtocol {
+        func setProfile(nickname: String, birthDate: Date?, profileImageAction: ProfileImageUpdateAction) async throws -> UserEntity {
+            UserEntity(userId: 3, nickname: "주희희", imageUrl: "https://picsum.photos/100/100", birthDate: Date())
+        }
+        
         func getUserInfo() async throws -> UserEntity {
             UserEntity(userId: 3, nickname: "주희희", imageUrl: "https://picsum.photos/100/100", birthDate: Date())
         }
-        
-        func setProfile(nickname: String, birthDate: String?, image: UIImage?) async throws -> UserEntity {
-            UserEntity(userId: 3, nickname: "주희희", imageUrl: "https://picsum.photos/100/100", birthDate: Date())
-        }
-        
         
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 protocol ProfileEditRepositoryProtocol {
-    func setProfile(nickname: String, birthDate: String?, imageUrl: String?) async throws -> UserEntity
+    func setProfile(nickname: String, birthDate: String?, imageUrl: String?, shouldDeleteProfileImage: Bool) async throws -> UserEntity
     
     func getPresignedUrl(directory: String, contentType: String) async throws -> PresignedURLEntity
     

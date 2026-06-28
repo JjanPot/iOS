@@ -34,7 +34,7 @@ struct ProfileContentView: View {
                 
                 Group {
                     switch imageSource {
-                    case .local(let uiImage):
+                    case let .local( uiImage, i_):
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFill()

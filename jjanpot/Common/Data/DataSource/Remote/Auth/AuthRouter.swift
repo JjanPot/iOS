@@ -30,7 +30,7 @@ public enum AuthRouter {
     case getProfile
     
     // 프로필 수정하기  birthDate "2000-01-15"
-    case editProfile(nickname: String, birthDate: String?, imageUrl: String?)
+    case editProfile(nickname: String, birthDate: String?, imageUrl: String?, shouldDeleteProfileImage: Bool)
     
     // MARK : mypage
     case getNotificationSettings
@@ -182,18 +182,20 @@ extension AuthRouter: Router {
             }
             return params
             
-        case let .editProfile(nickname, birthDate, imageUrl):
+        case let .editProfile(nickname, birthDate, imageUrl, shouldDeleteProfileImage):
             var params: Parameters = [
                 "nickname" : nickname,
             ]
             if let birthDate {
                 params["birthDate"] = birthDate
             }
+            // 새로운 이미지 url
             if let imageUrl {
                 params["profileImageUrl"] = imageUrl
+            } else if shouldDeleteProfileImage { // 이미지 삭제
+                params["resetProfileImage"] = shouldDeleteProfileImage
             }
             return params
-            
         
             
         case let .logout(userId):
@@ -265,7 +267,7 @@ public protocol AuthApiClientProtocol {
     func getProfile() async -> Result<ProfileDto, NetworkError>
     
     /// 프로필 수정하기
-    func editProfile(nickname: String, birthDate: String?, imageUrl: String?) async -> Result<ProfileDto, NetworkError>
+    func editProfile(nickname: String, birthDate: String?, imageUrl: String?, shouldDeleteProfileImage: Bool) async -> Result<ProfileDto, NetworkError>
     
     /// presignedUrl 가져오기
     func presignedUrl(directory: String, contentType: String) async -> Result<PresignedURLDto, NetworkError>
@@ -320,8 +322,8 @@ public class AuthApiClient: ApiClient<AuthRouter>, AuthApiClientProtocol {
     }
     
     /// 프로필 수정하기
-    public func editProfile(nickname: String, birthDate: String?, imageUrl: String?) async -> Result<ProfileDto, NetworkError> {
-        await request(.editProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl))
+    public func editProfile(nickname: String, birthDate: String?, imageUrl: String?, shouldDeleteProfileImage: Bool) async -> Result<ProfileDto, NetworkError> {
+        await request(.editProfile(nickname: nickname, birthDate: birthDate, imageUrl: imageUrl, shouldDeleteProfileImage: shouldDeleteProfileImage))
     }
     
     

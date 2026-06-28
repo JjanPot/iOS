@@ -100,9 +100,8 @@ struct ProfileSetupView: View {
         .photosPicker(isPresented: $isShowingPhotoPicker, selection: $selectedPhotoItem, matching: .images)
         .onChange(of: selectedPhotoItem) { newItem in
             Task {
-                if let data = try? await newItem?.loadTransferable(type: Data.self),
-                   let uiImage = UIImage(data: data) {
-                    viewModel.updateLocalImage(uiImage)
+                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                    viewModel.updateLocalImage(data)
                 }
             }
         }
