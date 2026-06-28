@@ -329,7 +329,7 @@ struct FeedPostView: View {
             PHPhotoLibrary.requestAuthorization(for: .readWrite) { newStatus in
                 DispatchQueue.main.async {
                     if newStatus == .authorized || newStatus == .limited {
-                        isShowingPhotoPicker = true
+                        isShowingPhotoSheet = true
                     }
                 }
             }

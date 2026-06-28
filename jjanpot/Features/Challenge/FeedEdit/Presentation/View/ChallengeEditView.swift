@@ -24,7 +24,14 @@ FeedEditView: View {
     @State private var isShowingPicker = false
     
     @State private var selectedPhotoItem: PhotosPickerItem?
+    
+    // 카메라&앨범미리보기 sheet열기
+    @State private var isShowingPhotoSheet = false
+    // 앨범열기
     @State private var isShowingPhotoPicker = false
+    // 카메라 열기
+    @State private var isShowingCamera = false
+    
     // 새로 선택한 로컬 이미지
     @State private var selectedImage: (data: Data, image: Image)? = nil
     @State private var showPermissionAlert = false
@@ -97,7 +104,7 @@ FeedEditView: View {
                 .foregroundStyle(.orange500)
             }
         }
-        // 사진 선택
+        // 날짜 선택
         .sheet(isPresented: $isShowingPicker) {
             VStack(spacing: 10) {
                         DatePicker(
@@ -114,6 +121,22 @@ FeedEditView: View {
                     }
                     .presentationDetents([.large])
                 }
+        // 사진 선택
+        .sheet(isPresented: $isShowingPhotoSheet){
+            PhotoSheetPickerSheet(openCamera: {
+                isShowingPhotoSheet = false
+                isShowingCamera = true
+            }, onTapPhoto: { image in
+                // 선택된 이미지 저장
+                let imageData = image.jpegData(compressionQuality: 0.8) ?? Data()
+                selectedImage = (imageData, Image(uiImage: image))
+                isShowingPhotoSheet = false
+            }, openGallery: {
+                isShowingPhotoSheet = false
+                isShowingPhotoPicker = true
+            })
+            .presentationDetents([ .height(220)])
+        }
         .photosPicker(isPresented: $isShowingPhotoPicker, selection: $selectedPhotoItem, matching: .images)
         .onChange(of: selectedPhotoItem) { newItem in
             Task {
@@ -124,6 +147,11 @@ FeedEditView: View {
                     
                 }
             }
+        }
+        .fullScreenCover(isPresented: $isShowingCamera) {
+            ImagePicker(image: $selectedImage, sourceType: .camera)
+                .ignoresSafeArea()
+            
         }
         .alert("사진 접근 권한 필요", isPresented: $showPermissionAlert) {
             Button("확인", role: .cancel) { }
@@ -301,12 +329,12 @@ FeedEditView: View {
 
         switch status {
         case .authorized, .limited:
-            isShowingPhotoPicker = true
+            isShowingPhotoSheet = true
         case .notDetermined:
             PHPhotoLibrary.requestAuthorization(for: .readWrite) { newStatus in
                 DispatchQueue.main.async {
                     if newStatus == .authorized || newStatus == .limited {
-                        isShowingPhotoPicker = true
+                        isShowingPhotoSheet = true
                     }
                 }
             }
