@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Photos
+import UIKit
 
 
 struct PhotoCell: View {
@@ -141,6 +142,46 @@ struct PhotoSheetPickerSheet: View {
             self.albumPhotos = photos.sorted {
                 photos.firstIndex(of: $0) ?? 0 < photos.firstIndex(of: $1) ?? 0
             }
+        }
+    }
+}
+
+// MARK: - ImagePicker
+
+struct ImagePicker: UIViewControllerRepresentable {
+    @Binding var image: (data: Data, image: Image)?
+    var sourceType: UIImagePickerController.SourceType = .photoLibrary
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = sourceType
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: ImagePicker
+
+        init(_ parent: ImagePicker) {
+            self.parent = parent
+        }
+
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            if let uiImage = info[.originalImage] as? UIImage,
+               let imageData = uiImage.jpegData(compressionQuality: 0.8) {
+                parent.image = (imageData, Image(uiImage: uiImage))
+            }
+            picker.dismiss(animated: true)
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            picker.dismiss(animated: true)
         }
     }
 }

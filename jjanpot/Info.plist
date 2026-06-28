@@ -51,6 +51,12 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>사진을 촬영하여 인증하기 위해 카메라에 접근합니다</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>앨범에서 사진을 선택하여 인증하기 위해 사진 라이브러리에 접근합니다</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>촬영한 사진을 앨범에 저장하기 위해 사진 라이브러리에 접근합니다</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>

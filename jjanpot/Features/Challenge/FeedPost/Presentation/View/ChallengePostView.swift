@@ -169,6 +169,11 @@ struct FeedPostView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: $isShowingCamera) {
+            ImagePicker(image: $selectedImage, sourceType: .camera)
+                .ignoresSafeArea()
+            
+        }
         .alert("사진 접근 권한 필요", isPresented: $showPermissionAlert) {
             Button("확인", role: .cancel) { }
             Button("설정으로 이동") {
