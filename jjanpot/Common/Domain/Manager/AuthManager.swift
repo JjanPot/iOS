@@ -20,8 +20,8 @@ final class AuthManager: ObservableObject {
     @Keychain(key: "refreshToken") private var refreshToken: String?
     
     // 토큰 임시 저장 (약관동의용)
-    @Keychain(key: "tempAccessToken") private var tempAccessToken: String?
-    @Keychain(key: "tempRefreshToken") private var tempRefreshToken: String?
+    private(set) var tempAccessToken: String?
+    private(set) var tempRefreshToken: String?
     
     // 리뷰 심사용
     @KeychainCodable(key: "reviewMode")
@@ -77,9 +77,9 @@ final class AuthManager: ObservableObject {
         Logger.success("로그아웃 완료")
     }
     
-    /// 임시 로그인 성공 시 호출 (토큰만 Keychain에 저장, 유저 정보는 메모리에만)
+    /// 임시 로그인 성공 시 호출
     func tempLogin(_ entity: LoginEntity) {
-        // 1. 토큰 저장 (Keychain)
+        // 1. 토큰 저장 (메모리)
         self.tempAccessToken = entity.accessToken
         self.tempRefreshToken = entity.refreshToken
         
@@ -92,10 +92,10 @@ final class AuthManager: ObservableObject {
     
     // 임시 로그인 정보 삭제
     func clearTempLogin(){
+        Logger.success("임시 로그인 정보 삭제")
         self.tempAccessToken = nil
         self.tempRefreshToken = nil
     }
-    
     
     // MARK: - getter setter
 

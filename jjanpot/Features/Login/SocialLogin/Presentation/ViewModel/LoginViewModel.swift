@@ -132,5 +132,4 @@ final class LoginViewModel: ObservableObject {
         shouldNavigateToSignup = false
         shouldNavigateToMain = false
     }
-
 }

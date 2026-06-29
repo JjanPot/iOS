@@ -228,6 +228,7 @@ extension AuthRouter: Router {
             ]
             // 가입 전, 임시 토큰
             if let token = AuthManager.shared.getTempAccessToken() {
+                Logger.debug("가입 전, 임시 토큰으로 진행")
                 params.add(name: "Authorization", value: "Bearer \(token)")
             }
             return params
